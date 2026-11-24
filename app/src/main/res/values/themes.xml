@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Echchara" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#0B1B36</item>
+        <item name="android:navigationBarColor">#FFFFFF</item>
+        <item name="android:windowBackground">@color/bg</item>
+    </style>
+    <color name="bg">#F5F7FA</color>
+    <color name="brand">#1554D1</color>
+</resources>

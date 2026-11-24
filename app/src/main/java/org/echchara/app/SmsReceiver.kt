@@ -1,0 +1,33 @@
+package org.echchara.app
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.provider.Telephony
+
+/** SMS Shield: checks every incoming SMS on the device and warns about scams. */
+class SmsReceiver : BroadcastReceiver() {
+    override fun onReceive(ctx: Context, intent: Intent) {
+        if (intent.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) return
+        Store.init(ctx)
+        if (!Store.smsShield) return
+        val parts = Telephony.Sms.Intents.getMessagesFromIntent(intent) ?: return
+        if (parts.isEmpty()) return
+        val sender = parts[0].displayOriginatingAddress ?: ""
+        val body = parts.joinToString("") { it.displayMessageBody ?: "" }
+        if (body.isBlank()) return
+        val pending = goAsync()
+        Thread {
+            try {
+                val a = Engine.analyze(body)
+                if (a.score >= 30) {
+                    val kn = Store.kannada
+                    Store.addHistory(HistoryItem(System.currentTimeMillis(), "sms", sender, body, a.score, a.type?.en, a.type?.kn))
+                    val title = (if (a.score >= 60) Txt("Scam SMS from $sender", "$sender ನಿಂದ ವಂಚನೆ SMS") else Txt("Suspicious SMS from $sender", "$sender ನಿಂದ ಅನುಮಾನಾಸ್ಪದ SMS")).get(kn)
+                    val body2 = (a.type?.get(kn)?.let { "$it · " } ?: "") + a.summary.get(kn)
+                    Store.notifyAlert(ctx, (System.currentTimeMillis() % 100000).toInt(), title, body2)
+                }
+            } finally { pending.finish() }
+        }.start()
+    }
+}
