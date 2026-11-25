@@ -207,7 +207,10 @@ mark.high{background:var(--danger-bg); border-color:var(--danger)} mark.mid{back
 .res-ic svg{width:26px; height:26px}
 .res-ic.safe{background:var(--safe-bg); color:var(--safe)} .res-ic.warn{background:var(--warn-bg); color:var(--warn)} .res-ic.danger{background:var(--danger-bg); color:var(--danger)} .res-ic.none{background:var(--sunk); color:var(--muted)}
 .res-t{font-size:1.35rem; font-weight:700; letter-spacing:-.02em}
-.res-t.safe{color:var(--safe)} .res-t.ctx{color:var(--warn)} .res-ic.ctx{background:var(--warn-bg); color:var(--warn)} .badge.ctx{color:var(--warn); background:var(--warn-bg); border-color:var(--warn-line)} .cq.on{background:var(--ink); color:var(--bg); border-color:var(--ink)} .res-t.warn{color:var(--warn)} .res-t.danger{color:var(--danger)}
+.res-t.safe{color:var(--safe)} .res-t.ctx{color:var(--warn)} .res-ic.ctx{background:var(--warn-bg); color:var(--warn)} .badge.ctx{color:var(--warn); background:var(--warn-bg); border-color:var(--warn-line)} .cq.on{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.drv{display:grid; gap:8px} .drv-r{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(60px,1fr) 40px; gap:10px; align-items:center; font-size:.88rem} .drv-l{min-width:0; overflow-wrap:anywhere} .drv-b{height:8px; background:var(--sunk); border-radius:4px; overflow:hidden} .drv-b i{display:block; height:100%; border-radius:4px} .drv-n{text-align:right; font-variant-numeric:tabular-nums; font-weight:600}
+.jr{display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:8px} .jr .ja{display:none} .jn{min-width:0; border:1px solid var(--line); border-top:4px solid var(--c); border-radius:10px; padding:10px 12px; background:var(--surface)} .jn .k{font-size:.72rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em} .jn b{display:block; font-size:1.25rem; color:var(--c); font-variant-numeric:tabular-nums} .jn p{font-size:.8rem; color:var(--ink2); margin-top:4px; overflow-wrap:anywhere} .ja{flex:none; align-self:center; color:var(--muted); padding:0 4px}
+.jin{display:grid; gap:12px} .jin .st{display:grid; grid-template-columns:30px 1fr; gap:10px; align-items:start} .jin .st i{width:26px; height:26px; border-radius:50%; background:var(--brand-soft); color:var(--brand); display:grid; place-items:center; font-style:normal; font-weight:700; font-size:.82rem; margin-top:24px} .jin label{font-size:.82rem; font-weight:600; display:block; margin-bottom:4px} .jin textarea.in{min-height:64px} .res-t.warn{color:var(--warn)} .res-t.danger{color:var(--danger)}
 .res-s{color:var(--ink2); font-size:.92rem; margin-top:2px}
 .score{margin-left:auto; text-align:right; flex:none}
 .score b{font-size:1.6rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.02em}
@@ -595,6 +598,8 @@ footer ul a:hover{color:var(--brand)}
         <p class="small" style="font-weight:600; margin:16px 0 8px" data-i18n="te.fHam"></p><div class="toks g" id="featHam"></div>
         <div class="block"><p class="block-h" data-i18n="te.still"></p><ul class="findings" id="stillWrong"></ul></div>
       </div></div>
+      <div class="card" style="grid-column:1/-1"><div class="card-h"><div><h3 id="robH"></h3><p class="small muted" id="robSub"></p></div></div><div class="card-b"><div class="tbl"><table id="robTbl"></table></div><p class="small muted" style="margin-top:12px" id="robNote"></p></div></div>
+      <div class="card" style="grid-column:1/-1"><div class="card-h"><div><h3 id="apH"></h3><p class="small muted" id="apSub"></p></div></div><div class="card-b" id="apBody"></div></div>
     </div>
   </div>
 </section>
@@ -640,6 +645,7 @@ let lang = store.get('ec-lang','en');
 const L = o => o==null ? '' : (typeof o==='string' ? o : (lang==='kn' && o.kn ? o.kn : o.en));
 const IC = {
  qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 17h4v4h-4"/>',
+ journey:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h8"/>',
  job:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
  learn:'<path d="M12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/>',
  call:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
@@ -667,7 +673,7 @@ const I18N = {
   'home.how':'How it works','home.trend':'Scam patterns active in Karnataka','home.trendSub':'The tricks people in Karnataka report most often, and how to stop each one.','home.allAlerts':'View all scam alerts',
   'home.band':'Already lost money? The first hour matters.','home.bandSub':'Call 1930 so your bank can try to freeze the transfer, then follow our recovery checklist.','home.bandBtn':'See what to do now',
   'check.h1':'Check a message','check.lead':'Paste the message, link or email, or upload a screenshot. Every result shows the reasons behind it and what to do next.',
-  'tab.msg':'SMS / WhatsApp','tab.email':'Email','tab.url':'Link','tab.web':'Website','tab.shot':'Screenshot','tab.qr':'QR code','tab.job':'Job offer','lbl.samples':'Examples:','nav.learn':'Learn & Play','lp.h1':'Learn & Play','lp.lead':'Ten real-world messages from Karnataka. Decide whether each is a scam or genuine, earn XP for correct answers and streaks, and unlock badges. Great for students and family members.',
+  'tab.msg':'SMS / WhatsApp','tab.email':'Email','tab.url':'Link','tab.web':'Website','tab.shot':'Screenshot','tab.qr':'QR code','tab.job':'Job offer','tab.journey':'Scam journey','lbl.samples':'Examples:','nav.learn':'Learn & Play','lp.h1':'Learn & Play','lp.lead':'Ten real-world messages from Karnataka. Decide whether each is a scam or genuine, earn XP for correct answers and streaks, and unlock badges. Great for students and family members.',
   'ph.msg':'Paste the message exactly as you received it, including any links and phone numbers.',
   'ph.email':'Paste the full email. Include the headers for the best result (in Gmail: ⋮ → Show original).',
   'ph.url':'https://example.com/login','ph.web':'Optional: paste the page text or HTML source to check what the page asks for.',
@@ -709,7 +715,7 @@ const I18N = {
   'home.how':'ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ','home.trend':'ಕರ್ನಾಟಕದಲ್ಲಿ ಸಕ್ರಿಯ ವಂಚನೆ ಮಾದರಿಗಳು','home.trendSub':'ಕರ್ನಾಟಕದ ಜನರು ಹೆಚ್ಚು ವರದಿ ಮಾಡುವ ತಂತ್ರಗಳು ಮತ್ತು ಅವನ್ನು ತಡೆಯುವ ವಿಧಾನ.','home.allAlerts':'ಎಲ್ಲ ಎಚ್ಚರಿಕೆಗಳನ್ನು ನೋಡಿ',
   'home.band':'ಈಗಾಗಲೇ ಹಣ ಕಳೆದುಕೊಂಡಿರಾ? ಮೊದಲ ಗಂಟೆ ಅತ್ಯಂತ ಮುಖ್ಯ.','home.bandSub':'ಬ್ಯಾಂಕ್ ಹಣ ತಡೆಹಿಡಿಯಲು 1930 ಗೆ ಕರೆ ಮಾಡಿ, ನಂತರ ನಮ್ಮ ಪಟ್ಟಿಯನ್ನು ಅನುಸರಿಸಿ.','home.bandBtn':'ಈಗ ಏನು ಮಾಡಬೇಕು ನೋಡಿ',
   'check.h1':'ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ','check.lead':'ಸಂದೇಶ, ಲಿಂಕ್ ಅಥವಾ ಇಮೇಲ್ ಅಂಟಿಸಿ, ಅಥವಾ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಪ್ರತಿ ಫಲಿತಾಂಶ ಕಾರಣಗಳು ಮತ್ತು ಮುಂದಿನ ಕ್ರಮವನ್ನು ತೋರಿಸುತ್ತದೆ.',
-  'tab.msg':'SMS / ವಾಟ್ಸಾಪ್','tab.email':'ಇಮೇಲ್','tab.url':'ಲಿಂಕ್','tab.web':'ವೆಬ್‌ಸೈಟ್','tab.shot':'ಸ್ಕ್ರೀನ್‌ಶಾಟ್','tab.qr':'QR ಕೋಡ್','tab.job':'ಉದ್ಯೋಗ ಆಫರ್','lbl.samples':'ಉದಾಹರಣೆಗಳು:','nav.learn':'ಕಲಿಯಿರಿ & ಆಡಿ','lp.h1':'ಕಲಿಯಿರಿ & ಆಡಿ','lp.lead':'ಕರ್ನಾಟಕದ ಹತ್ತು ನೈಜ ಸಂದೇಶಗಳು. ಪ್ರತಿಯೊಂದೂ ವಂಚನೆಯೇ ಅಥವಾ ನಿಜವಾದದ್ದೇ ಎಂದು ನಿರ್ಧರಿಸಿ, ಸರಿ ಉತ್ತರ ಮತ್ತು ಸರಣಿಗೆ XP ಗಳಿಸಿ, ಬ್ಯಾಡ್ಜ್ ಪಡೆಯಿರಿ. ವಿದ್ಯಾರ್ಥಿಗಳು ಮತ್ತು ಕುಟುಂಬದವರಿಗೆ ಉತ್ತಮ.',
+  'tab.msg':'SMS / ವಾಟ್ಸಾಪ್','tab.email':'ಇಮೇಲ್','tab.url':'ಲಿಂಕ್','tab.web':'ವೆಬ್‌ಸೈಟ್','tab.shot':'ಸ್ಕ್ರೀನ್‌ಶಾಟ್','tab.qr':'QR ಕೋಡ್','tab.job':'ಉದ್ಯೋಗ ಆಫರ್','tab.journey':'ವಂಚನೆಯ ಪ್ರಯಾಣ','lbl.samples':'ಉದಾಹರಣೆಗಳು:','nav.learn':'ಕಲಿಯಿರಿ & ಆಡಿ','lp.h1':'ಕಲಿಯಿರಿ & ಆಡಿ','lp.lead':'ಕರ್ನಾಟಕದ ಹತ್ತು ನೈಜ ಸಂದೇಶಗಳು. ಪ್ರತಿಯೊಂದೂ ವಂಚನೆಯೇ ಅಥವಾ ನಿಜವಾದದ್ದೇ ಎಂದು ನಿರ್ಧರಿಸಿ, ಸರಿ ಉತ್ತರ ಮತ್ತು ಸರಣಿಗೆ XP ಗಳಿಸಿ, ಬ್ಯಾಡ್ಜ್ ಪಡೆಯಿರಿ. ವಿದ್ಯಾರ್ಥಿಗಳು ಮತ್ತು ಕುಟುಂಬದವರಿಗೆ ಉತ್ತಮ.',
   'ph.msg':'ನಿಮಗೆ ಬಂದ ಸಂದೇಶವನ್ನು ಲಿಂಕ್ ಮತ್ತು ಫೋನ್ ಸಂಖ್ಯೆ ಸಹಿತ ಹಾಗೆಯೇ ಅಂಟಿಸಿ.',
   'ph.email':'ಪೂರ್ಣ ಇಮೇಲ್ ಅಂಟಿಸಿ. ಉತ್ತಮ ಫಲಿತಾಂಶಕ್ಕೆ ಹೆಡರ್‌ಗಳನ್ನೂ ಸೇರಿಸಿ (Gmail: ⋮ → Show original).',
   'ph.url':'https://example.com/login','ph.web':'ಐಚ್ಛಿಕ: ಪುಟ ಏನು ಕೇಳುತ್ತದೆ ಎಂದು ನೋಡಲು ಪಠ್ಯ ಅಥವಾ HTML ಅಂಟಿಸಿ.',
@@ -924,10 +930,37 @@ const CTX_CUES = [
 ];
 const SPECIFIC_RE = /\b(ref(erence)?|ticket|complaint|request|order|srn|sr|case|txn|transaction)\.?\s*(no\.?|number|id|#)?\s*[:#-]?\s*[A-Z0-9-]*\d[A-Z0-9-]{4,}\b/i;
 
+/* ---- disguise defence: undo look-alike letters, l33t spelling, s p a c e d letters and hidden characters ----
+   Length-preserving, so highlights still line up with what the user typed. */
+const HOMO = {'а':'a','е':'e','о':'o','р':'p','с':'c','х':'x','у':'y','і':'i','ј':'j','ѕ':'s','ԁ':'d','ӏ':'l','А':'A','В':'B','Е':'E','К':'K','М':'M','Н':'H','О':'O','Р':'P','С':'C','Т':'T','Х':'X','У':'Y','І':'I','ο':'o','α':'a','ν':'v','ρ':'p','τ':'t','ι':'i','κ':'k','Ο':'O','Α':'A','Β':'B','Ε':'E','Κ':'K','Μ':'M','Ν':'N','Ρ':'P','Τ':'T','Χ':'X','Ι':'I','Ζ':'Z'};
+const LEET = {'0':'o','1':'i','3':'e','4':'a','5':'s','7':'t','@':'a','$':'s','|':'l','!':'i'};
+const VOCAB = /^(otp|kyc|pin|upi|cvv|pan|sbi|hdfc|icici|account|bank|password|verify|verified|update|updated|block|blocked|suspend|suspended|refund|prize|winner|won|lottery|aadhaar|aadhar|police|arrest|paytm|gpay|phonepe|amazon|flipkart|login|urgent|urgently|click|link|free|cash|money|reward|offer|card|electricity|bill|bonus|claim|gift|loan|code|immediately|deactivated|expired|expire)s?$/i;
+const ZW = /[​-‍⁠﻿­]/;
+function normalizeText(text){
+  const ch=text.split('');
+  const kinds=new Set();
+  // 1. hidden characters inside Latin words: strip them, pad with spaces at the end of the word
+  text.replace(/[A-Za-z0-9@$](?:[A-Za-z0-9@$]|[​-‍⁠﻿­])*/g,(m,off)=>{ if(!ZW.test(m)) return m; const clean=m.replace(new RegExp(ZW.source,'g'),''); const out=clean+' '.repeat(m.length-clean.length); for(let i=0;i<m.length;i++) ch[off+i]=out[i]; kinds.add('hidden'); return m; });
+  // 2. look-alike letters from other alphabets, only inside words that also use Latin letters
+  let cur=ch.join('');
+  cur.replace(/[A-Za-zͰ-ϿЀ-ӿＡ-ｚ]+/g,(m,off)=>{ const mixed=/[A-Za-z]/.test(m) && /[^A-Za-z]/.test(m); const full=/[Ａ-ｚ]/.test(m); if(!mixed && !full) return m; for(let i=0;i<m.length;i++){ const c=m[i]; const code=c.charCodeAt(0); const r = HOMO[c] || (code>=0xFF21&&code<=0xFF5A ? String.fromCharCode(code-0xFEE0) : null); if(r){ ch[off+i]=r; kinds.add('lookalike'); } } return m; });
+  // 3. s p a c e d or d.o.t.t.e.d letters (O T P, K.Y.C)
+  cur=ch.join('');
+  cur.replace(/\b(?:[A-Za-z0-9@$][ .\-_*]){2,}[A-Za-z0-9@$]\b/g,(m,off)=>{ const joined=m.replace(/[ .\-_*]/g,''); const de=joined.replace(/[013457@$|!]/g,c=>LEET[c]); if(!VOCAB.test(de)) return m; const out=de+' '.repeat(m.length-de.length); for(let i=0;i<m.length;i++) ch[off+i]=out[i]; kinds.add('spaced'); return m; });
+  // 4. l33t spelling (0TP, acc0unt, upd@te), only when the result is a known scam word
+  cur=ch.join('');
+  cur.replace(/[A-Za-z0-9@$|!]+/g,(m,off)=>{ if(!/[A-Za-z]/.test(m) || !/[013457@$|!]/.test(m)) return m; const de=m.replace(/[013457@$|!]/g,c=>LEET[c]); if(!VOCAB.test(de)) return m; for(let i=0;i<m.length;i++) ch[off+i]=de[i]; kinds.add('leet'); return m; });
+  const t=ch.join('');
+  return {t, changed:t!==text, kinds:[...kinds]};
+}
+const DISGUISE_LABEL={hidden:{en:'hidden characters',kn:'ಅಡಗಿಸಿದ ಅಕ್ಷರಗಳು'},lookalike:{en:'look-alike letters from other alphabets',kn:'ಬೇರೆ ಲಿಪಿಯ ಹೋಲುವ ಅಕ್ಷರಗಳು'},spaced:{en:'s p a c e d - o u t words',kn:'ಬಿಡಿಬಿಡಿಯಾದ ಅಕ್ಷರಗಳು'},leet:{en:'numbers in place of letters (0TP, acc0unt)',kn:'ಅಕ್ಷರದ ಬದಲು ಅಂಕಿ (0TP)'}};
+
 const LINK_RE = /(?:https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.(?:[a-z]{2,24})(?:\/[^\s<>"']*)?)/gi;
 const NOT_DOMAIN = /\.(pdf|jpg|png|docx?|xlsx?|txt|zip)$/i;
 function analyzeText(text, opts={}){
   const off = new Set(opts.disable||[]);
+  const N = off.has('normalize') ? {t:text, changed:false, kinds:[]} : normalizeText(text);
+  const ntext = N.t;
   const ranges=[], hits=new Map(), links=[];
   for(const m of text.matchAll(LINK_RE)){
     const u=m[0].replace(/[.,;:!?)\]]+$/,'');
@@ -945,10 +978,10 @@ function analyzeText(text, opts={}){
   for(const rule of RULES){
     if(off.has(rule.id)) continue;
     for(const re of [rule.re, rule.kn, ...(rule.ml||[])]){ if(!re) continue;
-      for(const m of text.matchAll(re)){
+      for(const m of ntext.matchAll(re)){
         const s=m.index, e=s+m[0].length;
         if(inLink(s,e)) continue;
-        if(['otpshare','creds','upipin'].includes(rule.id) && !off.has('negation') && (/(\b(not|never|no one|nobody)\b|n't)[^.\n]{0,35}$/i.test(text.slice(Math.max(0,s-45),s)) || /\b(not|never)\b|n't/i.test(m[0]))) continue;
+        if(['otpshare','creds','upipin'].includes(rule.id) && !off.has('negation') && (/(\b(not|never|no one|nobody)\b|n't)[^.\n]{0,35}$/i.test(ntext.slice(Math.max(0,s-45),s)) || /\b(not|never)\b|n't/i.test(m[0]))) continue;
         if(!hits.has(rule.id)) hits.set(rule.id,{rule,ex:[]});
         const h=hits.get(rule.id); if(h.ex.length<3 && !h.ex.includes(m[0])) h.ex.push(m[0]);
         ranges.push({s,e,sev:rule.sev,tip:L(rule.label)});
@@ -956,9 +989,11 @@ function analyzeText(text, opts={}){
     }
   }
   const safe=[];
-  if(!off.has('negation')) for(const c of SAFE_CUES) for(const m of text.matchAll(c.re)){ ranges.push({s:m.index,e:m.index+m[0].length,sev:'safe',tip:L(c.label)}); if(!safe.find(x=>x.en===c.label.en)) safe.push(c.label); }
+  if(!off.has('negation')) for(const c of SAFE_CUES) for(const m of ntext.matchAll(c.re)){ ranges.push({s:m.index,e:m.index+m[0].length,sev:'safe',tip:L(c.label)}); if(!safe.find(x=>x.en===c.label.en)) safe.push(c.label); }
   const ws=[...hits.values()].map(h=>h.rule.w);
-  for(const l of links) if(l.r.score>=20) ws.push(Math.min(.7, l.r.score/100*.8));
+  if(!off.has('links')) for(const l of links) if(l.r.score>=20) ws.push(Math.min(.7, l.r.score/100*.8));
+  const disguised = N.changed && !off.has('disguise');
+  if(disguised) ws.push(.25);
   let score=combine(ws);
   if(safe.length && !hits.has('otpshare') && !hits.has('upipin')) score=Math.round(score*.55);
   const flags=[];
@@ -968,10 +1003,11 @@ function analyzeText(text, opts={}){
     else if(l.r.known) flags.push({sev:'safe',w:0,label:{en:`Link to ${l.r.reg}`,kn:`${l.r.reg} ಗೆ ಲಿಂಕ್`},why:l.r.flags[0].why});
     else flags.push({sev:'low',w:0,label:{en:`Link to ${l.r.reg}`,kn:`${l.r.reg} ಗೆ ಲಿಂಕ್`},why:{en:'No obvious tricks in the address, but Echchara does not recognise this domain. Check it belongs to who the message claims.',kn:'ವಿಳಾಸದಲ್ಲಿ ಸ್ಪಷ್ಟ ತಂತ್ರಗಳಿಲ್ಲ, ಆದರೆ ಈ ಡೊಮೇನ್ ಗುರುತಿಸಲಾಗಿಲ್ಲ.'}});
   }
+  if(disguised) flags.push({id:'disguise',sev:'mid',w:.25,label:{en:'Disguised wording to dodge filters',kn:'ಫಿಲ್ಟರ್ ತಪ್ಪಿಸಲು ಮರೆಮಾಚಿದ ಪದಗಳು'},why:{en:`Uses ${N.kinds.map(k=>DISGUISE_LABEL[k].en).join(', ')}. Genuine banks and services have no reason to hide their words. Echchara reads through the disguise.`,kn:`${N.kinds.map(k=>DISGUISE_LABEL[k].kn).join(', ')} ಬಳಸಿದೆ. ನಿಜವಾದ ಬ್ಯಾಂಕ್‌ಗಳು ಪದಗಳನ್ನು ಮರೆಮಾಚುವುದಿಲ್ಲ. ಎಚ್ಚರ ಮರೆಮಾಚುವಿಕೆಯನ್ನು ಬಿಡಿಸಿ ಓದುತ್ತದೆ.`}});
   for(const h of hits.values()) flags.push({id:h.rule.id,sev:h.rule.sev,w:h.rule.w,label:h.rule.label,why:h.rule.why,ex:h.ex,do:h.rule.do});
   for(const s of safe) flags.push({sev:'safe',w:0,label:s,why:{en:'Genuine messages often include this.',kn:'ನಿಜವಾದ ಸಂದೇಶಗಳಲ್ಲಿ ಇದು ಸಾಮಾನ್ಯ.'}});
   const ctx=[];
-  for(const re of CTX_CUES) for(const m of text.matchAll(re)){ if(inLink(m.index,m.index+m[0].length)) continue; if(ctx.length<3 && !ctx.includes(m[0])) ctx.push(m[0]); ranges.push({s:m.index,e:m.index+m[0].length,sev:'low',tip:lang==='kn'?'ಅಸ್ಪಷ್ಟ ಉಲ್ಲೇಖ':'Vague reference'}); }
+  for(const re of CTX_CUES) for(const m of ntext.matchAll(re)){ if(inLink(m.index,m.index+m[0].length)) continue; if(ctx.length<3 && !ctx.includes(m[0])) ctx.push(m[0]); ranges.push({s:m.index,e:m.index+m[0].length,sev:'low',tip:lang==='kn'?'ಅಸ್ಪಷ್ಟ ಉಲ್ಲೇಖ':'Vague reference'}); }
   const specific = SPECIFIC_RE.test(text) || links.some(l=>l.r.known);
   if(ctx.length) flags.push({id:'vague',sev:'low',w:0,label:{en:'Refers to an earlier request without details',kn:'ವಿವರವಿಲ್ಲದೆ ಹಿಂದಿನ ವಿನಂತಿಯ ಉಲ್ಲೇಖ'},ex:ctx,
     why: specific ? {en:'It mentions a previous request or conversation. It does include a reference number or official link, so check that against your own records.',kn:'ಹಿಂದಿನ ವಿನಂತಿಯನ್ನು ಉಲ್ಲೇಖಿಸುತ್ತದೆ. ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ ಅಥವಾ ಅಧಿಕೃತ ಲಿಂಕ್ ಇದೆ, ನಿಮ್ಮ ದಾಖಲೆಯೊಂದಿಗೆ ಹೋಲಿಸಿ.'}
@@ -1143,8 +1179,8 @@ const DATA = [
  [1,"మీ కరెంట్ కనెక్షన్ ఈ రాత్రి నిలిపివేయబడుతుంది. వెంటనే ఈ నంబర్‌కు కాల్ చేయండి 9845067892"],
  [1,"നിങ്ങളുടെ വൈദ്യുതി കണക്ഷൻ ഇന്ന് രാത്രി വിച്ഛേദിക്കും. ഉടൻ ഈ നമ്പറിൽ വിളിക്കുക 9845067893"]
 ];
-function tokens(text){
-  let s = text.toLowerCase();
+function tokens(text, raw){
+  let s = (raw ? text : normalizeText(text).t).toLowerCase();
   const extra=[];
   s = s.replace(/(?:https?:\/\/|www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,24}(?:\/\S*)?/g, m=>{ const r=analyzeUrl(m); if(!r.error){ extra.push(r.score>=40?'__badurl':r.known?'__goodurl':'__url'); } return ' '; });
   s = s.replace(/\+?\d[\d\s-]{8,}\d/g, ()=>{extra.push('__phone'); return ' ';});
@@ -1154,7 +1190,7 @@ function tokens(text){
   return [...w, ...bi, ...extra];
 }
 function trainNB(rows){ const m={c:[0,0],tc:[0,0],f:[new Map(),new Map()],v:new Set()}; for(const [y,x] of rows){ m.c[y]++; for(const tk of tokens(x)){ m.f[y].set(tk,(m.f[y].get(tk)||0)+1); m.tc[y]++; m.v.add(tk);} } return m; }
-function predictNB(m,x){ const V=m.v.size, N=m.c[0]+m.c[1]; const lp=[Math.log(m.c[0]/N), Math.log(m.c[1]/N)]; for(const tk of tokens(x)){ if(!m.v.has(tk)) continue; for(const y of [0,1]) lp[y]+=Math.log(((m.f[y].get(tk)||0)+1)/(m.tc[y]+V)); } const mx=Math.max(...lp); const e=lp.map(v=>Math.exp(v-mx)); return e[1]/(e[0]+e[1]); }
+function predictNB(m,x,raw){ const V=m.v.size, N=m.c[0]+m.c[1]; const lp=[Math.log(m.c[0]/N), Math.log(m.c[1]/N)]; for(const tk of tokens(x,raw)){ if(!m.v.has(tk)) continue; for(const y of [0,1]) lp[y]+=Math.log(((m.f[y].get(tk)||0)+1)/(m.tc[y]+V)); } const mx=Math.max(...lp); const e=lp.map(v=>Math.exp(v-mx)); return e[1]/(e[0]+e[1]); }
 let userRows = store.get('ec-feedback',[]);
 const isTest = (_,i)=> i%4===3;
 let TRAIN, TEST, NB;
@@ -1258,9 +1294,9 @@ $('menuBtn').onclick=()=>{ const o=$('mnav').classList.toggle('open'); $('menuBt
 const go = id => { if(location.hash==='#'+id) route(); else location.hash = id; };
 
 /* ======================= Check page ======================= */
-const MODES=['msg','email','url','web','shot','qr','job'];
+const MODES=['msg','email','url','web','shot','qr','job','journey'];
 let mode='msg';
-const inputs={msg:'', email:'', url:'', web:'', webc:'', job:''};
+const inputs={msg:'', email:'', url:'', web:'', webc:'', job:'', j1:'', j2:'', j3:'', j4:''};
 let shotFile=null, shotURL=null, last=null;
 let ocrState={status:'idle', key:null, text:'', progress:0};
 
@@ -1276,6 +1312,11 @@ function renderPane(){
   if(mode==='qr'){ const kn=lang==='kn'; const done=qrState.status==='done'&&qrState.key===currentKey();
     p.innerHTML = `<div class="samples"><span>${t('lbl.samples')}</span>${QR_SAMPLES.map((s,i)=>`<button class="chip" data-qs="${i}">${esc(L(s.n))}</button>`).join('')}</div><div class="drop" id="qrDrop">${qrURL?`<img src="${qrURL}" alt="QR code" style="max-height:200px;image-rendering:pixelated">`:ico('qr','i" style="width:36px;height:36px;color:var(--muted)')}<p>${kn?'QR ಕೋಡ್‌ನ ಫೋಟೋ ಅಥವಾ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಇಲ್ಲಿ ಹಾಕಿ':'Drop a photo or screenshot of a QR code'}</p><label class="btn sec sm" for="in-qr" style="cursor:pointer">${t('shot.pick')}</label><input type="file" id="in-qr" accept="image/*" hidden></div>${done?`<div class="note" style="margin-top:12px;display:block"><b>${kn?'QR ಒಳಗಿನ ವಿಷಯ':'Inside this QR code'}:</b><br><code style="word-break:break-all">${esc(qrState.text)}</code></div>`:''}<p class="note" style="margin:12px 0">${ico('info')}<span>${kn?'QR ಅನ್ನು ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ. ಲಿಂಕ್ ತೆರೆಯುವುದಿಲ್ಲ, ಪಾವತಿ ಮಾಡುವುದಿಲ್ಲ.':'The QR code is read on your device. Echchara never opens the link or makes a payment.'}</span></p>`; }
   if(mode==='job') p.innerHTML = samplesHTML(JOB_SAMPLES)+`<label for="in-job" class="sr">${t('tab.job')}</label><textarea id="in-job" class="in" spellcheck="false" placeholder="${esc(lang==='kn'?'ಉದ್ಯೋಗ ಅಥವಾ ಇಂಟರ್ನ್‌ಶಿಪ್ ಆಫರ್, ನೇಮಕಾತಿ ಇಮೇಲ್ ಅಥವಾ ವಾಟ್ಸಾಪ್ ಸಂದೇಶ ಅಂಟಿಸಿ.':'Paste the job or internship offer, recruiter email or WhatsApp message, including any email addresses and links.')}">${esc(inputs.job)}</textarea>`;
+  if(mode==='journey'){ const kn=lang==='kn';
+    p.innerHTML = `<div class="samples"><span>${t('lbl.samples')}</span>${JOURNEY_SAMPLES.map((s,i)=>`<button class="chip" data-js="${i}">${esc(L(s.n))}</button>`).join('')}</div>
+    <p class="note" style="margin-bottom:12px">${ico('info')}<span>${kn?'ಒಂದು ವಂಚನೆ ಹಲವು ಹಂತಗಳಲ್ಲಿ ಬರುತ್ತದೆ: SMS, ಲಿಂಕ್ ಅಥವಾ QR, ನಕಲಿ ಪುಟ ಅಥವಾ ಕರೆ, ನಂತರ ಪಾವತಿ. ನಿಮಗೆ ತಿಳಿದ ಹಂತಗಳನ್ನು ತುಂಬಿ. ಎಚ್ಚರ ಅವುಗಳನ್ನು ಒಂದೇ ಪ್ರಕರಣವಾಗಿ ಜೋಡಿಸುತ್ತದೆ.':'One scam usually arrives in steps: an SMS, a link or QR, a fake page or caller, then a payment. Fill in the steps you have. Echchara links them into one case and checks whether they match.'}</span></p>
+    <div class="jin">${JSTAGES.map((d,i)=>`<div class="st"><i>${i+1}</i><div><label for="in-${d.k}">${esc(kn?d.kn:d.en)}</label><textarea id="in-${d.k}" class="in" spellcheck="false" placeholder="${esc(L(d.ph))}">${esc(inputs[d.k])}</textarea></div></div>`).join('')}</div>`;
+  }
   wirePane();
 }
 let tmr;
@@ -1284,10 +1325,11 @@ function wirePane(){
   p.querySelectorAll('[data-qs]').forEach(c=>c.onclick=()=>makeSampleQR(+c.dataset.qs));
   const qi=$('in-qr'); if(qi) qi.onchange=()=>{ if(qi.files[0]) setQR(qi.files[0]); };
   const qd=$('qrDrop'); if(qd){ qd.ondragover=e=>{e.preventDefault(); qd.classList.add('over');}; qd.ondragleave=()=>qd.classList.remove('over'); qd.ondrop=e=>{e.preventDefault(); qd.classList.remove('over'); const fl=e.dataTransfer.files[0]; if(fl && /^image\//.test(fl.type)) setQR(fl);}; }
+  p.querySelectorAll('[data-js]').forEach(c=>c.onclick=()=>{ JOURNEY_SAMPLES[+c.dataset.js].v.forEach((v,i)=>inputs['j'+(i+1)]=v); renderPane(); runScan(); });
   if(mode==='job') p.querySelectorAll('[data-s]').forEach(c=>c.onclick=()=>{ inputs.job=JOB_SAMPLES[+c.dataset.s].v; renderPane(); runScan(); });
-  p.querySelectorAll(mode==='job'||mode==='qr'?'.none':'.chip').forEach(c=>c.onclick=()=>{ const s=SAMPLES[mode][+c.dataset.s]; if(mode==='web'){inputs.web=s.v; inputs.webc=s.c||'';} else inputs[mode]=s.v; renderPane(); runScan(true); });
+  p.querySelectorAll(mode==='job'||mode==='qr'||mode==='journey'?'.none':'.chip').forEach(c=>c.onclick=()=>{ const s=SAMPLES[mode][+c.dataset.s]; if(mode==='web'){inputs.web=s.v; inputs.webc=s.c||'';} else inputs[mode]=s.v; renderPane(); runScan(true); });
   const bind=(id,key)=>{ const el=$(id); if(el) el.addEventListener('input',()=>{ inputs[key]=el.value; clearTimeout(tmr); tmr=setTimeout(()=>runScan(false),260); }); };
-  bind('in-msg','msg'); bind('in-email','email'); bind('in-url','url'); bind('in-web','web'); bind('in-webc','webc'); bind('in-job','job');
+  bind('in-msg','msg'); bind('in-email','email'); bind('in-url','url'); bind('in-web','web'); bind('in-webc','webc'); bind('in-job','job'); bind('in-j1','j1'); bind('in-j2','j2'); bind('in-j3','j3'); bind('in-j4','j4');
   const urlIn=$('in-url'); if(urlIn) urlIn.addEventListener('keydown',e=>{ if(e.key==='Enter') runScan(true); });
   const f=$('in-shot'); if(f) f.onchange=()=>{ if(f.files[0]) setShot(f.files[0]); };
   const ss=$('sampleShot'); if(ss) ss.onclick=makeSampleShot;
@@ -1307,7 +1349,7 @@ function makeSampleShot(){
 function setShot(file){ shotFile=file; if(shotURL) URL.revokeObjectURL(shotURL); shotURL=URL.createObjectURL(file); renderPane(); runOCR(); }
 $('tabs').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; mode=b.dataset.m; renderTabs(); renderPane(); runScan(true); });
 
-function currentKey(){ return mode+'|'+(mode==='web'?inputs.web+'\n'+inputs.webc: mode==='shot'?(shotFile?shotFile.name+shotFile.size+shotFile.lastModified:''): mode==='qr'?(qrFile?qrFile.name+qrFile.size+qrFile.lastModified:''): inputs[mode]); }
+function currentKey(){ return mode+'|'+(mode==='web'?inputs.web+'\n'+inputs.webc: mode==='shot'?(shotFile?shotFile.name+shotFile.size+shotFile.lastModified:''): mode==='qr'?(qrFile?qrFile.name+qrFile.size+qrFile.lastModified:''): mode==='journey'?[inputs.j1,inputs.j2,inputs.j3,inputs.j4].join('|'): inputs[mode]); }
 function runScan(ask){
   $('marked').innerHTML=''; $('markedH').hidden=true;
   let res=null;
@@ -1320,6 +1362,7 @@ function runScan(ask){
     else res={shot:true, pending:true};
   }
   if(mode==='job' && inputs.job.trim()){ const a=analyzeJob(inputs.job); res={...a, ml:predictNB(NB,inputs.job)}; $('marked').innerHTML=highlight(inputs.job,a.ranges); }
+  if(mode==='journey'){ const a=analyzeJourney(); if(a) res=a; }
   if(mode==='qr' && qrFile){
     if(qrState.key===currentKey() && qrState.status==='done'){ res=analyzeQR(qrState.text); if(res.ranges&&res.ranges.length) $('marked').innerHTML=highlight(res.text,res.ranges); }
     else res={qrPending:true, pending:true};
@@ -1481,10 +1524,10 @@ function similarScam(text){
 const BREAKDOWN=[
   {en:'Urgency or pressure',kn:'ತುರ್ತು ಅಥವಾ ಒತ್ತಡ',ids:['urgency']},
   {en:'Threats or fear',kn:'ಬೆದರಿಕೆ ಅಥವಾ ಭಯ',ids:['threat','secrecy','power']},
-  {en:'Asks for OTP, PIN, passwords or documents',kn:'OTP, PIN, ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ದಾಖಲೆ ಬೇಡಿಕೆ',ids:['otpshare','upipin','creds','j_docs']},
-  {en:'Money or fee demand',kn:'ಹಣ ಅಥವಾ ಶುಲ್ಕದ ಬೇಡಿಕೆ',ids:['money','scheme','gulf','prize','job','j_fee','j_pay','q_pay','q_refund']},
+  {en:'Asks for OTP, PIN, passwords or documents',kn:'OTP, PIN, ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ದಾಖಲೆ ಬೇಡಿಕೆ',ids:['otpshare','upipin','creds','j_docs','x_chain']},
+  {en:'Money or fee demand',kn:'ಹಣ ಅಥವಾ ಶುಲ್ಕದ ಬೇಡಿಕೆ',ids:['money','scheme','gulf','prize','job','j_fee','j_pay','q_pay','q_refund','x_payee']},
   {en:'Suspicious link, QR or app',kn:'ಅನುಮಾನಾಸ್ಪದ ಲಿಂಕ್, QR ಅಥವಾ ಆ್ಯಪ್',ids:['link','remote','challan','q_url']},
-  {en:'Impersonation of a known organisation',kn:'ಪರಿಚಿತ ಸಂಸ್ಥೆಯಂತೆ ನಟನೆ',ids:['id','family','q_name','q_phone','j_brand','j_mail','ctx_req','ctx_sender']}
+  {en:'Impersonation of a known organisation',kn:'ಪರಿಚಿತ ಸಂಸ್ಥೆಯಂತೆ ನಟನೆ',ids:['id','family','q_name','q_phone','j_brand','j_mail','ctx_req','ctx_sender','x_brand','disguise']}
 ];
 function breakdownHTML(ex, b){
   const ids=new Set([...(last.flags||[]), ...ctxFlags()].filter(f=>f.sev==='high'||f.sev==='mid').map(f=>f.id).filter(Boolean));
@@ -1496,6 +1539,105 @@ function breakdownHTML(ex, b){
   return `<div class="block"><p class="block-h"><span>${lang==='kn'?'ಅಪಾಯದ ವಿಭಜನೆ':'Risk breakdown'}</span>${lg?`<span class="small muted">${lang==='kn'?'ಭಾಷೆ':'Language'}: <b style="color:var(--ink)">${esc(L(lg))}</b></span>`:''}</p>
     <div class="tbl"><table><tbody>${rows}<tr class="hl"><td>${lang==='kn'?'ಒಟ್ಟು ಅಪಾಯ':'Overall risk'}</td><td class="n" style="color:${colorFor(finalScore())}">${finalScore()} / 100</td></tr></tbody></table></div>
     ${sim?`<div class="note" style="margin-top:10px">${ico('search')}<span><b>${lang==='kn'?'ತಿಳಿದ ವಂಚನೆಯನ್ನು ಹೋಲುತ್ತದೆ':'Resembles a known scam pattern'}</b> (${Math.round(sim.j*100)}% ${lang==='kn'?'ಹೋಲಿಕೆ':'similar'}): “${esc(sim.x.length>110?sim.x.slice(0,110)+'…':sim.x)}”</span></div>`:''}</div>`;
+}
+/* ---- scam journey: link the stages of one scam across channels ---- */
+const JSTAGES=[
+ {k:'j1',en:'Message or call',kn:'ಸಂದೇಶ ಅಥವಾ ಕರೆ',ph:{en:'The SMS, WhatsApp or email, or what the caller said',kn:'SMS, ವಾಟ್ಸಾಪ್, ಇಮೇಲ್ ಅಥವಾ ಕರೆ ಮಾಡಿದವರು ಹೇಳಿದ್ದು'}},
+ {k:'j2',en:'Link or QR it led to',kn:'ಅದು ಕರೆದೊಯ್ದ ಲಿಂಕ್ ಅಥವಾ QR',ph:{en:'The link, or what is inside the QR code (https://… or upi://…)',kn:'ಲಿಂಕ್ ಅಥವಾ QR ಒಳಗಿನ ವಿಷಯ (https://… ಅಥವಾ upi://…)'}},
+ {k:'j3',en:'What the page or caller asked for',kn:'ಪುಟ ಅಥವಾ ಕರೆ ಮಾಡಿದವರು ಕೇಳಿದ್ದು',ph:{en:'For example: "Enter card number and OTP to pay the redelivery fee"',kn:'ಉದಾ: "ಮರು-ಡೆಲಿವರಿ ಶುಲ್ಕಕ್ಕೆ ಕಾರ್ಡ್ ಸಂಖ್ಯೆ ಮತ್ತು OTP ನಮೂದಿಸಿ"'}},
+ {k:'j4',en:'Payment request',kn:'ಪಾವತಿ ಬೇಡಿಕೆ',ph:{en:'UPI ID, collect request or upi:// payment link (optional)',kn:'UPI ID, collect request ಅಥವಾ upi:// ಲಿಂಕ್ (ಐಚ್ಛಿಕ)'}}
+];
+const JOURNEY_SAMPLES=[
+ {n:{en:'Parcel scam',kn:'ಪಾರ್ಸೆಲ್ ವಂಚನೆ'},v:['India Post: Your parcel is on hold due to incomplete address. Update within 12 hours or it will be returned to sender.','https://indiapost-redelivery.top/track','Enter your debit card number, expiry date and the OTP sent to your phone to pay the Rs 25 redelivery fee.','upi://pay?pa=redelivery.9876543210@ybl&pn=India%20Post&am=25&cu=INR']},
+ {n:{en:'Power-cut scam',kn:'ವಿದ್ಯುತ್ ಕಡಿತ ವಂಚನೆ'},v:['Dear consumer, your electricity will be disconnected tonight. Call our electricity officer 9845012345 immediately. MESCOM','https://anydesk-support.in/download','Caller said: install AnyDesk and pay Rs 10 to update the bill. Do not disconnect the call.','upi://pay?pa=bill.update.mescom@okaxis&pn=Ravi%20Kumar&am=10&cu=INR']},
+ {n:{en:'Genuine order',kn:'ನಿಜವಾದ ಆರ್ಡರ್'},v:['Amazon: Your order of boAt earphones has been shipped and will arrive on Friday.','https://www.amazon.in/gp/your-account/order-history','The order page shows the tracking number and delivery date.','']}
+];
+function analyzeJourney(){
+  const st=[];
+  JSTAGES.forEach((d,i)=>{ const v=(inputs[d.k]||'').trim(); if(!v) return; let r;
+    if(/^upi:\/\//i.test(v)){ r=analyzeQR(v); r.fs=r.score; }
+    else if(/^\S+$/.test(v) && /[a-z0-9-]+\.[a-z]{2,}/i.test(v)){ const u=analyzeUrl(v); if(u.error){ const a=analyzeText(v); r={...a, fs:fuse(a.score,predictNB(NB,v),a.safeCue)}; } else r={score:u.score, flags:u.flags, fs:u.score, url:u, moves:[]}; }
+    else { const a=analyzeText(v); r={...a, fs:fuse(a.score,predictNB(NB,v),a.safeCue)}; }
+    st.push({i, d, v, r});
+  });
+  if(!st.length) return null;
+  const cross=[]; const add=(id,sev,w,label,why)=>cross.push({id,sev,w,label,why});
+  const claimHit=ORGS.find(([re])=>re.test(st.filter(x=>x.i===0||x.i===2).map(x=>x.v).join(' '))); const claim=claimHit&&claimHit[1];
+  const cw=claim?claim.toLowerCase().split(' ')[0]:'';
+  const linkSt=st.find(x=>x.r.url);
+  if(claim && linkSt && !linkSt.r.url.known) add('x_brand','high',.4,{en:`Says it is ${claim}, but the link goes to ${linkSt.r.url.reg}`,kn:`${claim} ಎನ್ನುತ್ತದೆ, ಆದರೆ ಲಿಂಕ್ ${linkSt.r.url.reg} ಗೆ ಹೋಗುತ್ತದೆ`},{en:`The message and the website do not belong to the same organisation. ${claim} sends people only to its own official website or app.`,kn:`ಸಂದೇಶ ಮತ್ತು ವೆಬ್‌ಸೈಟ್ ಒಂದೇ ಸಂಸ್ಥೆಯದಲ್ಲ. ${claim} ತನ್ನ ಅಧಿಕೃತ ಸೈಟ್ ಅಥವಾ ಆ್ಯಪ್‌ಗೆ ಮಾತ್ರ ಕಳುಹಿಸುತ್ತದೆ.`});
+  const s1=st.find(x=>x.i===0), s3=st.find(x=>x.i===2);
+  const idsOf=x=>new Set(((x&&x.r.flags)||[]).map(f=>f.id).filter(Boolean));
+  const secret = s3 && (['otpshare','creds','upipin','remote'].some(id=>idsOf(s3).has(id)) || /\b(otp|cvv|card number|upi pin|pin|password|anydesk|teamviewer)\b/i.test(normalizeText(s3.v).t));
+  if(secret && (linkSt || (s1 && s1.r.fs>=30))) add('x_chain','high',.35,{en:'Classic chain: lure → link → asks for secrets',kn:'ಸಾಮಾನ್ಯ ಸರಪಳಿ: ಆಮಿಷ → ಲಿಂಕ್ → ರಹಸ್ಯ ಮಾಹಿತಿ ಬೇಡಿಕೆ'},{en:'An urgent message led to a page or caller that wants your OTP, card details, PIN or remote access. Each step looks small; together they are one attack.',kn:'ತುರ್ತು ಸಂದೇಶ ನಿಮ್ಮ OTP, ಕಾರ್ಡ್, PIN ಅಥವಾ ರಿಮೋಟ್ ಆಕ್ಸೆಸ್ ಕೇಳುವ ಪುಟ ಅಥವಾ ಕರೆಗೆ ಕರೆದೊಯ್ಯಿತು. ಎಲ್ಲಾ ಹಂತಗಳು ಸೇರಿ ಒಂದೇ ದಾಳಿ.'});
+  const pay=st.find(x=>/^upi:\/\//i.test(x.v));
+  if(pay){ const q=new URLSearchParams(pay.v.split('?')[1]||''); const pa=(q.get('pa')||'').toLowerCase(), pn=(q.get('pn')||'').trim();
+    if(claim && pn && !pn.toLowerCase().includes(cw)) add('x_payee','high',.35,{en:`Payment goes to “${pn}”, not ${claim}`,kn:`ಪಾವತಿ “${pn}” ಗೆ ಹೋಗುತ್ತದೆ, ${claim} ಗೆ ಅಲ್ಲ`},{en:`The earlier steps claimed to be ${claim}, but the money goes to a different name.`,kn:`ಹಿಂದಿನ ಹಂತಗಳು ${claim} ಎಂದವು, ಆದರೆ ಹಣ ಬೇರೆ ಹೆಸರಿಗೆ ಹೋಗುತ್ತದೆ.`});
+    else if(claim && /\d{10}/.test(pa)) add('x_payee','high',.3,{en:`${claim} payment to a personal mobile-number UPI ID`,kn:`${claim} ಪಾವತಿ ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯ UPI ಗೆ`},{en:`Organisations collect payments through registered merchant IDs, not a UPI ID built on a 10-digit phone number (${pa}).`,kn:`ಸಂಸ್ಥೆಗಳು ನೋಂದಾಯಿತ ವ್ಯಾಪಾರಿ ID ಮೂಲಕ ಹಣ ಪಡೆಯುತ್ತವೆ, 10-ಅಂಕಿ ಫೋನ್ ಸಂಖ್ಯೆಯ UPI ಮೂಲಕ ಅಲ್ಲ (${pa}).`});
+  }
+  if(st.length>=3){ const sc=st.map(x=>x.r.fs); if(sc[sc.length-1]>=sc[0]+15 && sc[sc.length-1]>=45) add('x_esc','mid',.2,{en:'The demands get bigger at each step',kn:'ಪ್ರತಿ ಹಂತದಲ್ಲೂ ಬೇಡಿಕೆ ಹೆಚ್ಚುತ್ತದೆ'},{en:'It starts with a harmless-looking notice and ends with a request for money or secrets. That escalation is how campaigns work.',kn:'ನಿರಪಾಯಕಾರಿ ಸೂಚನೆಯಿಂದ ಆರಂಭಿಸಿ ಹಣ ಅಥವಾ ರಹಸ್ಯ ಬೇಡಿಕೆಯಲ್ಲಿ ಮುಗಿಯುತ್ತದೆ.'}); }
+  const ws=[...st.map(x=>x.r.fs>=20?Math.min(.75,x.r.fs/100*.8):0), ...cross.map(c=>c.w)];
+  const score=Math.max(combine(ws), ...st.map(x=>x.r.fs));
+  const sflags=[]; for(const x of st) for(const f of (x.r.flags||[]).filter(f=>f.sev==='high'||f.sev==='mid').sort((a,b)=>(b.w||0)-(a.w||0)).slice(0,2)) sflags.push({...f, label:{en:`${x.d.en}: ${f.label.en}`, kn:`${x.d.kn}: ${f.label.kn||f.label.en}`}});
+  const moves=[]; if(score>=30) moves.push({en:'Treat every step as one scam: do not open the link, share codes or pay.',kn:'ಎಲ್ಲಾ ಹಂತಗಳನ್ನು ಒಂದೇ ವಂಚನೆ ಎಂದು ಪರಿಗಣಿಸಿ: ಲಿಂಕ್ ತೆರೆಯಬೇಡಿ, ಕೋಡ್ ಹಂಚಬೇಡಿ, ಪಾವತಿಸಬೇಡಿ.'},{en:'Report at 1930 or cybercrime.gov.in with all the steps: sender number, link, UPI ID and amount.',kn:'1930 ಅಥವಾ cybercrime.gov.in ನಲ್ಲಿ ಎಲ್ಲಾ ಹಂತಗಳೊಂದಿಗೆ ದೂರು ನೀಡಿ: ಸಂಖ್ಯೆ, ಲಿಂಕ್, UPI ID, ಮೊತ್ತ.'});
+  for(const x of st) for(const m of (x.r.moves||[])) if(!moves.find(y=>y.en===m.en)) moves.push(m);
+  return {score, ml:null, flags:[...cross, ...sflags, ...(score<30?st.flatMap(x=>(x.r.flags||[]).filter(f=>f.sev==='safe')).slice(0,2):[])], moves, text:st.map(x=>x.v).join('\n'), journey:{st, claim}};
+}
+function journeyHTML(){
+  const kn=lang==='kn', st=last.journey.st;
+  const node=x=>{ const top=(x.r.flags||[]).filter(f=>f.sev==='high'||f.sev==='mid').sort((a,b)=>(b.w||0)-(a.w||0))[0]; return `<div class="jn" style="--c:${colorFor(x.r.fs)}"><span class="k">${x.i+1}. ${esc(kn?x.d.kn:x.d.en)}</span><b>${x.r.fs}</b><p>${top?esc(L(top.label)):(kn?'ಎಚ್ಚರಿಕೆ ಲಕ್ಷಣಗಳಿಲ್ಲ':'No warning signs')}</p></div>`; };
+  return `<div class="block"><p class="block-h">${kn?'ವಂಚನೆಯ ಪ್ರಯಾಣ':'Scam journey'}${last.journey.claim?`<span class="small muted">${kn?'ಹೇಳಿಕೊಂಡ ಸಂಸ್ಥೆ':'Claims to be'}: <b style="color:var(--ink)">${esc(last.journey.claim)}</b></span>`:''}</p><div class="jr">${st.map(node).join('<span class="ja" aria-hidden="true">→</span>')}</div>
+    <p class="small muted" style="margin-top:8px">${kn?'ಪ್ರತಿ ಹಂತವನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ಪರಿಶೀಲಿಸಿ, ನಂತರ ಹಂತಗಳ ನಡುವಿನ ಹೊಂದಾಣಿಕೆಯಿಲ್ಲದಿಕೆಗಳನ್ನು ಹುಡುಕಲಾಗಿದೆ.':'Each step is checked on its own, then the steps are compared with each other for mismatches.'}</p></div>`;
+}
+/* ---- what drove the score: remove one signal at a time and re-score (counterfactual) ---- */
+function driverText(){ return (mode==='msg'||mode==='shot'||mode==='job') && last && last.text && !last.qr && !last.journey ? last.text : null; }
+function scoreDrivers(){
+  const txt=driverText(); if(!txt) return [];
+  const base=fuse(last.score, last.ml, last.safeCue);
+  const out=[];
+  const ids=[...new Set((last.flags||[]).filter(f=>f.id && (f.w||0)>0 && !/^(j_|ctx_)/.test(f.id)).map(f=>f.id))];
+  for(const id of ids){ const a=analyzeText(txt,{disable:[id]}); const s=fuse(a.score, last.ml, a.safeCue); const f=last.flags.find(x=>x.id===id); out.push({label:f.label, without:s, d:base-s}); }
+  if((last.links||[]).some(l=>l.r.score>=20)){ const a=analyzeText(txt,{disable:['links']}); const s=fuse(a.score,last.ml,a.safeCue); out.push({label:{en:'Risky link',kn:'ಅಪಾಯಕಾರಿ ಲಿಂಕ್'}, without:s, d:base-s}); }
+  if(last.ml!=null){ const s=fuse(last.score, null, last.safeCue); out.push({label:{en:'Classifier: wording resembles known scams',kn:'ವರ್ಗೀಕರಣ: ಪದಗಳು ತಿಳಿದ ವಂಚನೆಗಳನ್ನು ಹೋಲುತ್ತವೆ'}, without:s, d:base-s, ml:true}); }
+  return out.filter(x=>x.d!==0).sort((a,b)=>b.d-a.d).slice(0,5);
+}
+function driversHTML(){
+  const ds=scoreDrivers(); if(!ds.length) return '';
+  const kn=lang==='kn', mx=Math.max(...ds.map(d=>Math.abs(d.d)),1);
+  const top=ds[0];
+  return `<div class="block"><p class="block-h">${kn?'ಈ ಅಂಕಕ್ಕೆ ಕಾರಣವೇನು':'What drove this score'}</p>
+    <div class="drv">${ds.map(d=>`<div class="drv-r"><span class="drv-l">${esc(L(d.label))}</span><span class="drv-b"><i style="width:${Math.round(Math.abs(d.d)/mx*100)}%;background:${d.d>0?'var(--danger)':'var(--safe)'}"></i></span><span class="drv-n">${d.d>0?'+':''}${d.d}</span></div>`).join('')}</div>
+    <p class="small muted" style="margin-top:8px">${kn?`“${esc(L(top.label))}” ಇಲ್ಲದಿದ್ದರೆ ಅಂಕ ${top.without} (${t('v.'+band(top.without))}) ಆಗುತ್ತಿತ್ತು. ಪ್ರತಿ ಸಂಕೇತವನ್ನು ತೆಗೆದು ಮರು-ಲೆಕ್ಕ ಹಾಕಲಾಗಿದೆ.`:`Without “${esc(L(top.label))}”, this would score ${top.without} (${t('v.'+band(top.without))}). Each signal was removed and the message re-scored.`}</p></div>`;
+}
+/* ---- appeal: contest the verdict, retrain on-device, keep an appeal log ---- */
+let appeal={key:null, label:null, reason:null, done:null};
+const APPEAL_REASONS={0:[{en:'I know the sender',kn:'ಕಳುಹಿಸಿದವರು ಗೊತ್ತು'},{en:'I made this request',kn:'ನಾನೇ ವಿನಂತಿ ಮಾಡಿದ್ದೆ'},{en:'It is an official message',kn:'ಇದು ಅಧಿಕೃತ ಸಂದೇಶ'},{en:'Other',kn:'ಬೇರೆ'}],1:[{en:'They asked me for money or a code',kn:'ಹಣ ಅಥವಾ ಕೋಡ್ ಕೇಳಿದರು'},{en:'I was pressured or threatened',kn:'ಒತ್ತಡ ಅಥವಾ ಬೆದರಿಕೆ ಹಾಕಿದರು'},{en:'I lost money',kn:'ಹಣ ಕಳೆದುಕೊಂಡೆ'},{en:'Other',kn:'ಬೇರೆ'}]};
+function appealText(){ return mode==='email'?parseEmail(inputs.email).body: mode==='web'?inputs.webc: last.text; }
+function appealHTML(s){
+  if(!(last.text && mode!=='url' && !last.qr && !last.journey)) return '';
+  if(appeal.key!==currentKey()) appeal={key:currentKey(), label:null, reason:null, done:null};
+  const kn=lang==='kn';
+  if(appeal.done) return `<div class="block"><p class="block-h">${kn?'ಮೇಲ್ಮನವಿ ದಾಖಲಾಗಿದೆ':'Appeal recorded'}</p><p class="small">${kn?`ನಿಮ್ಮ ತಿದ್ದುಪಡಿಯಿಂದ ವರ್ಗೀಕರಣ ಮರು-ತರಬೇತಿ ಪಡೆಯಿತು. ಈ ಸಂದೇಶದ ಅಂಕ: ${appeal.done.before} → ${appeal.done.after}.`:`The classifier retrained on your correction. This message now scores ${appeal.done.after} (was ${appeal.done.before}).`}</p><p class="small muted" style="margin-top:6px">${kn?'ಬ್ಯಾಂಕ್ ಅಥವಾ ಟೆಲಿಕಾಂ ಆವೃತ್ತಿಯಲ್ಲಿ ಮೇಲ್ಮನವಿ ಮಾನವ ಪರಿಶೀಲಕರಿಗೆ ಹೋಗುತ್ತದೆ ಮತ್ತು ತಪ್ಪು ಎಚ್ಚರಿಕೆಗಳನ್ನು ಅಳೆಯಲಾಗುತ್ತದೆ. ಇಲ್ಲಿ ಅದು ಈ ಸಾಧನದಲ್ಲೇ ಉಳಿಯುತ್ತದೆ.':'In a bank or telecom deployment, appeals go to a human reviewer and false alarms are tracked. Here the appeal stays on this device.'}</p></div>`;
+  const wrong = s>=30 ? 0 : 1;
+  const opt=(v,en,k)=>`<button class="btn sec sm cq${appeal.label===v?' on':''}" data-al="${v}">${kn?k:en}</button>`;
+  return `<div class="block" id="appeal"><p class="block-h">${kn?'ಈ ತೀರ್ಪು ತಪ್ಪೇ? ಮೇಲ್ಮನವಿ ಸಲ್ಲಿಸಿ':'Think this verdict is wrong? Appeal it'}</p>
+    <div class="actions">${wrong===0?opt(0,'It is genuine (false alarm)','ಇದು ನಿಜವಾದದ್ದು (ತಪ್ಪು ಎಚ್ಚರಿಕೆ)')+opt(1,'Yes, it was a scam','ಹೌದು, ಇದು ವಂಚನೆ'):opt(1,'It was a scam (missed)','ಇದು ವಂಚನೆ (ತಪ್ಪಿಹೋಯಿತು)')+opt(0,'Yes, it is genuine','ಹೌದು, ಇದು ನಿಜ')}</div>
+    ${appeal.label!=null && appeal.label!==(s>=30?1:0) ? `<p class="small" style="margin:12px 0 6px">${kn?'ಕಾರಣ':'Why?'}</p><div class="actions">${APPEAL_REASONS[appeal.label].map((r,i)=>`<button class="btn sec sm cq${appeal.reason===i?' on':''}" data-ar="${i}">${esc(L(r))}</button>`).join('')}</div><div class="actions" style="margin-top:10px"><button class="btn sm" id="appealGo" ${appeal.reason==null?'disabled':''}>${kn?'ಮೇಲ್ಮನವಿ ಸಲ್ಲಿಸಿ':'Submit appeal'}</button></div>` : appeal.label!=null ? `<p class="small muted" style="margin-top:8px">${kn?'ಧನ್ಯವಾದ. ವರ್ಗೀಕರಣ ಈ ಉದಾಹರಣೆಯಿಂದ ಕಲಿಯಿತು.':'Thanks. The classifier learned from this example.'}</p>`:''}</div>`;
+}
+function wireAppeal(s){
+  const box=$('appeal'); if(!box) return;
+  box.onclick=e=>{
+    const a=e.target.closest('[data-al]'), r=e.target.closest('[data-ar]');
+    if(a){ appeal.label=+a.dataset.al; appeal.reason=null; if(appeal.label===(s>=30?1:0)){ const txt=appealText(); if(txt&&txt.trim()){ userRows.push([appeal.label, txt]); store.set('ec-feedback', userRows.slice(-200)); retrain(); } } renderVerdict(); return; }
+    if(r){ appeal.reason=+r.dataset.ar; renderVerdict(); return; }
+    if(e.target.closest('#appealGo') && appeal.reason!=null){
+      const txt=appealText(); const before=s;
+      if(txt&&txt.trim()){ userRows.push([appeal.label, txt]); store.set('ec-feedback', userRows.slice(-200)); retrain(); last.ml=predictNB(NB, txt); }
+      const after=finalScore();
+      const log=store.get('ec-appeals',[]); log.push({at:Date.now(), label:appeal.label, reason:APPEAL_REASONS[appeal.label][appeal.reason].en, before, after, snippet:(txt||'').slice(0,80)}); store.set('ec-appeals', log.slice(-50));
+      appeal.done={before, after}; renderVerdict();
+    }
+  };
 }
 function shareText(s, b, sum, moves){
   const head = lang==='kn' ? `ಎಚ್ಚರ ಎಚ್ಚರಿಕೆ: ${t('v.'+b)} (${s}/100)` : `Echchara alert: ${t('v.'+b)} (${s}/100)`;
@@ -1570,7 +1712,7 @@ function ctxDetectSender(text){
   return null;
 }
 function ctxSync(){ if(!last || ctxAns.key===ctxKey()) return; ctxAns={key:ctxKey(), req:null, sender:last.text?ctxDetectSender(last.text):null}; }
-const askContext = () => !!(last && !last.error && !last.pending && !last.qr && mode!=='url' && mode!=='web' && last.text && (last.ctx&&last.ctx.length || (fuse(last.score,last.ml,last.safeCue)>=30 && fuse(last.score,last.ml,last.safeCue)<60)));
+const askContext = () => !!(last && !last.error && !last.pending && !last.qr && !last.journey && mode!=='url' && mode!=='web' && last.text && (last.ctx&&last.ctx.length || (fuse(last.score,last.ml,last.safeCue)>=30 && fuse(last.score,last.ml,last.safeCue)<60)));
 function finalScore(){
   if(!last || last.error || last.pending) return null;
   let s = fuse(last.score, last.ml, last.safeCue);
@@ -1711,8 +1853,10 @@ function renderVerdict(){
     <div class="res-top"><div class="res-ic ${b}">${ico(RESICON[b])}</div><div style="min-width:0"><div class="res-t ${b}">${t('v.'+b)}</div><p class="res-s">${t('v.'+b+'Sub')}</p></div><div class="score"><b style="color:${col}">${s}</b><span>${t('risk')} / 100</span></div></div>
     <div class="meter" role="img" aria-label="${t('risk')} ${s}/100"><b style="width:${Math.max(3,s)}%; background:${col}"></b></div>
     <div class="block"><div class="block-h"><span>${t('sum.h')}</span>${canSpeak?`<button class="btn sec sm" id="ttsBtn">${speaking?t('ai.stop'):t('ai.listen')}</button>`:''}</div><div class="aisum"><p>${esc(sumText)}</p>${ex.type||ex.org?`<p class="meta">${ex.type?`${t('ai.type')}: ${esc(L(ex.type))}`:''}${ex.type&&ex.org?' · ':''}${ex.org?`${t('ai.imp')}: ${esc(ex.org)}`:''}</p>`:''}</div></div>
+    ${last.journey?journeyHTML():''}
     ${ctxHTML()}
     ${breakdownHTML(ex, b)}
+    ${driversHTML()}
     <div class="block"><p class="block-h">${t('eng.h')}</p><div class="engines">
       <div class="eng"><span class="nm">${ico('rules')}${t('sig.rules')}</span><span class="val"><span style="color:${colorFor(last.score)}">${last.score}</span><span class="muted small">/ 100</span></span></div>
       <div class="eng"><span class="nm">${ico('ml')}${t('sig.ml')}</span><span class="val">${last.ml==null?`<span class="muted small">${mode==='url'?t('sig.na'):'—'}</span>`:`<span style="color:${colorFor(last.ml*100)}">${Math.round(last.ml*100)}%</span><span class="muted small">${lang==='kn'?'ವಂಚನೆ ಸಾಧ್ಯತೆ':'scam probability'}</span>`}</span></div>
@@ -1722,11 +1866,11 @@ function renderVerdict(){
     ${flags.length?`<div class="block"><p class="block-h">${t('find.h')} (${flags.length})</p><ul class="findings">${flags.slice(0,8).map(f=>`<li class="fi ${f.sev}">${ico(fic[f.sev])}<div><b>${esc(L(f.label))}</b><span>${L(f.why)}${f.ex?' '+f.ex.map(x=>'<code>'+esc(x)+'</code>').join(' '):''}</span></div></li>`).join('')}</ul></div>`:''}
     ${moves.length?`<div class="block"><p class="block-h">${t('todo.h')}</p><ol class="todo">${moves.map(m=>`<li>${esc(L(m))}</li>`).join('')}</ol></div>`:''}
     ${s>=30?shareHTML(s,b,sumText,moves):''}
-    ${last.text && mode!=='url' && !last.qr?`<div class="block fb" id="fb"><span>${t('fb.q')}</span><button class="btn sec sm" data-y="1">${t('fb.yes')}</button><button class="btn sec sm" data-y="0">${t('fb.no')}</button></div>`:''}`;
+    ${appealHTML(s)}`;
   wireShare(s,b,sumText,moves);
   const cq=$('ctxq'); if(cq) cq.onclick=e=>{ const k=e.target.closest('[data-cq]'); if(!k) return; const q=k.dataset.cq, v=k.dataset.v; ctxAns[q] = ctxAns[q]===v ? null : v; renderVerdict(); };
   const tb=$('ttsBtn'); if(tb) tb.onclick=()=>speak(`${t('v.'+b)}. ${sumText} ${moves.slice(0,2).map(m=>L(m)).join(' ')}`);
-  const fb=$('fb'); if(fb) fb.onclick=e=>{ const y=e.target.closest('[data-y]')?.dataset.y; if(y==null) return; const txt = mode==='email'?parseEmail(inputs.email).body: mode==='web'?inputs.webc: last.text; if(txt && txt.trim()){ userRows.push([+y, txt]); store.set('ec-feedback', userRows.slice(-200)); retrain(); } fb.innerHTML=`<span>${t('fb.thanks')}</span>`; };
+  wireAppeal(s);
 }
 
 /* ======================= Home ======================= */
@@ -1979,6 +2123,39 @@ function renderCallInfo(){
 function renderCallShield(){ renderCallControls(); renderCallInfo(); if(call.state!=='live') renderCall(); }
 
 /* ======================= Technology ======================= */
+/* red-team: attack the scam messages the way real scammers dodge filters, then measure */
+const ATK_VOCAB=/\b(otp|kyc|account|blocked|verify|update|pin|bank|refund|prize|password|suspended|lottery|money|urgent|click|immediately|police|arrest|electricity|aadhaar|winner|card)\b/gi;
+const atkLeet=x=>x.replace(ATK_VOCAB,w=>w.replace(/o/gi,'0').replace(/i/gi,'1').replace(/e/gi,'3').replace(/a/gi,'@'));
+const atkSpace=x=>x.replace(/\b(otp|kyc|pin|upi|cvv|pan|sbi)\b/gi,w=>w.split('').join(' '));
+const atkHomo=x=>x.replace(ATK_VOCAB,w=>w.replace(/[aeopc]/g,c=>({a:'а',e:'е',o:'о',p:'р',c:'с'}[c])));
+const atkHidden=x=>x.replace(ATK_VOCAB,w=>w[0]+'​'+w.slice(1));
+const ATTACKS=[
+ {n:{en:'Numbers for letters',kn:'ಅಕ್ಷರದ ಬದಲು ಅಂಕಿ'},f:atkLeet},
+ {n:{en:'S p a c e d letters',kn:'ಬಿಡಿಬಿಡಿ ಅಕ್ಷರ'},f:atkSpace},
+ {n:{en:'Look-alike letters (Cyrillic)',kn:'ಹೋಲುವ ಅಕ್ಷರ (ಸಿರಿಲಿಕ್)'},f:atkHomo},
+ {n:{en:'Hidden zero-width characters',kn:'ಅಡಗಿಸಿದ ಅಕ್ಷರಗಳು'},f:atkHidden},
+ {n:{en:'All four combined',kn:'ನಾಲ್ಕೂ ಸೇರಿ'},f:x=>atkHidden(atkHomo(atkSpace(atkLeet(x))))}
+];
+function renderRobust(){
+  const kn=lang==='kn';
+  const rows=DATA.filter(r=>r[0]===1 && (r[1].match(/[a-z]/gi)||[]).length > r[1].length*.5).map(r=>r[1]);
+  const sc=(x,def)=>{ const a=def?analyzeText(x):analyzeText(x,{disable:['normalize']}); return fuse(a.score, predictNB(NB,x,!def), a.safeCue); };
+  const stat=(xs,def)=>{ const s=xs.map(x=>sc(x,def)); return {dang:s.filter(v=>v>=60).length/s.length, avg:Math.round(s.reduce((a,b)=>a+b,0)/s.length)}; };
+  const pct=v=>Math.round(v*100)+'%';
+  const B=stat(rows,true);
+  $('robH').textContent=kn?'ರೆಡ್-ಟೀಮ್ ಪರೀಕ್ಷೆ: ಮರೆಮಾಚಿದ ವಂಚನೆಗಳು':'Red-team test: disguised scams';
+  $('robSub').textContent=kn?`${rows.length} ಇಂಗ್ಲಿಷ್ ವಂಚನೆ ಸಂದೇಶಗಳನ್ನು ವಂಚಕರಂತೆ ಮರೆಮಾಚಿ, ಈ ಪುಟ ತೆರೆದಾಗಲೇ ಮರು-ಪರೀಕ್ಷಿಸಲಾಗಿದೆ.`:`${rows.length} English scam messages from the demo set, disguised the way scammers dodge filters, re-tested live when this page opened.`;
+  const hdr=kn?['ದಾಳಿ','ಉದಾಹರಣೆ','"ಅಪಾಯಕಾರಿ" ರಕ್ಷಣೆ ಇಲ್ಲದೆ','"ಅಪಾಯಕಾರಿ" ರಕ್ಷಣೆಯೊಂದಿಗೆ','ಸರಾಸರಿ ಅಂಕ']:['Attack','Example','Flagged Dangerous, no defence','Flagged Dangerous, with defence','Avg score (no defence → with)'];
+  const ex=rows.find(x=>/otp|kyc|account/i.test(x))||rows[0];
+  $('robTbl').innerHTML=`<thead><tr>${hdr.map((h,i)=>`<th class="${i>1?'n':''}">${h}</th>`).join('')}</tr></thead><tbody><tr><td>${kn?'ಮರೆಮಾಚದ ಮೂಲ ಸಂದೇಶಗಳು':'Original messages (no attack)'}</td><td class="small muted">—</td><td class="n">${pct(B.dang)}</td><td class="n">${pct(B.dang)}</td><td class="n">${B.avg}</td></tr>${ATTACKS.map(a=>{ const xs=rows.map(a.f); const off=stat(xs,false), on=stat(xs,true); return `<tr><td>${esc(L(a.n))}</td><td class="small mono" style="max-width:260px;overflow-wrap:anywhere">${esc(a.f(ex).replace(/​/g,'·').slice(0,64))}…</td><td class="n" style="color:${off.dang<B.dang?'var(--danger)':'inherit'}">${pct(off.dang)}</td><td class="n" style="color:var(--safe);font-weight:700">${pct(on.dang)}</td><td class="n">${off.avg} → <b>${on.avg}</b></td></tr>`; }).join('')}</tbody>`;
+  $('robNote').textContent=kn?'ರಕ್ಷಣೆ: ವಿಶ್ಲೇಷಣೆಯ ಮೊದಲು ಎಚ್ಚರ ಹೋಲುವ ಅಕ್ಷರ, ಅಂಕಿ-ಅಕ್ಷರ, ಬಿಡಿಬಿಡಿ ಅಕ್ಷರ ಮತ್ತು ಅಡಗಿಸಿದ ಅಕ್ಷರಗಳನ್ನು ಸರಿಪಡಿಸುತ್ತದೆ. ಮರೆಮಾಚುವಿಕೆಯೇ ಒಂದು ಎಚ್ಚರಿಕೆಯ ಲಕ್ಷಣವಾಗಿ ಎಣಿಕೆಯಾಗುತ್ತದೆ. (· = ಅಡಗಿಸಿದ ಅಕ್ಷರ)':'Defence: before analysis, Echchara undoes look-alike letters, numbers used as letters, spaced-out words and hidden characters, and counts the disguise itself as a warning sign. Most of these messages are also in the training set, so the original-message rate is optimistic; the drop and recovery are what this test shows. (· marks a hidden character.)';
+  // appeals
+  const log=store.get('ec-appeals',[]);
+  $('apH').textContent=kn?'ಮೇಲ್ಮನವಿಗಳು (ಈ ಸಾಧನದಲ್ಲಿ)':'Appeals on this device';
+  $('apSub').textContent=kn?'ಬಳಕೆದಾರರು ತೀರ್ಪನ್ನು ಪ್ರಶ್ನಿಸಬಹುದು. ಪ್ರತಿ ಮೇಲ್ಮನವಿ ವರ್ಗೀಕರಣವನ್ನು ಮರು-ತರಬೇತಿ ಮಾಡುತ್ತದೆ ಮತ್ತು ತಪ್ಪು ಎಚ್ಚರಿಕೆಗಳನ್ನು ಅಳೆಯಲು ದಾಖಲಾಗುತ್ತದೆ.':'Users can contest any verdict. Each appeal retrains the classifier and is logged so false alarms and missed scams can be measured.';
+  const fa=log.filter(x=>x.label===0).length, ms=log.filter(x=>x.label===1).length;
+  $('apBody').innerHTML = log.length ? `<div class="engines" style="margin-bottom:12px"><div class="eng"><span class="nm">${kn?'ತಪ್ಪು ಎಚ್ಚರಿಕೆ ವರದಿಗಳು':'False alarms reported'}</span><span class="val">${fa}</span></div><div class="eng"><span class="nm">${kn?'ತಪ್ಪಿದ ವಂಚನೆ ವರದಿಗಳು':'Missed scams reported'}</span><span class="val">${ms}</span></div></div><ul class="findings">${log.slice(-5).reverse().map(x=>`<li class="fi ${x.label?'high':'safe'}">${ico(x.label?'x':'ok')}<div><b>${x.label?(kn?'ವಂಚನೆ ಎಂದು ಮೇಲ್ಮನವಿ':'Appealed as scam'):(kn?'ನಿಜವಾದದ್ದು ಎಂದು ಮೇಲ್ಮನವಿ':'Appealed as genuine')} · ${esc(x.reason)} · ${x.before} → ${x.after}</b><span>${esc(x.snippet)}</span></div></li>`).join('')}</ul>` : `<p class="small muted">${kn?'ಇನ್ನೂ ಮೇಲ್ಮನವಿಗಳಿಲ್ಲ. ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ ಫಲಿತಾಂಶದ ಕೆಳಗೆ "ಈ ತೀರ್ಪು ತಪ್ಪೇ?" ಬಳಸಿ.':'No appeals yet. Check a message and use “Think this verdict is wrong?” under the result.'}</p>`;
+}
 function evalOn(rows, fn){ let tp=0,tn=0,fp=0,fn_=0; const wrong=[]; for(const [y,x] of rows){ const p=fn(x)?1:0; if(p&&y)tp++; else if(!p&&!y)tn++; else if(p&&!y){fp++; wrong.push([y,x]);} else {fn_++; wrong.push([y,x]);} } const acc=(tp+tn)/rows.length, prec=tp/(tp+fp)||0, rec=tp/(tp+fn_)||0, f1=2*prec*rec/(prec+rec)||0; return {tp,tn,fp,fn:fn_,acc,prec,rec,f1,wrong}; }
 function renderModelCard(){
   const st=[[{en:'Input',kn:'ಇನ್‌ಪುಟ್'},{en:'SMS, email, link, website or screenshot',kn:'SMS, ಇಮೇಲ್, ಲಿಂಕ್, ವೆಬ್‌ಸೈಟ್, ಸ್ಕ್ರೀನ್‌ಶಾಟ್'},{en:'Kannada, English, Hindi, Tamil, Telugu or Malayalam, or a mix. Links are read as text and never opened.',kn:'ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು ಅಥವಾ ಮಲಯಾಳಂ, ಅಥವಾ ಮಿಶ್ರ. ಲಿಂಕ್‌ಗಳನ್ನು ತೆರೆಯುವುದಿಲ್ಲ.'}],[{en:'Features',kn:'ಲಕ್ಷಣಗಳು'},{en:'URL anatomy and 20 scam rules',kn:'URL ರಚನೆ ಮತ್ತು 20 ನಿಯಮಗಳು'},{en:'Look-alike domains, IP links, risky endings, KYC / UPI / power-cut wording, email headers.',kn:'ನಕಲಿ ಡೊಮೇನ್, IP ಲಿಂಕ್, KYC / UPI / ವಿದ್ಯುತ್ ಕಡಿತ ಪದಗಳು, ಇಮೇಲ್ ಹೆಡರ್.'}],[{en:'Models',kn:'ಮಾದರಿಗಳು'},{en:'Naive Bayes classifier + OCR',kn:'Naive Bayes + OCR'},{en:'The classifier is trained in the browser. On-device OCR reads screenshots, and an explanation engine writes the summary.',kn:'ವರ್ಗೀಕರಣ ಬ್ರೌಸರ್‌ನಲ್ಲೇ ತರಬೇತಿ. ಸಾಧನದಲ್ಲೇ OCR ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಓದುತ್ತದೆ, ವಿವರಣಾ ಎಂಜಿನ್ ಸಾರಾಂಶ ಬರೆಯುತ್ತದೆ.'}],[{en:'Verdict',kn:'ತೀರ್ಪು'},{en:'Safe · Suspicious · Dangerous',kn:'ಸುರಕ್ಷಿತ · ಅನುಮಾನಾಸ್ಪದ · ಅಪಾಯಕಾರಿ'},{en:'A weighted combination of all three, with reasons and next steps.',kn:'ಮೂರರ ಸಂಯೋಜನೆ, ಕಾರಣ ಮತ್ತು ಮುಂದಿನ ಕ್ರಮದೊಂದಿಗೆ.'}],[{en:'Delivery',kn:'ವಿತರಣೆ'},{en:'Website + Android app',kn:'ವೆಬ್‌ಸೈಟ್ + Android ಆ್ಯಪ್'},{en:'The same engine everywhere, warning before the click or payment.',kn:'ಎಲ್ಲೆಡೆ ಒಂದೇ ಎಂಜಿನ್, ಕ್ಲಿಕ್ ಅಥವಾ ಪಾವತಿಯ ಮೊದಲೇ ಎಚ್ಚರಿಕೆ.'}]];
@@ -2004,6 +2181,7 @@ function renderModelCard(){
   const nice=tk=>({'__badurl':'⟨risky link⟩','__goodurl':'⟨official link⟩','__url':'⟨link⟩','__phone':'⟨phone no.⟩','__money':'⟨₹ amount⟩'}[tk]||tk.replace('_',' '));
   $('featScam').innerHTML=sc.slice(0,14).map(([k])=>`<span>${esc(nice(k))}</span>`).join('');
   $('featHam').innerHTML=sc.slice(-12).reverse().map(([k])=>`<span>${esc(nice(k))}</span>`).join('');
+  try{ renderRobust(); }catch(e){ console.error(e); }
   $('stillWrong').innerHTML=comb.wrong.length?comb.wrong.map(([y,x])=>`<li class="fi ${y?'high':'mid'}">${ico(y?'x':'warn')}<div><b>${y?(lang==='kn'?'ತಪ್ಪಿದ ವಂಚನೆ':'Missed scam'):(lang==='kn'?'ತಪ್ಪು ಎಚ್ಚರಿಕೆ':'False alarm')}</b><span>${esc(x)}</span></div></li>`).join(''):`<li class="small muted">${t('te.none')}</li>`;
 }
 
