@@ -59,7 +59,7 @@ svg.i{width:18px; height:18px; flex:none; stroke:currentColor; fill:none; stroke
 .lang button{border:0; background:transparent; color:var(--on-navy); padding:3px 10px; border-radius:6px; font-size:.82rem; font-weight:500}
 .lang button[aria-pressed="true"]{background:rgba(255,255,255,.14); color:#fff}
 header.main{position:sticky; top:env(safe-area-inset-top,0px); z-index:30; background:var(--surface); border-bottom:1px solid var(--line)}
-header.main .wrap{display:flex; align-items:center; gap:28px; height:64px}
+header.main .wrap{display:flex; align-items:center; gap:20px; height:64px; max-width:1320px}
 .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); flex:none}
 .brand b{font-size:1.15rem; font-weight:700; letter-spacing:-.02em}
 .brand small{font-size:.78rem; color:var(--muted); font-weight:500; border-left:1px solid var(--line2); padding-left:8px; margin-left:2px}
@@ -100,7 +100,8 @@ html.big body{font-size:17.5px}
 .livepill i{width:6px; height:6px; border-radius:50%; background:var(--safe)}
 .menu-btn{display:none; margin-left:auto; border:1px solid var(--line2); background:var(--surface); border-radius:8px; padding:7px}
 .mnav{display:none}
-@media (max-width:1380px){ nav.pages, header.main .cta{display:none} .menu-btn{display:inline-flex} .mnav.open{display:grid; gap:2px; padding:8px max(20px, env(safe-area-inset-right,0px)) 14px max(20px, env(safe-area-inset-left,0px)); border-top:1px solid var(--line); background:var(--surface)} .mnav a{padding:11px 10px; border-radius:8px; text-decoration:none; color:var(--ink); font-weight:500} .mnav a[aria-current="page"]{background:var(--brand-soft); color:var(--brand)} header.main .mnav .cta{display:flex; justify-content:center; margin-top:6px; color:#fff} }
+@media (max-width:900px){ nav.pages, header.main .cta{display:none} .menu-btn{display:inline-flex} .mnav.open{display:grid; gap:2px; padding:8px max(20px, env(safe-area-inset-right,0px)) 14px max(20px, env(safe-area-inset-left,0px)); border-top:1px solid var(--line); background:var(--surface)} .mnav a{padding:11px 10px; border-radius:8px; text-decoration:none; color:var(--ink); font-weight:500} .mnav a[aria-current="page"]{background:var(--brand-soft); color:var(--brand)} header.main .mnav .cta{display:flex; justify-content:center; margin-top:6px; color:#fff} }
+header.main.compact nav.pages, header.main.compact .wrap > .cta{display:none} header.main.compact .menu-btn{display:inline-flex} header.main.compact .mnav.open{display:grid; gap:2px; padding:8px 20px 14px; border-top:1px solid var(--line); background:var(--surface)} header.main.compact .mnav a{padding:11px 10px; border-radius:8px; text-decoration:none; color:var(--ink); font-weight:500} header.main.compact .mnav a[aria-current="page"]{background:var(--brand-soft); color:var(--brand)} header.main.compact .mnav .cta{display:flex; justify-content:center; margin-top:6px; color:#fff}
 
 /* page scaffolding */
 main{min-height:60vh}
@@ -837,7 +838,7 @@ function analyzeUrl(input){
 /* ======================= Message rules ======================= */
 const R = (id,sev,w,label,re,kn,why,doo) => ({id,sev,w,label,re,kn,why,do:doo});
 const RULES = [
- R('otpshare','high',.45,{en:'Asks you to share a code',kn:'ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಲು ಕೇಳುತ್ತಿದೆ'},/\b(share|send|tell|forward|provide|read out|give)\b[^.\n]{0,40}\b(otp|code|pin|password)\b/gi,/(OTP|ಒಟಿಪಿ|ಕೋಡ್|ಪಿನ್)[^.\n]{0,30}(ಕಳುಹಿಸಿ|ಹೇಳಿ|ಹಂಚಿಕೊಳ್ಳಿ|kalisi|heli)/gi,
+ R('otpshare','high',.45,{en:'Asks you to share a code',kn:'ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಲು ಕೇಳುತ್ತಿದೆ'},/\b(share|send|tell|forward|provide|read out|give)\b[^.\n]{0,40}\b(otp|code|pin|password)\b|\b(otp|pin|password)\b[^.\n]{0,40}\b(share|send|tell|forward|give|read out)\s+(it|that|me|us|the (otp|code|pin))\b/gi,/(OTP|ಒಟಿಪಿ|ಕೋಡ್|ಪಿನ್)[^.\n]{0,30}(ಕಳುಹಿಸಿ|ಹೇಳಿ|ಹಂಚಿಕೊಳ್ಳಿ|kalisi|heli)/gi,
   {en:'No bank, courier or app will ever ask you to read out or forward a one-time code. The code is the key to your account.',kn:'ಯಾವ ಬ್ಯಾಂಕ್, ಕೊರಿಯರ್ ಅಥವಾ ಆ್ಯಪ್ OTP ಕೇಳುವುದಿಲ್ಲ. ಆ ಕೋಡ್ ನಿಮ್ಮ ಖಾತೆಯ ಕೀಲಿ.'},{en:'Never share an OTP or PIN, even with someone claiming to be the bank.',kn:'OTP ಅಥವಾ PIN ಅನ್ನು ಯಾರಿಗೂ ಹೇಳಬೇಡಿ, ಬ್ಯಾಂಕಿನವರು ಎಂದರೂ ಸಹ.'}),
  R('upipin','high',.45,{en:'PIN to "receive" money',kn:'ಹಣ "ಪಡೆಯಲು" PIN'},/\b(enter|type|input)\b[^.\n]{0,30}\b(upi )?pin\b[^.\n]{0,40}\b(receive|get|claim|refund|credit)|\b(collect request|approve (the )?(payment )?request)/gi,/ಹಣ ಪಡೆಯಲು[^.\n]{0,20}(ಪಿನ್|PIN)/g,
   {en:'You never need a PIN to receive money. Entering your UPI PIN on a collect request sends money out of your account.',kn:'ಹಣ ಪಡೆಯಲು PIN ಬೇಕಿಲ್ಲ. collect request ನಲ್ಲಿ PIN ಹಾಕಿದರೆ ನಿಮ್ಮ ಖಾತೆಯಿಂದ ಹಣ ಹೋಗುತ್ತದೆ.'},{en:'Decline any collect request you did not start.',kn:'ನೀವು ಆರಂಭಿಸದ collect request ತಿರಸ್ಕರಿಸಿ.'}),
@@ -847,7 +848,7 @@ const RULES = [
   {en:'Real officials never forbid you from talking to family. Isolation is how "digital arrest" scams keep control for hours.',kn:'ನಿಜವಾದ ಅಧಿಕಾರಿಗಳು ಮನೆಯವರೊಂದಿಗೆ ಮಾತನಾಡಬೇಡಿ ಎನ್ನುವುದಿಲ್ಲ. "ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್" ವಂಚನೆಯ ತಂತ್ರ ಇದು.'},{en:'Hang up and tell someone you trust. Police do not arrest anyone over a video call.',kn:'ಕರೆ ಕಡಿತಗೊಳಿಸಿ, ನಂಬಿಕಸ್ಥರಿಗೆ ತಿಳಿಸಿ. ಪೊಲೀಸರು ವೀಡಿಯೊ ಕರೆಯಲ್ಲಿ ಬಂಧಿಸುವುದಿಲ್ಲ.'}),
  R('creds','high',.3,{en:'Asks for login or card details',kn:'ಲಾಗಿನ್ ಅಥವಾ ಕಾರ್ಡ್ ವಿವರ ಕೇಳುತ್ತಿದೆ'},/\b(password|passcode|cvv|card number|card details|login details|net ?banking (id|details)|verify your (account|identity|details)|confirm your (account|details|identity)|update your (kyc|details|account|pan|information)|update pan|kyc update)\b/gi,/ಕೆವೈಸಿ ನವೀಕರಿಸ|ಖಾತೆಯನ್ನು ಪರಿಶೀಲಿಸ|ಪಾಸ್‌ವರ್ಡ್|KYC update maadi/gi,
   {en:'Requests to "verify" or "update" details through a link are the core of credential phishing.',kn:'ಲಿಂಕ್ ಮೂಲಕ ವಿವರ "ಪರಿಶೀಲಿಸಿ" ಅಥವಾ "ನವೀಕರಿಸಿ" ಎನ್ನುವುದು ಫಿಶಿಂಗ್‌ನ ಮುಖ್ಯ ತಂತ್ರ.'},{en:'Open the official app or type the website yourself. Never use the link in the message.',kn:'ಅಧಿಕೃತ ಆ್ಯಪ್ ತೆರೆಯಿರಿ ಅಥವಾ ವೆಬ್‌ಸೈಟ್ ನೀವೇ ಟೈಪ್ ಮಾಡಿ. ಸಂದೇಶದ ಲಿಂಕ್ ಬಳಸಬೇಡಿ.'}),
- R('threat','high',.25,{en:'Threat or penalty',kn:'ಬೆದರಿಕೆ ಅಥವಾ ದಂಡ'},/\b(suspend(ed)?|block(ed)?|deactivat(ed|ion)|disconnect(ed|ion)|locked|terminat(ed|ion)|legal action|arrest(ed)?|warrant|penalty|fine of|police|FIR|court|money laundering|seized|frozen|banned)\b/gi,/ಬ್ಲಾಕ್|ಸ್ಥಗಿತ|ಬಂಧನ|ಪೊಲೀಸ್|ದಂಡ|block aag/gi,
+ R('threat','high',.25,{en:'Threat or penalty',kn:'ಬೆದರಿಕೆ ಅಥವಾ ದಂಡ'},/\b(suspend(ed)?|block(ed)?|deactivat(ed|ion)|disconnect(ed|ion)|locked|terminat(ed|ion)|legal action|arrest(ed)?|warrant|penalty|fine of|police|FIR|court|money laundering|seized|frozen|banned|or else)\b/gi,/ಬ್ಲಾಕ್|ಸ್ಥಗಿತ|ಬಂಧನ|ಪೊಲೀಸ್|ದಂಡ|block aag/gi,
   {en:'Fear shuts down careful thinking. Scammers invent a consequence so you act before checking.',kn:'ಭಯ ಯೋಚನೆಯನ್ನು ನಿಲ್ಲಿಸುತ್ತದೆ. ಪರಿಶೀಲಿಸುವ ಮೊದಲೇ ನೀವು ಕ್ರಮ ಕೈಗೊಳ್ಳಲೆಂದು ಬೆದರಿಸುತ್ತಾರೆ.'},{en:'Check your account status yourself in the official app.',kn:'ನಿಮ್ಮ ಖಾತೆಯ ಸ್ಥಿತಿಯನ್ನು ಅಧಿಕೃತ ಆ್ಯಪ್‌ನಲ್ಲಿ ನೀವೇ ಪರಿಶೀಲಿಸಿ.'}),
  R('money','high',.3,{en:'Unusual payment demand',kn:'ಅಸಾಮಾನ್ಯ ಪಾವತಿ ಬೇಡಿಕೆ'},/\b(gift ?cards?|google play (cards?|codes?)|bitcoin|btc|usdt|crypto(currency)?|wire transfer|western union|processing (fee|charges)|registration fee|release fee|customs (duty|fee|charges)|security deposit|(safe|secure|verification|rbi) account|transfer (all )?(your )?(savings|funds|money)|pay (rs\.?|₹|inr)\s?[\d,]+)\b/gi,/ಶುಲ್ಕ ಪಾವತಿಸಿ|ವೀಸಾ ಶುಲ್ಕ|ಹಣ ವರ್ಗಾಯಿಸಿ|ಗಿಫ್ಟ್ ಕಾರ್ಡ್|ನೋಂದಣಿ ಶುಲ್ಕ/g,
   {en:'Gift cards, crypto, "safe accounts" and small fees to release a bigger amount are untraceable routes fraudsters prefer.',kn:'ಗಿಫ್ಟ್ ಕಾರ್ಡ್, ಕ್ರಿಪ್ಟೋ, "ಸುರಕ್ಷಿತ ಖಾತೆ", ದೊಡ್ಡ ಮೊತ್ತಕ್ಕಾಗಿ ಸಣ್ಣ ಶುಲ್ಕ: ವಂಚಕರ ಮೆಚ್ಚಿನ ದಾರಿಗಳು.'},{en:'Do not pay any fee to receive a prize, parcel, refund, loan or job.',kn:'ಬಹುಮಾನ, ಪಾರ್ಸೆಲ್, ರೀಫಂಡ್, ಸಾಲ ಅಥವಾ ಕೆಲಸಕ್ಕಾಗಿ ಶುಲ್ಕ ಪಾವತಿಸಬೇಡಿ.'}),
@@ -857,7 +858,7 @@ const RULES = [
   {en:'Karnataka guarantee schemes have no registration fee and never ask for payment through a link.',kn:'ಕರ್ನಾಟಕದ ಗ್ಯಾರಂಟಿ ಯೋಜನೆಗಳಿಗೆ ನೋಂದಣಿ ಶುಲ್ಕವಿಲ್ಲ. ಲಿಂಕ್ ಮೂಲಕ ಪಾವತಿ ಕೇಳುವುದಿಲ್ಲ.'},{en:'Ask at a Grama One / Karnataka One centre or on Seva Sindhu.',kn:'ಗ್ರಾಮ ಒನ್ / ಕರ್ನಾಟಕ ಒನ್ ಕೇಂದ್ರ ಅಥವಾ ಸೇವಾ ಸಿಂಧುವಿನಲ್ಲಿ ವಿಚಾರಿಸಿ.'}),
  R('challan','high',.4,{en:'Fake traffic e-challan',kn:'ನಕಲಿ ಟ್ರಾಫಿಕ್ ಇ-ಚಲನ್'},/\b(e-?challan|traffic (fine|challan)|rto)\b[^.\n]{0,60}\b(apk|download|app|pay now|link)\b/gi,/ಚಲನ್[^.\n]{0,40}(ಡೌನ್‌ಲೋಡ್|ಲಿಂಕ್|APK)/gi,
   {en:'Scammers send fake challan "apps" that steal SMS and OTPs once installed.',kn:'ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದ ನಂತರ SMS ಮತ್ತು OTP ಕದಿಯುವ ನಕಲಿ ಚಲನ್ "ಆ್ಯಪ್" ಕಳುಹಿಸುತ್ತಾರೆ.'},{en:'Check challans only on the official Parivahan or Karnataka State Police site. Never install an APK.',kn:'ಚಲನ್ ಅನ್ನು ಅಧಿಕೃತ ಪರಿವಾಹನ್ ಅಥವಾ ಕರ್ನಾಟಕ ಪೊಲೀಸ್ ಸೈಟ್‌ನಲ್ಲಿ ಮಾತ್ರ ಪರಿಶೀಲಿಸಿ.'}),
- R('family','mid',.32,{en:'Money request from a "new number"',kn:'"ಹೊಸ ಸಂಖ್ಯೆ"ಯಿಂದ ಹಣದ ಬೇಡಿಕೆ'},/\b(new number|my (phone|mobile) (broke|fell|is (lost|broken))|lost my phone|phone (broke|fell))\b/gi,/ಹೊಸ ಸಂಖ್ಯೆ|ಫೋನ್ ಕಳೆದು/g,
+ R('family','mid',.32,{en:'Money request posing as a friend or relative',kn:'ಸ್ನೇಹಿತ / ಸಂಬಂಧಿಕರಂತೆ ಹಣದ ಬೇಡಿಕೆ'},/\b(new number|my (phone|mobile) (broke|fell|is (lost|broken))|lost my phone|phone (broke|fell)|(i'?m|i am|iam|this is|it'?s) (your )?(friend|brother|bro|sister|son|daughter|cousin|uncle|nephew|niece|colleague|classmate)|(send|transfer)\s+(me|us)\s+(some\s+)?(money|cash|amount)|(please|pls|plz|kindly)\s+(send|transfer)\s+(some\s+)?(money|cash|amount)|^\s*(send|transfer)\s+(some\s+)?(money|cash)|\bi\s+need\s+(some\s+)?(money|cash))\b/gi,/ಹೊಸ ಸಂಖ್ಯೆ|ಫೋನ್ ಕಳೆದು/g,
   {en:'"Hi Amma, this is my new number" is how relative-impersonation scams start, often followed by an urgent UPI request.',kn:'"ಅಮ್ಮ, ಇದು ನನ್ನ ಹೊಸ ಸಂಖ್ಯೆ" ಎಂದು ಸಂಬಂಧಿಕರಂತೆ ನಟಿಸುವ ವಂಚನೆ ಶುರುವಾಗುತ್ತದೆ.'},{en:'Call the person on their old saved number before sending anything.',kn:'ಹಣ ಕಳುಹಿಸುವ ಮೊದಲು ಹಳೆಯ ಉಳಿಸಿದ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಿ ಖಚಿತಪಡಿಸಿ.'}),
  R('gulf','mid',.28,{en:'Overseas job with visa fee',kn:'ವಿದೇಶಿ ಉದ್ಯೋಗ, ವೀಸಾ ಶುಲ್ಕ'},/\b(dubai|saudi|qatar|kuwait|oman|bahrain|gulf|abroad)\b[^.\n]{0,60}\b(visa|job|salary)\b|\bvisa (processing|charges|fee)/gi,/(ದುಬೈ|ವಿದೇಶ)[^.\n]{0,30}(ಉದ್ಯೋಗ|ವೀಸಾ)/g,
   {en:'Coastal Karnataka families are targeted with fake Gulf job offers that demand visa or medical fees up front.',kn:'ಕರಾವಳಿ ಕರ್ನಾಟಕದ ಕುಟುಂಬಗಳನ್ನು ಮುಂಗಡ ವೀಸಾ ಶುಲ್ಕ ಕೇಳುವ ನಕಲಿ ಗಲ್ಫ್ ಉದ್ಯೋಗಗಳಿಂದ ಗುರಿ ಮಾಡಲಾಗುತ್ತಿದೆ.'},{en:'Verify the recruiting agent on the government eMigrate portal.',kn:'ನೇಮಕಾತಿ ಏಜೆಂಟ್ ಅನ್ನು ಸರ್ಕಾರದ eMigrate ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ಪರಿಶೀಲಿಸಿ.'}),
@@ -947,7 +948,7 @@ function analyzeText(text, opts={}){
       for(const m of text.matchAll(re)){
         const s=m.index, e=s+m[0].length;
         if(inLink(s,e)) continue;
-        if(['otpshare','creds','upipin'].includes(rule.id) && !off.has('negation') && /(\b(not|never|no one|nobody)\b|n't)[^.\n]{0,35}$/i.test(text.slice(Math.max(0,s-45),s))) continue;
+        if(['otpshare','creds','upipin'].includes(rule.id) && !off.has('negation') && (/(\b(not|never|no one|nobody)\b|n't)[^.\n]{0,35}$/i.test(text.slice(Math.max(0,s-45),s)) || /\b(not|never)\b|n't/i.test(m[0]))) continue;
         if(!hits.has(rule.id)) hits.set(rule.id,{rule,ex:[]});
         const h=hits.get(rule.id); if(h.ex.length<3 && !h.ex.includes(m[0])) h.ex.push(m[0]);
         ranges.push({s,e,sev:rule.sev,tip:L(rule.label)});
@@ -1166,6 +1167,7 @@ function fuse(rule, ml, safe){
   if(ml!=null && (rule>=60 || ml>=.9)) s = Math.max(s, 62);
   if(ml!=null && rule<20 && ml<.35) s = Math.min(s, 20);
   if(safe && rule<20) s = Math.min(s, 20);
+  if(rule>=40) s = Math.max(s, rule>=55 ? 60 : 45);
   return Math.max(0, Math.min(100, s));
 }
 const band = s => s>=60?'danger':s>=30?'warn':'safe';
@@ -1229,7 +1231,18 @@ function renderNav(){
   const links = PAGES.filter(p=>p[0]!=='home' && p[0]!=='partners').map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('');
   $('nav').innerHTML = links;
   $('mnav').innerHTML = PAGES.map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('') + `<a class="cta app" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener">${t('app.hdr')}</a><a class="cta" href="#help">${t('cta')}</a>`;
+  fitNav();
 }
+function fitNav(){
+  const h=document.querySelector('header.main'), n=$('nav'); if(!h||!n) return;
+  h.classList.remove('compact');
+  if(getComputedStyle(n).display==='none') return;
+  const w=h.querySelector('.wrap');
+  if(n.scrollWidth>n.clientWidth+1 || w.scrollWidth>w.clientWidth+1) h.classList.add('compact');
+}
+addEventListener('resize', ()=>{ clearTimeout(fitNav.t); fitNav.t=setTimeout(fitNav,80); });
+if(window.ResizeObserver){ let lastW=0; new ResizeObserver(es=>{ const w=Math.round(es[0].contentRect.width); if(w!==lastW){ lastW=w; fitNav(); } }).observe(document.querySelector('header.main')); }
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>fitNav());
 function route(){
   let p = location.hash.slice(1); if(!PAGES.some(x=>x[0]===p)) p='home';
   const changed = p!==page; page = p;
