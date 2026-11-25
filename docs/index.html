@@ -206,7 +206,7 @@ mark.high{background:var(--danger-bg); border-color:var(--danger)} mark.mid{back
 .res-ic svg{width:26px; height:26px}
 .res-ic.safe{background:var(--safe-bg); color:var(--safe)} .res-ic.warn{background:var(--warn-bg); color:var(--warn)} .res-ic.danger{background:var(--danger-bg); color:var(--danger)} .res-ic.none{background:var(--sunk); color:var(--muted)}
 .res-t{font-size:1.35rem; font-weight:700; letter-spacing:-.02em}
-.res-t.safe{color:var(--safe)} .res-t.warn{color:var(--warn)} .res-t.danger{color:var(--danger)}
+.res-t.safe{color:var(--safe)} .res-t.ctx{color:var(--warn)} .res-ic.ctx{background:var(--warn-bg); color:var(--warn)} .badge.ctx{color:var(--warn); background:var(--warn-bg); border-color:var(--warn-line)} .cq.on{background:var(--ink); color:var(--bg); border-color:var(--ink)} .res-t.warn{color:var(--warn)} .res-t.danger{color:var(--danger)}
 .res-s{color:var(--ink2); font-size:.92rem; margin-top:2px}
 .score{margin-left:auto; text-align:right; flex:none}
 .score b{font-size:1.6rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.02em}
@@ -659,8 +659,8 @@ const I18N = {
   'app.demoP':'The phones below show what the app does. Install Echchara on an Android phone and it does this for real: on actual incoming calls from unknown numbers, and on every SMS you receive.',
   'nav.home':'Home','nav.check':'Check a message','nav.protect':'Live protection','nav.alerts':'Scam alerts','nav.tech':'Technology','nav.help':'Get help','nav.partners':'For partners',
   'home.tag':'Free scam checker for Karnataka','home.h1':'Is this message a scam? Check it before you click, pay or share.',
-  'home.sub':'Echchara checks SMS, WhatsApp messages, emails, links, websites and screenshots for phishing and fraud, in Kannada and English.',
-  'home.ph':'Paste a suspicious message or link here','home.qcHint':'Works with Kannada, English and Kanglish','home.check':'Check now',
+  'home.sub':'Echchara checks SMS, WhatsApp messages, emails, links, websites and screenshots for phishing and fraud. It reads Kannada, English, Hindi, Tamil, Telugu and Malayalam, including mixed messages.',
+  'home.ph':'Paste a suspicious message or link here','home.qcHint':'Works with Kannada, English, Hindi, Tamil, Telugu, Malayalam and mixed messages','home.check':'Check now',
   'tr.1':'Free, no sign-up','tr.2':'Links are never opened','tr.3':'Answers in Kannada or English',
   'home.what':'What Echchara checks','home.whatSub':'One checker for every place a scam can reach you.',
   'home.how':'How it works','home.trend':'Scam patterns active in Karnataka','home.trendSub':'The tricks people in Karnataka report most often, and how to stop each one.','home.allAlerts':'View all scam alerts',
@@ -674,7 +674,7 @@ const I18N = {
   'web.note':'Echchara never visits the site. It checks the address, and the page content only if you paste it.',
   'shot.drop':'Drop a screenshot of an SMS, chat or web page','shot.pick':'Choose image','shot.note':'Built-in text recognition (OCR) reads Kannada and English text in the image on your device, then every engine scores it.',
   'btn.scan':'Scan','btn.clear':'Clear','hint.live':'Results update as you type','marked.h':'What we found in the text',
-  'v.safe':'Looks safe','v.warn':'Suspicious','v.danger':'Dangerous','v.none':'Nothing checked yet',
+  'v.safe':'Looks safe','v.ctx':'Needs context','v.ctxSub':'Not enough evidence either way. Answer two quick questions below.','v.warn':'Suspicious','v.danger':'Dangerous','v.none':'Nothing checked yet',
   'v.safeSub':'No strong scam signals. If money is involved, still confirm with the sender.','v.warnSub':'Several warning signs. Verify through the official app before you act.','v.dangerSub':'This is very likely a scam. Do not click, pay or share anything.','v.noneSub':'Paste a message on the left or pick an example.',
   'risk':'Risk score','eng.h':'Analysis','sig.rules':'Pattern engine','sig.ml':'ML classifier','sig.type':'Scam type','sum.h':'Summary','sig.na':'Not used for links',
   'ai.sum':'AI summary','ai.type':'Type','ai.imp':'Pretending to be','ai.listen':'Read aloud','ai.stop':'Stop','ai.retry':'Try again',
@@ -684,7 +684,7 @@ const I18N = {
   'bot.name':'Echchara on WhatsApp','bot.sub':'Forward any message, get a verdict in seconds','bot.preview':'Preview','bot.ph':'Forward or paste a suspicious message','bot.send':'Send','bot.hi':'Namaskara! Forward me any message, link or job offer you are unsure about and I will check it.',
   'al.h1':'Scam alerts','al.lead':'Scams reported most often in Karnataka, with the warning signs and the action that stops each one. Use "Check a similar message" to see how Echchara flags it.',
   'te.h1':'How Echchara decides','te.lead':'Three engines check every message. Rules catch known tricks, a trained classifier reads the wording, and an explanation engine describes the result in plain Kannada or English. Everything runs in your browser.',
-  'te.eval':'Test results on held-out messages','te.evalNote':'Demo dataset: short messages written to match scams reported in Karnataka, in English, Kannada and Kanglish. Next step: train on the UCI SMS Spam Collection, PhishTank and Kaggle phishing URL datasets.',
+  'te.eval':'Test results on held-out messages','te.evalNote':'Demo dataset: short messages written to match scams reported in Karnataka, in English, Kannada and Kanglish, plus a few Hindi, Tamil, Telugu and Malayalam examples. Next step: train on the UCI SMS Spam Collection, PhishTank and Kaggle phishing URL datasets.',
   'te.cm':'Combined result on the test set','te.mist':'Two mistakes we found and fixed','te.mistSub':'Scores are calculated live by this page, with each fix switched off and on.',
   'te.feat':'What the classifier learned','te.featSub':'Words and signals that push a message towards scam or genuine.','te.fScam':'Scam signals','te.fHam':'Genuine signals','te.still':'Still wrong on the test set','te.none':'No errors on the test set with the current training data.',
   'he.h1':'Get help','he.lead':'If you clicked a link, shared a code or sent money, act now. Work through the checklist in order.','he.eh':'National Cyber Crime Helpline','he.ep':'Call within the first hours. Banks can often freeze money that is still moving between accounts.','he.steps':'Recovery checklist','he.saved':'Saved on this device','he.contacts':'Helplines and reporting',
@@ -701,8 +701,8 @@ const I18N = {
   'app.demoP':'ಕೆಳಗಿನ ಫೋನ್‌ಗಳು ಆ್ಯಪ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂದು ತೋರಿಸುತ್ತವೆ. Android ಫೋನ್‌ನಲ್ಲಿ ಎಚ್ಚರ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದರೆ ಅಪರಿಚಿತ ಸಂಖ್ಯೆಗಳ ನಿಜವಾದ ಕರೆಗಳಿಗೆ ಮತ್ತು ಪ್ರತಿ SMS ಗೆ ಇದು ನಿಜವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.',
   'nav.home':'ಮುಖಪುಟ','nav.check':'ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ','nav.protect':'ನೇರ ರಕ್ಷಣೆ','nav.alerts':'ವಂಚನೆ ಎಚ್ಚರಿಕೆಗಳು','nav.tech':'ತಂತ್ರಜ್ಞಾನ','nav.help':'ಸಹಾಯ ಪಡೆಯಿರಿ','nav.partners':'ಪಾಲುದಾರರಿಗೆ',
   'home.tag':'ಕರ್ನಾಟಕಕ್ಕಾಗಿ ಉಚಿತ ವಂಚನೆ ಪರಿಶೀಲಕ','home.h1':'ಈ ಸಂದೇಶ ವಂಚನೆಯೇ? ಕ್ಲಿಕ್ ಮಾಡುವ, ಪಾವತಿಸುವ ಅಥವಾ ಹಂಚಿಕೊಳ್ಳುವ ಮೊದಲು ಪರಿಶೀಲಿಸಿ.',
-  'home.sub':'ಎಚ್ಚರ SMS, ವಾಟ್ಸಾಪ್ ಸಂದೇಶ, ಇಮೇಲ್, ಲಿಂಕ್, ವೆಬ್‌ಸೈಟ್ ಮತ್ತು ಸ್ಕ್ರೀನ್‌ಶಾಟ್‌ಗಳಲ್ಲಿ ಫಿಶಿಂಗ್ ಮತ್ತು ವಂಚನೆಯನ್ನು ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಪರಿಶೀಲಿಸುತ್ತದೆ.',
-  'home.ph':'ಅನುಮಾನಾಸ್ಪದ ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಇಲ್ಲಿ ಅಂಟಿಸಿ','home.qcHint':'ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಕಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ','home.check':'ಈಗ ಪರಿಶೀಲಿಸಿ',
+  'home.sub':'ಎಚ್ಚರ SMS, ವಾಟ್ಸಾಪ್ ಸಂದೇಶ, ಇಮೇಲ್, ಲಿಂಕ್, ವೆಬ್‌ಸೈಟ್ ಮತ್ತು ಸ್ಕ್ರೀನ್‌ಶಾಟ್‌ಗಳಲ್ಲಿ ಫಿಶಿಂಗ್ ಮತ್ತು ವಂಚನೆಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು ಮತ್ತು ಮಲಯಾಳಂ, ಮಿಶ್ರ ಸಂದೇಶಗಳನ್ನೂ ಓದುತ್ತದೆ.',
+  'home.ph':'ಅನುಮಾನಾಸ್ಪದ ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಇಲ್ಲಿ ಅಂಟಿಸಿ','home.qcHint':'ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು, ಮಲಯಾಳಂ ಮತ್ತು ಮಿಶ್ರ ಸಂದೇಶಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ','home.check':'ಈಗ ಪರಿಶೀಲಿಸಿ',
   'tr.1':'ಉಚಿತ, ನೋಂದಣಿ ಬೇಕಿಲ್ಲ','tr.2':'ಲಿಂಕ್‌ಗಳನ್ನು ತೆರೆಯುವುದಿಲ್ಲ','tr.3':'ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಉತ್ತರ',
   'home.what':'ಎಚ್ಚರ ಏನನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ','home.whatSub':'ವಂಚನೆ ನಿಮ್ಮನ್ನು ತಲುಪುವ ಎಲ್ಲ ಮಾರ್ಗಗಳಿಗೂ ಒಂದೇ ಪರಿಶೀಲಕ.',
   'home.how':'ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ','home.trend':'ಕರ್ನಾಟಕದಲ್ಲಿ ಸಕ್ರಿಯ ವಂಚನೆ ಮಾದರಿಗಳು','home.trendSub':'ಕರ್ನಾಟಕದ ಜನರು ಹೆಚ್ಚು ವರದಿ ಮಾಡುವ ತಂತ್ರಗಳು ಮತ್ತು ಅವನ್ನು ತಡೆಯುವ ವಿಧಾನ.','home.allAlerts':'ಎಲ್ಲ ಎಚ್ಚರಿಕೆಗಳನ್ನು ನೋಡಿ',
@@ -716,7 +716,7 @@ const I18N = {
   'web.note':'ಎಚ್ಚರ ಸೈಟ್ ಅನ್ನು ತೆರೆಯುವುದಿಲ್ಲ. ವಿಳಾಸವನ್ನು, ಮತ್ತು ನೀವು ಅಂಟಿಸಿದರೆ ಮಾತ್ರ ವಿಷಯವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ.',
   'shot.drop':'SMS, ಚಾಟ್ ಅಥವಾ ವೆಬ್ ಪುಟದ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಇಲ್ಲಿ ಹಾಕಿ','shot.pick':'ಚಿತ್ರ ಆಯ್ಕೆಮಾಡಿ','shot.note':'ಅಂತರ್ನಿರ್ಮಿತ ಪಠ್ಯ ಗುರುತಿಸುವಿಕೆ (OCR) ಚಿತ್ರದಲ್ಲಿನ ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್ ಪಠ್ಯವನ್ನು ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಓದುತ್ತದೆ, ನಂತರ ಎಲ್ಲ ಎಂಜಿನ್‌ಗಳು ಅಂಕ ನೀಡುತ್ತವೆ.',
   'btn.scan':'ಪರಿಶೀಲಿಸಿ','btn.clear':'ಅಳಿಸಿ','hint.live':'ಟೈಪ್ ಮಾಡುತ್ತಿದ್ದಂತೆ ಫಲಿತಾಂಶ','marked.h':'ಪಠ್ಯದಲ್ಲಿ ಕಂಡುಬಂದದ್ದು',
-  'v.safe':'ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣುತ್ತದೆ','v.warn':'ಅನುಮಾನಾಸ್ಪದ','v.danger':'ಅಪಾಯಕಾರಿ','v.none':'ಇನ್ನೂ ಏನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ',
+  'v.safe':'ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣುತ್ತದೆ','v.ctx':'ಸಂದರ್ಭ ಬೇಕು','v.ctxSub':'ಯಾವುದೇ ತೀರ್ಮಾನಕ್ಕೆ ಸಾಕಷ್ಟು ಪುರಾವೆ ಇಲ್ಲ. ಕೆಳಗಿನ ಎರಡು ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ.','v.warn':'ಅನುಮಾನಾಸ್ಪದ','v.danger':'ಅಪಾಯಕಾರಿ','v.none':'ಇನ್ನೂ ಏನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ',
   'v.safeSub':'ಬಲವಾದ ವಂಚನೆಯ ಲಕ್ಷಣಗಳಿಲ್ಲ. ಹಣದ ವಿಷಯವಿದ್ದರೆ ಕಳುಹಿಸಿದವರೊಂದಿಗೆ ಖಚಿತಪಡಿಸಿ.','v.warnSub':'ಹಲವು ಎಚ್ಚರಿಕೆಯ ಲಕ್ಷಣಗಳಿವೆ. ಕ್ರಮ ಕೈಗೊಳ್ಳುವ ಮೊದಲು ಅಧಿಕೃತ ಆ್ಯಪ್‌ನಲ್ಲಿ ಪರಿಶೀಲಿಸಿ.','v.dangerSub':'ಇದು ಬಹುತೇಕ ವಂಚನೆ. ಕ್ಲಿಕ್ ಮಾಡಬೇಡಿ, ಪಾವತಿಸಬೇಡಿ, ಏನನ್ನೂ ಹಂಚಿಕೊಳ್ಳಬೇಡಿ.','v.noneSub':'ಎಡಭಾಗದಲ್ಲಿ ಸಂದೇಶ ಅಂಟಿಸಿ ಅಥವಾ ಉದಾಹರಣೆ ಆಯ್ಕೆಮಾಡಿ.',
   'risk':'ಅಪಾಯ ಅಂಕ','eng.h':'ವಿಶ್ಲೇಷಣೆ','sig.rules':'ಮಾದರಿ ಎಂಜಿನ್','sig.ml':'ML ವರ್ಗೀಕರಣ','sig.type':'ವಂಚನೆಯ ಪ್ರಕಾರ','sum.h':'ಸಾರಾಂಶ','sig.na':'ಲಿಂಕ್‌ಗೆ ಬಳಸುವುದಿಲ್ಲ',
   'ai.sum':'AI ಸಾರಾಂಶ','ai.type':'ಪ್ರಕಾರ','ai.imp':'ಇವರಂತೆ ನಟನೆ','ai.listen':'ಗಟ್ಟಿಯಾಗಿ ಓದಿ','ai.stop':'ನಿಲ್ಲಿಸಿ','ai.retry':'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
@@ -726,7 +726,7 @@ const I18N = {
   'bot.name':'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಎಚ್ಚರ','bot.sub':'ಯಾವುದೇ ಸಂದೇಶ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ, ಕ್ಷಣದಲ್ಲಿ ತೀರ್ಪು ಪಡೆಯಿರಿ','bot.preview':'ಮುನ್ನೋಟ','bot.ph':'ಅನುಮಾನಾಸ್ಪದ ಸಂದೇಶ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ','bot.send':'ಕಳುಹಿಸಿ','bot.hi':'ನಮಸ್ಕಾರ! ನಿಮಗೆ ಅನುಮಾನ ಇರುವ ಯಾವುದೇ ಸಂದೇಶ, ಲಿಂಕ್ ಅಥವಾ ಉದ್ಯೋಗದ ಆಫರ್ ಕಳುಹಿಸಿ, ನಾನು ಪರಿಶೀಲಿಸುತ್ತೇನೆ.',
   'al.h1':'ವಂಚನೆ ಎಚ್ಚರಿಕೆಗಳು','al.lead':'ಕರ್ನಾಟಕದಲ್ಲಿ ಹೆಚ್ಚು ವರದಿಯಾದ ವಂಚನೆಗಳು, ಎಚ್ಚರಿಕೆ ಲಕ್ಷಣಗಳು ಮತ್ತು ತಡೆಯುವ ಕ್ರಮ. "ಇಂತಹ ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ" ಒತ್ತಿ ಎಚ್ಚರ ಹೇಗೆ ಗುರುತಿಸುತ್ತದೆ ನೋಡಿ.',
   'te.h1':'ಎಚ್ಚರ ಹೇಗೆ ನಿರ್ಧರಿಸುತ್ತದೆ','te.lead':'ಪ್ರತಿ ಸಂದೇಶವನ್ನು ಮೂರು ಎಂಜಿನ್‌ಗಳು ಪರಿಶೀಲಿಸುತ್ತವೆ. ನಿಯಮಗಳು ತಿಳಿದ ತಂತ್ರಗಳನ್ನು, ವರ್ಗೀಕರಣ ಪದಗಳನ್ನು ಹಿಡಿಯುತ್ತವೆ, ವಿವರಣಾ ಎಂಜಿನ್ ಸರಳ ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ವಿವರಿಸುತ್ತದೆ. ಎಲ್ಲವೂ ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲೇ.',
-  'te.eval':'ಪ್ರತ್ಯೇಕ ಸಂದೇಶಗಳ ಮೇಲೆ ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ','te.evalNote':'ಡೆಮೊ ಡೇಟಾಸೆಟ್: ಕರ್ನಾಟಕದಲ್ಲಿ ವರದಿಯಾದ ವಂಚನೆಗಳನ್ನು ಹೋಲುವ ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಕಂಗ್ಲಿಷ್ ಸಂದೇಶಗಳು. ಮುಂದೆ UCI SMS Spam, PhishTank ಮತ್ತು Kaggle ಡೇಟಾಸೆಟ್‌ಗಳ ಮೇಲೆ ತರಬೇತಿ.',
+  'te.eval':'ಪ್ರತ್ಯೇಕ ಸಂದೇಶಗಳ ಮೇಲೆ ಪರೀಕ್ಷಾ ಫಲಿತಾಂಶ','te.evalNote':'ಡೆಮೊ ಡೇಟಾಸೆಟ್: ಕರ್ನಾಟಕದಲ್ಲಿ ವರದಿಯಾದ ವಂಚನೆಗಳನ್ನು ಹೋಲುವ ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಕಂಗ್ಲಿಷ್ ಸಂದೇಶಗಳು, ಜೊತೆಗೆ ಕೆಲವು ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು, ಮಲಯಾಳಂ ಉದಾಹರಣೆಗಳು. ಮುಂದೆ UCI SMS Spam, PhishTank ಮತ್ತು Kaggle ಡೇಟಾಸೆಟ್‌ಗಳ ಮೇಲೆ ತರಬೇತಿ.',
   'te.cm':'ಪರೀಕ್ಷಾ ಸೆಟ್‌ನಲ್ಲಿ ಒಟ್ಟು ಫಲಿತಾಂಶ','te.mist':'ನಾವು ಕಂಡು ಸರಿಪಡಿಸಿದ ಎರಡು ತಪ್ಪುಗಳು','te.mistSub':'ಪ್ರತಿ ಸರಿಪಡಿಕೆಯನ್ನು ಆಫ್ ಮತ್ತು ಆನ್ ಮಾಡಿ ಈ ಪುಟವೇ ಅಂಕ ಲೆಕ್ಕ ಹಾಕುತ್ತದೆ.',
   'te.feat':'ವರ್ಗೀಕರಣ ಕಲಿತದ್ದು','te.featSub':'ಸಂದೇಶವನ್ನು ವಂಚನೆ ಅಥವಾ ನಿಜವಾದದ್ದು ಎಂದು ತಳ್ಳುವ ಪದಗಳು.','te.fScam':'ವಂಚನೆಯ ಸೂಚನೆಗಳು','te.fHam':'ನಿಜವಾದ ಸೂಚನೆಗಳು','te.still':'ಪರೀಕ್ಷಾ ಸೆಟ್‌ನಲ್ಲಿ ಇನ್ನೂ ತಪ್ಪು','te.none':'ಪರೀಕ್ಷಾ ಸೆಟ್‌ನಲ್ಲಿ ತಪ್ಪುಗಳಿಲ್ಲ.',
   'he.h1':'ಸಹಾಯ ಪಡೆಯಿರಿ','he.lead':'ಲಿಂಕ್ ಕ್ಲಿಕ್ ಮಾಡಿದ್ದರೆ, ಕೋಡ್ ಹಂಚಿಕೊಂಡಿದ್ದರೆ ಅಥವಾ ಹಣ ಕಳುಹಿಸಿದ್ದರೆ, ಈಗಲೇ ಕ್ರಮ ಕೈಗೊಳ್ಳಿ. ಪಟ್ಟಿಯನ್ನು ಕ್ರಮವಾಗಿ ಅನುಸರಿಸಿ.','he.eh':'ರಾಷ್ಟ್ರೀಯ ಸೈಬರ್ ಅಪರಾಧ ಸಹಾಯವಾಣಿ','he.ep':'ಮೊದಲ ಕೆಲವು ಗಂಟೆಗಳಲ್ಲಿ ಕರೆ ಮಾಡಿ. ಖಾತೆಗಳ ನಡುವೆ ಚಲಿಸುತ್ತಿರುವ ಹಣವನ್ನು ಬ್ಯಾಂಕ್‌ಗಳು ತಡೆಹಿಡಿಯಬಹುದು.','he.steps':'ಚೇತರಿಕೆ ಪಟ್ಟಿ','he.saved':'ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ','he.contacts':'ಸಹಾಯವಾಣಿ ಮತ್ತು ವರದಿ',
@@ -882,6 +882,47 @@ const SAFE_CUES = [
  {re:/\bnever (asks?|call|request)s? (you )?for\b/gi,label:{en:'States it will never ask for your details',kn:'ವಿವರ ಕೇಳುವುದಿಲ್ಲ ಎಂದು ಹೇಳುತ್ತದೆ'}},
  {re:/\b(ignore if already paid|if this was you, no action needed|no action needed)\b/gi,label:{en:'No pressure to act',kn:'ಕ್ರಮಕ್ಕೆ ಒತ್ತಡವಿಲ್ಲ'}}
 ];
+/* ---- Hindi, Tamil, Telugu, Malayalam (script + romanised) patterns, attached to the same rules ---- */
+const MULTI = {
+ otpshare:[/(OTP|ओटीपी|कोड|पिन)[^।.\n]{0,30}(बताएं|बताइए|बताओ|भेजें|भेजिए|शेयर करें|दें)/g,/\b(otp|code|pin)\b[^.\n]{0,30}\b(batao|bataye|bataiye|bhejo|bhejiye|share karo|share karein|de do)\b/gi,
+   /(OTP|ஓடிபி|கோட்|பின்)[^.\n]{0,30}(சொல்லுங்கள்|சொல்லுங்க|அனுப்புங்கள்|அனுப்புங்க|பகிரவும்)/g,/\b(otp|code)\b[^.\n]{0,30}\b(sollunga|anuppunga|share pannunga)\b/gi,
+   /(OTP|ఓటీపీ|కోడ్|పిన్)[^.\n]{0,30}(చెప్పండి|పంపండి|షేర్ చేయండి)/g,/\b(otp|code)\b[^.\n]{0,30}\b(cheppandi|pampandi|share cheyandi)\b/gi,
+   /(OTP|ഒടിപി|കോഡ്|പിൻ)[^.\n]{0,30}(പറയൂ|പറയുക|അയയ്ക്കുക|അയക്കൂ|ഷെയർ ചെയ്യുക)/g,/\b(otp|code)\b[^.\n]{0,30}\b(parayu|parayuka|ayakku|share cheyyu)\b/gi],
+ creds:[/केवाईसी|KYC अपडेट|खाता सत्यापित|पैन (कार्ड )?अपडेट|अपना पासवर्ड/g,/\b(kyc update (kare|karo|karein)|account verify (kare|karo))\b/gi,
+   /கேஒய்சி|KYC புதுப்பி|கணக்கை சரிபார்|பான் (கார்டு )?புதுப்பி/g,/కేవైసీ|KYC అప్‌డేట్|ఖాతాను ధృవీకరించ|పాన్ (కార్డ్ )?అప్‌డేట్/g,/കെവൈസി|KYC അപ്ഡേറ്റ്|അക്കൗണ്ട് പരിശോധി|പാൻ (കാർഡ് )?അപ്ഡേറ്റ്/g],
+ threat:[/बंद हो जाएगा|ब्लॉक|निलंबित|गिरफ्तार|पुलिस|जुर्माना|कानूनी कार्रवाई/g,/\b(band ho jayega|block ho jayega|giraftar|jurmana)\b/gi,
+   /முடக்கப்படும்|தடை செய்யப்படும்|நிறுத்தப்படும்|கைது|காவல்துறை|அபராதம்|பிளாக்/g,/\b(block aagum|block agidum|arrest pannuvom)\b/gi,
+   /బ్లాక్ (అవుతుంది|చేయబడుతుంది)|నిలిపివేయబడుతుంది|అరెస్ట్|పోలీసు|జరిమానా/g,/\b(block avutundi|arrest chestam)\b/gi,
+   /ബ്ലോക്ക് (ചെയ്യും|ആകും)|റദ്ദാക്കും|അറസ്റ്റ്|പോലീസ്|പിഴ/g,/\b(block aakum|arrest cheyyum)\b/gi],
+ urgency:[/तुरंत|आज ही|जल्दी|आज रात/g,/\b(aaj hi|aaj raat)\b/gi,/உடனடியாக|உடனே|இன்றே|இன்று இரவு/g,/\b(udane|udanadiyaga|innaike)\b/gi,/వెంటనే|ఈరోజే|ఈ రాత్రి|తక్షణమే/g,/\b(ventane|eeroje)\b/gi,/ഉടൻ|ഉടനെ|ഇന്ന് തന്നെ|ഇന്ന് രാത്രി/g,/\b(innu thanne)\b/gi],
+ money:[/(शुल्क|फीस) (जमा|भरें|अदा)|पैसे (भेजें|ट्रांसफर)|प्रोसेसिंग फीस|रजिस्ट्रेशन फीस/g,/\b(fees? (bharo|bhariye|jama karo)|paise (bhejo|transfer karo))\b/gi,
+   /கட்டணம் செலுத்துங்கள்|கட்டணம் செலுத்தவும்|பணம் அனுப்ப|பதிவு கட்டணம்/g,/\b(panam anuppunga|fees kattunga)\b/gi,
+   /రుసుము చెల్లించ|ఫీజు చెల్లించ|డబ్బు పంపండి|రిజిస్ట్రేషన్ ఫీజు/g,/\b(dabbu pampandi|fee kattandi)\b/gi,/ഫീസ് അടയ്ക്കുക|പണം അയയ്ക്കുക|രജിസ്ട്രേഷൻ ഫീസ്/g],
+ prize:[/बधाई|आपने जीत|इनाम|लॉटरी|लकी ड्रॉ/g,/\b(aapne jeeta|inaam|lottery lagi)\b/gi,/வாழ்த்துக்கள்|பரிசு|வென்றுள்ளீர்கள்|லாட்டரி/g,/అభినందనలు|బహుమతి|గెలుచుకున్నారు|లాటరీ/g,/അഭിനന്ദനങ്ങൾ|സമ്മാനം|നേടിയിരിക്കുന്നു|ലോട്ടറി/g],
+ power:[/बिजली[^।.\n]{0,25}(कट|काट|बंद)/g,/\bbijli\b[^.\n]{0,25}\b(cut|kat|band)\b/gi,/(மின்|மின்சாரம்)[^.\n]{0,25}(துண்டி|நிறுத்த)/g,/(విద్యుత్|కరెంట్)[^.\n]{0,25}(నిలిపి|కట్)/g,/(വൈദ്യുതി|കറന്റ്)[^.\n]{0,25}(വിച്ഛേദി|കട്ട്)/g],
+ secrecy:[/किसी को (मत|न) बताएं|किसी को नहीं बताना|कॉल (मत|न) काटें|डिजिटल अरेस्ट/g,/யாரிடமும் சொல்லாதீர்கள்|யாருக்கும் சொல்ல வேண்டாம்|டிஜிட்டல் அரெஸ்ட்/g,/ఎవరికీ చెప్పకండి|డిజిటల్ అరెస్ట్/g,/ആരോടും പറയരുത്|ഡിജിറ്റൽ അറസ്റ്റ്/g],
+ id:[/आधार|पैन कार्ड/g,/ஆதார்|பான் கார்டு/g,/ఆధార్|పాన్ కార్డ్/g,/ആധാർ|പാൻ കാർഡ്/g],
+ job:[/घर बैठे (कमाएं|काम)|पार्ट टाइम/g,/\bghar baithe\b/gi,/வீட்டிலிருந்தே வேலை|பகுதி நேர வேலை/g,/ఇంటి నుండే పని|పార్ట్ టైమ్/g,/വീട്ടിലിരുന്ന് ജോലി|പാർട്ട് ടൈം/g],
+ callback:[/(\+?\d[\d\s-]{8,}\d)[^.\n]{0,30}(कॉल करें|संपर्क करें|அழைக்கவும்|அழையுங்கள்|కాల్ చేయండి|ఫోన్ చేయండి|വിളിക്കുക|വിളിക്കൂ)/g]
+};
+for(const r of RULES) r.ml = MULTI[r.id] || [];
+SAFE_CUES.push({re:/साझा न करें|शेयर न करें|பகிர வேண்டாம்|షేర్ చేయవద్దు|పంచుకోవద్దు|പങ്കിടരുത്|ഷെയർ ചെയ്യരുത്/g,label:{en:'Warns you not to share the code',kn:'ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಬೇಡಿ ಎಂದು ಎಚ್ಚರಿಸುತ್ತದೆ'}});
+
+/* ---- vague references that need context before any verdict ---- */
+const CTX_CUES = [
+ /\b(your|the|our) (earlier|previous|recent|last) (service )?(request|complaint|query|enquiry|inquiry|application|conversation|call|order)\b/gi,
+ /\bregarding (your|the) (service |support )?(request|complaint|query|ticket|application|issue)\b/gi,
+ /\bas (per|discussed (in|on)) (our|the|your) (call|conversation|discussion|chat)\b|\bas discussed\b/gi,
+ /\byour (service |support )?(request|complaint|ticket|application) (has been|is|was) (received|processed|approved|registered|pending|on hold|escalated|updated)\b/gi,
+ /\bwe (tried|were unable|have been trying) to (reach|contact|call) you\b/gi,
+ /\b(kindly|please) (call back|revert|reply|respond|get back)\b|\breply to this (message|sms)\b/gi,
+ /\bpending (action|verification|confirmation)\b|\bfollow(ing)?[- ]up on\b/gi,
+ /ನಿಮ್ಮ (ಹಿಂದಿನ )?(ವಿನಂತಿ|ದೂರು|ಅರ್ಜಿ)|ಈ ಹಿಂದೆ ಮಾತನಾಡಿದಂತೆ/g,
+ /आपके? (पिछले |हाल के )?(अनुरोध|शिकायत|आवेदन)|जैसा कि (हमने )?बात की/g,/\b(aapki|aapke) (request|complaint)\b/gi,
+ /உங்கள் (முந்தைய )?(கோரிக்கை|புகார்|விண்ணப்ப)/g,/మీ (మునుపటి )?(అభ్యర్థన|ఫిర్యాదు|దరఖాస్తు)/g,/നിങ്ങളുടെ (മുൻ )?(അഭ്യർത്ഥന|പരാതി|അപേക്ഷ)/g
+];
+const SPECIFIC_RE = /\b(ref(erence)?|ticket|complaint|request|order|srn|sr|case|txn|transaction)\.?\s*(no\.?|number|id|#)?\s*[:#-]?\s*[A-Z0-9-]*\d[A-Z0-9-]{4,}\b/i;
+
 const LINK_RE = /(?:https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.(?:[a-z]{2,24})(?:\/[^\s<>"']*)?)/gi;
 const NOT_DOMAIN = /\.(pdf|jpg|png|docx?|xlsx?|txt|zip)$/i;
 function analyzeText(text, opts={}){
@@ -902,7 +943,7 @@ function analyzeText(text, opts={}){
   const inLink=(s,e)=>linkRanges.some(x=>s<x.e && e>x.s);
   for(const rule of RULES){
     if(off.has(rule.id)) continue;
-    for(const re of [rule.re, rule.kn]){ if(!re) continue;
+    for(const re of [rule.re, rule.kn, ...(rule.ml||[])]){ if(!re) continue;
       for(const m of text.matchAll(re)){
         const s=m.index, e=s+m[0].length;
         if(inLink(s,e)) continue;
@@ -928,9 +969,16 @@ function analyzeText(text, opts={}){
   }
   for(const h of hits.values()) flags.push({id:h.rule.id,sev:h.rule.sev,w:h.rule.w,label:h.rule.label,why:h.rule.why,ex:h.ex,do:h.rule.do});
   for(const s of safe) flags.push({sev:'safe',w:0,label:s,why:{en:'Genuine messages often include this.',kn:'ನಿಜವಾದ ಸಂದೇಶಗಳಲ್ಲಿ ಇದು ಸಾಮಾನ್ಯ.'}});
+  const ctx=[];
+  for(const re of CTX_CUES) for(const m of text.matchAll(re)){ if(inLink(m.index,m.index+m[0].length)) continue; if(ctx.length<3 && !ctx.includes(m[0])) ctx.push(m[0]); ranges.push({s:m.index,e:m.index+m[0].length,sev:'low',tip:lang==='kn'?'ಅಸ್ಪಷ್ಟ ಉಲ್ಲೇಖ':'Vague reference'}); }
+  const specific = SPECIFIC_RE.test(text) || links.some(l=>l.r.known);
+  if(ctx.length) flags.push({id:'vague',sev:'low',w:0,label:{en:'Refers to an earlier request without details',kn:'ವಿವರವಿಲ್ಲದೆ ಹಿಂದಿನ ವಿನಂತಿಯ ಉಲ್ಲೇಖ'},ex:ctx,
+    why: specific ? {en:'It mentions a previous request or conversation. It does include a reference number or official link, so check that against your own records.',kn:'ಹಿಂದಿನ ವಿನಂತಿಯನ್ನು ಉಲ್ಲೇಖಿಸುತ್ತದೆ. ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ ಅಥವಾ ಅಧಿಕೃತ ಲಿಂಕ್ ಇದೆ, ನಿಮ್ಮ ದಾಖಲೆಯೊಂದಿಗೆ ಹೋಲಿಸಿ.'}
+      : {en:'It mentions a previous request or conversation but gives no reference number, name or official link that proves who sent it. Scammers use this to sound familiar.',kn:'ಹಿಂದಿನ ವಿನಂತಿಯನ್ನು ಉಲ್ಲೇಖಿಸುತ್ತದೆ, ಆದರೆ ಕಳುಹಿಸಿದವರನ್ನು ಸಾಬೀತುಪಡಿಸುವ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ, ಹೆಸರು ಅಥವಾ ಅಧಿಕೃತ ಲಿಂಕ್ ಇಲ್ಲ. ಪರಿಚಿತರಂತೆ ಕಾಣಲು ವಂಚಕರು ಹೀಗೆ ಮಾಡುತ್ತಾರೆ.'}});
   const moves=[]; if(links.some(l=>l.r.score>=25)) moves.push({en:'Do not open the link. Use the official app or type the address yourself.',kn:'ಲಿಂಕ್ ತೆರೆಯಬೇಡಿ. ಅಧಿಕೃತ ಆ್ಯಪ್ ಬಳಸಿ ಅಥವಾ ವಿಳಾಸ ನೀವೇ ಟೈಪ್ ಮಾಡಿ.'});
   for(const f of flags) if(f.do && !moves.find(m=>m.en===f.do.en)) moves.push(f.do);
-  return {score, ranges, flags, moves, links};
+  if(ctx.length) moves.push({en:'Reply only through the official app or a number you already have, never the one in this message.',kn:'ಅಧಿಕೃತ ಆ್ಯಪ್ ಅಥವಾ ನಿಮ್ಮಲ್ಲಿರುವ ಸಂಖ್ಯೆಯ ಮೂಲಕ ಮಾತ್ರ ಉತ್ತರಿಸಿ, ಈ ಸಂದೇಶದಲ್ಲಿನ ಸಂಖ್ಯೆಗೆ ಅಲ್ಲ.'});
+  return {score, ranges, flags, moves, links, ctx, specific, safeCue: safe.length>0 && !hits.has('otpshare') && !hits.has('upipin')};
 }
 function highlight(text, ranges){
   const rs=[...ranges].sort((a,b)=>a.s-b.s || (b.e-b.s)-(a.e-a.s));
@@ -1071,7 +1119,28 @@ const DATA = [
  [0,"ಮುಂದಿನ ವಾರ ಪರೀಕ್ಷೆ ವೇಳಾಪಟ್ಟಿ ಪ್ರಕಟವಾಗಿದೆ. ಕಾಲೇಜು ವೆಬ್‌ಸೈಟ್ ನೋಡಿ."],
  [0,"Your Zomato order is delivered. Rate your food."],
  [0,"Train 16585 is running 20 minutes late at Mangaluru Central."],
- [0,"Your vehicle insurance renewal is due next month. Renew in the insurer's app."]
+ [0,"Your vehicle insurance renewal is due next month. Renew in the insurer's app."],
+ [1,"प्रिय ग्राहक, आपका बैंक खाता आज ब्लॉक हो जाएगा। तुरंत KYC अपडेट करें, वरना खाता बंद हो जाएगा।"],
+ [0,"आपका OTP 482913 है। यह कोड किसी के साथ साझा न करें।"],
+ [1,"आपने 25 लाख की लॉटरी जीती है। इनाम पाने के लिए आज ही प्रोसेसिंग फीस जमा करें।"],
+ [0,"आपके खाते में Rs 2,000 जमा किए गए हैं। धन्यवाद।"],
+ [1,"Aapka bijli connection aaj raat cut ho jayega. Turant is number par call karein 9876512345"],
+ [0,"உங்கள் மின் கட்டணம் Rs 640 பெறப்பட்டது. நன்றி."],
+ [1,"உங்கள் வங்கி கணக்கு இன்று முடக்கப்படும். உடனடியாக KYC புதுப்பிக்கவும்."],
+ [0,"உங்கள் OTP 551203. யாரிடமும் பகிர வேண்டாம்."],
+ [1,"வாழ்த்துக்கள்! நீங்கள் லாட்டரி பரிசு வென்றுள்ளீர்கள். பதிவு கட்டணம் செலுத்தவும்."],
+ [0,"మీ ఆర్డర్ డెలివరీ అయింది. ధన్యవాదాలు."],
+ [1,"మీ బ్యాంక్ ఖాతా ఈరోజే బ్లాక్ అవుతుంది. వెంటనే మీ OTP చెప్పండి."],
+ [0,"మీ OTP 730114. ఎవరితోనూ పంచుకోవద్దు."],
+ [1,"అభినందనలు! మీరు లాటరీ గెలుచుకున్నారు. రిజిస్ట్రేషన్ ఫీజు చెల్లించండి."],
+ [0,"നിങ്ങളുടെ ബിൽ Rs 450 അടച്ചു. നന്ദി."],
+ [1,"നിങ്ങളുടെ അക്കൗണ്ട് ഇന്ന് ബ്ലോക്ക് ചെയ്യും. ഉടൻ OTP പറയുക."],
+ [0,"നിങ്ങളുടെ OTP 902211 ആണ്. ആരുമായും പങ്കിടരുത്."],
+ [1,"അഭിനന്ദനങ്ങൾ! നിങ്ങൾ ലോട്ടറി സമ്മാനം നേടിയിരിക്കുന്നു. രജിസ്ട്രേഷൻ ഫീസ് അടയ്ക്കുക."],
+ [1,"மின் கட்டணம் நிலுவையில் உள்ளதால் இன்று இரவு மின்சாரம் துண்டிக்கப்படும். உடனே இந்த எண்ணை அழைக்கவும் 9845067890"],
+ [1,"आपका बिजली कनेक्शन आज रात काट दिया जाएगा। तुरंत बिजली अधिकारी को इस नंबर पर कॉल करें 9845067891"],
+ [1,"మీ కరెంట్ కనెక్షన్ ఈ రాత్రి నిలిపివేయబడుతుంది. వెంటనే ఈ నంబర్‌కు కాల్ చేయండి 9845067892"],
+ [1,"നിങ്ങളുടെ വൈദ്യുതി കണക്ഷൻ ഇന്ന് രാത്രി വിച്ഛേദിക്കും. ഉടൻ ഈ നമ്പറിൽ വിളിക്കുക 9845067893"]
 ];
 function tokens(text){
   let s = text.toLowerCase();
@@ -1092,11 +1161,11 @@ function retrain(){ TRAIN = DATA.filter((r,i)=>!isTest(r,i)).concat(userRows); T
 retrain();
 
 /* ======================= Fusion ======================= */
-function fuse(rule, ml, ai){
+function fuse(rule, ml, safe){
   let s = ml==null ? rule : Math.round(.6*rule + .4*ml*100);
   if(ml!=null && (rule>=60 || ml>=.9)) s = Math.max(s, 62);
   if(ml!=null && rule<20 && ml<.35) s = Math.min(s, 20);
-  if(ai){ const a = ai.verdict==='dangerous' ? 65+ai.confidence*.35 : ai.verdict==='suspicious' ? 45 : (100-ai.confidence)*.3; s = Math.round(.65*s + .35*a); if(ai.verdict==='dangerous') s=Math.max(s,60); }
+  if(safe && rule<20) s = Math.min(s, 20);
   return Math.max(0, Math.min(100, s));
 }
 const band = s => s>=60?'danger':s>=30?'warn':'safe';
@@ -1112,7 +1181,12 @@ const SAMPLES = {
   {n:{en:'Digital arrest',kn:'ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್'},v:'This is Inspector Sharma from Mumbai Cyber Police. A FedEx parcel in your name with illegal drugs was seized and your Aadhaar is linked to money laundering. You are under digital arrest. Do not disconnect this video call and do not tell your family. Transfer your savings to the RBI verification account.'},
   {n:{en:'Gulf job',kn:'ಗಲ್ಫ್ ಉದ್ಯೋಗ'},v:'Dubai hotel job, salary 2200 AED, free food and stay. Visa ready. Pay visa processing charges Rs 38,000 today to confirm. WhatsApp +971 50 123 4567'},
   {n:{en:'Real OTP',kn:'ನಿಜವಾದ OTP'},v:'482913 is your OTP to log in to Swiggy. Valid for 10 minutes. Do not share this code with anyone. -Swiggy'},
-  {n:{en:'Real BESCOM bill',kn:'ನಿಜವಾದ ಬೆಸ್ಕಾಂ ಬಿಲ್'},v:'Your BESCOM bill of Rs 1,240 for October is due on 30 Nov. Pay via the BESCOM Mithra app or bescom.karnataka.gov.in. Ignore if already paid.'}
+  {n:{en:'Real BESCOM bill',kn:'ನಿಜವಾದ ಬೆಸ್ಕಾಂ ಬಿಲ್'},v:'Your BESCOM bill of Rs 1,240 for October is due on 30 Nov. Pay via the BESCOM Mithra app or bescom.karnataka.gov.in. Ignore if already paid.'},
+  {n:{en:'Vague request',kn:'ಅಸ್ಪಷ್ಟ ವಿನಂತಿ'},v:'Hello, this is regarding your earlier service request. Your request has been processed. Please reply to this message to proceed.'},
+  {n:{en:'Hindi KYC',kn:'ಹಿಂದಿ KYC'},v:'प्रिय ग्राहक, आपका SBI खाता आज ब्लॉक हो जाएगा। तुरंत अपना KYC अपडेट करें: sbi-kyc-help.top वरना खाता बंद हो जाएगा।'},
+  {n:{en:'Tamil power cut',kn:'ತಮಿಳು ವಿದ್ಯುತ್ ಕಡಿತ'},v:'அன்புள்ள வாடிக்கையாளரே, உங்கள் மின் இணைப்பு இன்று இரவு துண்டிக்கப்படும். உடனடியாக மின்சார அதிகாரியை 9876543210 என்ற எண்ணில் அழைக்கவும். BESCOM'},
+  {n:{en:'Telugu prize',kn:'ತೆಲುಗು ಬಹುಮಾನ'},v:'అభినందనలు! మీరు ₹25,00,000 లాటరీ గెలుచుకున్నారు. బహుమతి పొందడానికి వెంటనే ₹4,999 రిజిస్ట్రేషన్ ఫీజు చెల్లించండి. ఎవరికీ చెప్పకండి.'},
+  {n:{en:'Malayalam OTP',kn:'ಮಲಯಾಳಂ OTP'},v:'പ്രിയ ഉപഭോക്താവേ, നിങ്ങളുടെ ബാങ്ക് അക്കൗണ്ട് ഇന്ന് ബ്ലോക്ക് ചെയ്യും. ഉടൻ തന്നെ നിങ്ങളുടെ ഫോണിൽ വന്ന OTP ഞങ്ങളോട് പറയുക.'}
  ],
  email:[
   {n:{en:'Spoofed bank',kn:'ನಕಲಿ ಬ್ಯಾಂಕ್'},v:`From: "Canara Bank Security" <alerts@canarabank-secure.co>
@@ -1358,12 +1432,29 @@ function analyzeJob(text){
 
 /* ---------- result extras: breakdown, language, similar scam, family share ---------- */
 const KANGLISH=/\b(maadi|madi|nimma|nimage|bega|aagutte|agutte|illa|ide|banni|kalisi|heli|koodale|ivattu|raatri|naale|gante|beku|swalpa|yaake|enu|houdu|alli|ge)\b/gi;
+const SCRIPTS=[
+  {re:/[ಀ-೿]/g,en:'Kannada',kn:'ಕನ್ನಡ'},
+  {re:/[ऀ-ॿ]/g,en:'Hindi',kn:'ಹಿಂದಿ'},
+  {re:/[஀-௿]/g,en:'Tamil',kn:'ತಮಿಳು'},
+  {re:/[ఀ-౿]/g,en:'Telugu',kn:'ತೆಲುಗು'},
+  {re:/[ഀ-ൿ]/g,en:'Malayalam',kn:'ಮಲಯಾಳಂ'}
+];
+const ROMAN=[
+  {re:KANGLISH,en:'Kanglish (Kannada in English letters)',kn:'ಕಂಗ್ಲಿಷ್ (ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರದಲ್ಲಿ ಕನ್ನಡ)'},
+  {re:/\b(aapka|aapke|aapki|apna|khata|kijiye|karein|karo|hoga|jayega|turant|jaldi|paise|bhejo|batao|nahi|hai|hain|mat)\b/gi,en:'Hinglish (Hindi in English letters)',kn:'ಹಿಂಗ್ಲಿಷ್ (ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರದಲ್ಲಿ ಹಿಂದಿ)'},
+  {re:/\b(ungal|unga|pannunga|panunga|sollunga|anuppunga|illai|irukku|vendam|udanadiyaga)\b/gi,en:'Tanglish (Tamil in English letters)',kn:'ತಂಗ್ಲಿಷ್ (ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರದಲ್ಲಿ ತಮಿಳು)'},
+  {re:/\b(meeru|mee|cheyandi|ventane|cheppandi|pampandi|ledu|undi|avutundi)\b/gi,en:'Telugu in English letters',kn:'ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರದಲ್ಲಿ ತೆಲುಗು'},
+  {re:/\b(ningal|ningalude|cheyyuka|parayu|parayuka|aanu|aakum|venam|thanne)\b/gi,en:'Manglish (Malayalam in English letters)',kn:'ಮಂಗ್ಲಿಷ್ (ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರದಲ್ಲಿ ಮಲಯಾಳಂ)'}
+];
 function detectLang(text){
-  const kn=(text.match(/[ಀ-೿]/g)||[]).length, la=(text.match(/[a-z]/gi)||[]).length;
-  const kg=(text.match(KANGLISH)||[]).length;
-  if(kn>8 && la>20) return {en:'Kannada + English',kn:'ಕನ್ನಡ + ಇಂಗ್ಲಿಷ್'};
-  if(kn>8) return {en:'Kannada',kn:'ಕನ್ನಡ'};
-  if(kg>=2) return {en:'Kanglish (Kannada in English letters)',kn:'ಕಂಗ್ಲಿಷ್ (ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರದಲ್ಲಿ ಕನ್ನಡ)'};
+  const la=(text.match(/[a-z]/gi)||[]).length;
+  const found=SCRIPTS.map(x=>({...x,n:(text.match(x.re)||[]).length})).filter(x=>x.n>8).sort((a,b)=>b.n-a.n);
+  if(found.length){
+    const parts=found.map(x=>x), addEn = la>20;
+    return {en:parts.map(x=>x.en).join(' + ')+(addEn?' + English':''), kn:parts.map(x=>x.kn).join(' + ')+(addEn?' + ಇಂಗ್ಲಿಷ್':'')};
+  }
+  const rom=ROMAN.map(x=>({...x,n:(text.match(x.re)||[]).length})).filter(x=>x.n>=2).sort((a,b)=>b.n-a.n)[0];
+  if(rom) return {en:rom.en,kn:rom.kn};
   return {en:'English',kn:'ಇಂಗ್ಲಿಷ್'};
 }
 let scamTokenSets=null;
@@ -1380,10 +1471,10 @@ const BREAKDOWN=[
   {en:'Asks for OTP, PIN, passwords or documents',kn:'OTP, PIN, ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ದಾಖಲೆ ಬೇಡಿಕೆ',ids:['otpshare','upipin','creds','j_docs']},
   {en:'Money or fee demand',kn:'ಹಣ ಅಥವಾ ಶುಲ್ಕದ ಬೇಡಿಕೆ',ids:['money','scheme','gulf','prize','job','j_fee','j_pay','q_pay','q_refund']},
   {en:'Suspicious link, QR or app',kn:'ಅನುಮಾನಾಸ್ಪದ ಲಿಂಕ್, QR ಅಥವಾ ಆ್ಯಪ್',ids:['link','remote','challan','q_url']},
-  {en:'Impersonation of a known organisation',kn:'ಪರಿಚಿತ ಸಂಸ್ಥೆಯಂತೆ ನಟನೆ',ids:['id','family','q_name','q_phone','j_brand','j_mail']}
+  {en:'Impersonation of a known organisation',kn:'ಪರಿಚಿತ ಸಂಸ್ಥೆಯಂತೆ ನಟನೆ',ids:['id','family','q_name','q_phone','j_brand','j_mail','ctx_req','ctx_sender']}
 ];
 function breakdownHTML(ex, b){
-  const ids=new Set((last.flags||[]).filter(f=>f.sev==='high'||f.sev==='mid').map(f=>f.id).filter(Boolean));
+  const ids=new Set([...(last.flags||[]), ...ctxFlags()].filter(f=>f.sev==='high'||f.sev==='mid').map(f=>f.id).filter(Boolean));
   const urlBad = mode==='url' && (last.flags||[]).some(f=>f.sev==='high'||f.sev==='mid');
   const rows=BREAKDOWN.map((c,i)=>{ const hit=c.ids.some(id=>ids.has(id)) || (i===4 && urlBad) || (i===5 && !!ex.org && finalScore()>=30);
     return `<tr><td>${esc(L(c))}</td><td class="n">${hit?`<span class="badge danger"><span class="dot"></span>${lang==='kn'?'ಪತ್ತೆಯಾಗಿದೆ':'Detected'}</span>`:`<span class="muted small">${lang==='kn'?'ಕಂಡುಬಂದಿಲ್ಲ':'Not found'}</span>`}</td></tr>`; }).join('');
@@ -1456,10 +1547,49 @@ document.addEventListener('click',e=>{ const b=e.target.closest('#quizCard [data
 function applyBig(){ const on=store.get('ec-big',false); document.documentElement.classList.toggle('big',on); const b=$('bigBtn'); if(b){ b.setAttribute('aria-pressed',String(on)); } }
 
 /* ======================= Result render ======================= */
-const RESICON = {safe:'ok', warn:'warn', danger:'x', none:'search'};
+const RESICON = {safe:'ok', warn:'warn', danger:'x', none:'search', ctx:'info'};
+/* ---- context questions: earlier request? who sent it? ---- */
+let ctxAns={key:null, req:null, sender:null};
+function ctxKey(){ return mode+'|'+(last&&last.text||''); }
+function ctxDetectSender(text){
+  if(/^\s*[A-Z]{2}-[A-Z0-9]{3,8}(-[SPTG])?\s*[:\n]/.test(text)) return 'official';
+  if(/^\s*(from:?\s*)?\+?\d[\d\s-]{9,}\d\s*[:\n]/i.test(text)) return 'unknown';
+  return null;
+}
+function ctxSync(){ if(!last || ctxAns.key===ctxKey()) return; ctxAns={key:ctxKey(), req:null, sender:last.text?ctxDetectSender(last.text):null}; }
+const askContext = () => !!(last && !last.error && !last.pending && !last.qr && mode!=='url' && mode!=='web' && last.text && (last.ctx&&last.ctx.length || (fuse(last.score,last.ml,last.safeCue)>=30 && fuse(last.score,last.ml,last.safeCue)<60)));
 function finalScore(){
   if(!last || last.error || last.pending) return null;
-  return fuse(last.score, last.ml);
+  let s = fuse(last.score, last.ml, last.safeCue);
+  if(!askContext()) return s;
+  ctxSync();
+  const strong = last.score>=45;
+  if(last.ctx && last.ctx.length && !strong && ctxAns.req==null) s=Math.min(s, last.score<20 ? 29 : 59);
+  if(ctxAns.req==='no') s=Math.max(s+20,50); else if(ctxAns.req==='unsure') s+=5; else if(ctxAns.req==='yes' && !strong) s-=8;
+  if(ctxAns.sender==='unknown') s+=15; else if((ctxAns.sender==='official'||ctxAns.sender==='saved') && !strong) s-=10;
+  if(ctxAns.req==='no' && ctxAns.sender==='unknown') s=Math.max(s,62);
+  return Math.max(0, Math.min(100, Math.round(s)));
+}
+function vband(s){ return (last && last.ctx && last.ctx.length && (ctxAns.req==null||ctxAns.req==='unsure') && s<30) ? 'ctx' : band(s); }
+function ctxFlags(){
+  if(!askContext()) return [];
+  const f=[];
+  if(ctxAns.req==='no') f.push({id:'ctx_req',sev:'mid',w:.3,label:{en:'You made no such request',kn:'ನೀವು ಅಂತಹ ವಿನಂತಿ ಮಾಡಿಲ್ಲ'},why:{en:'A message about a request, complaint or order you never made is a common way to start a scam.',kn:'ನೀವು ಮಾಡದ ವಿನಂತಿ, ದೂರು ಅಥವಾ ಆರ್ಡರ್ ಬಗ್ಗೆ ಸಂದೇಶ ವಂಚನೆ ಆರಂಭಿಸುವ ಸಾಮಾನ್ಯ ವಿಧಾನ.'}});
+  if(ctxAns.sender==='unknown') f.push({id:'ctx_sender',sev:'mid',w:.3,label:{en:'Sent from an unknown mobile number',kn:'ಅಪರಿಚಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯಿಂದ ಬಂದಿದೆ'},why:{en:'Banks, ESCOMs and government offices send SMS from registered sender IDs such as JM-SBIINB, not from personal 10-digit numbers.',kn:'ಬ್ಯಾಂಕ್, ESCOM ಮತ್ತು ಸರ್ಕಾರಿ ಕಚೇರಿಗಳು JM-SBIINB ನಂತಹ ನೋಂದಾಯಿತ ಸೆಂಡರ್ ID ಯಿಂದ SMS ಕಳುಹಿಸುತ್ತವೆ, ವೈಯಕ್ತಿಕ 10-ಅಂಕಿ ಸಂಖ್ಯೆಯಿಂದಲ್ಲ.'}});
+  if(ctxAns.sender==='official') f.push({sev:'safe',w:0,label:{en:'Registered sender ID',kn:'ನೋಂದಾಯಿತ ಸೆಂಡರ್ ID'},why:{en:'Registered sender IDs are harder to fake, but links and numbers inside the message still need checking.',kn:'ನೋಂದಾಯಿತ ಸೆಂಡರ್ ID ನಕಲಿ ಮಾಡುವುದು ಕಷ್ಟ, ಆದರೆ ಸಂದೇಶದ ಲಿಂಕ್ ಮತ್ತು ಸಂಖ್ಯೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.'}});
+  if(ctxAns.req==='yes') f.push({sev:'safe',w:0,label:{en:'You did contact them recently',kn:'ನೀವು ಇತ್ತೀಚೆಗೆ ಸಂಪರ್ಕಿಸಿದ್ದೀರಿ'},why:{en:'It may be genuine. Scammers also time messages after real complaints, so reply only through the channel you used.',kn:'ಇದು ನಿಜವಿರಬಹುದು. ವಂಚಕರೂ ನಿಜವಾದ ದೂರಿನ ನಂತರ ಸಂದೇಶ ಕಳುಹಿಸುತ್ತಾರೆ, ನೀವು ಬಳಸಿದ ದಾರಿಯ ಮೂಲಕ ಮಾತ್ರ ಉತ್ತರಿಸಿ.'}});
+  return f;
+}
+function ctxHTML(){
+  if(!askContext()) return '';
+  const kn=lang==='kn';
+  const opt=(q,v,en,k)=>`<button class="btn sec sm cq${ctxAns[q]===v?' on':''}" data-cq="${q}" data-v="${v}" aria-pressed="${ctxAns[q]===v}">${kn?k:en}</button>`;
+  return `<div class="block ctxq" id="ctxq"><p class="block-h">${kn?'ಸಂದರ್ಭ ತಿಳಿಸಿ, ತೀರ್ಪು ಹೆಚ್ಚು ನಿಖರವಾಗುತ್ತದೆ':'Add context for a surer verdict'}</p>
+    <p class="small" style="margin:0 0 6px">${kn?'ಇತ್ತೀಚೆಗೆ ನೀವು ಈ ಸಂಸ್ಥೆಯನ್ನು ಸಂಪರ್ಕಿಸಿದ್ದೀರಾ ಅಥವಾ ವಿನಂತಿ ಮಾಡಿದ್ದೀರಾ?':'Did you contact this organisation or make a request recently?'}</p>
+    <div class="actions">${opt('req','yes','Yes','ಹೌದು')}${opt('req','no','No','ಇಲ್ಲ')}${opt('req','unsure','Not sure','ಗೊತ್ತಿಲ್ಲ')}</div>
+    <p class="small" style="margin:12px 0 6px">${kn?'ಇದನ್ನು ಯಾರು ಕಳುಹಿಸಿದ್ದಾರೆ?':'Who sent it?'}</p>
+    <div class="actions">${opt('sender','official','Registered sender ID (e.g. JM-SBIINB)','ನೋಂದಾಯಿತ ಸೆಂಡರ್ ID (ಉದಾ: JM-SBIINB)')}${opt('sender','saved','Saved contact','ಉಳಿಸಿದ ಸಂಪರ್ಕ')}${opt('sender','unknown','Unknown mobile number','ಅಪರಿಚಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ')}</div>
+    <p class="small muted" style="margin-top:8px">${kn?'ನಿಮ್ಮ ಉತ್ತರಗಳು ಈ ಸಾಧನದಲ್ಲೇ ಇರುತ್ತವೆ.':'Your answers stay on this device.'}</p></div>`;
 }
 /* ---- local explanation engine ---- */
 const TYPES = {kyc:{en:'KYC phishing',kn:'KYC ಫಿಶಿಂಗ್'},upipin:{en:'UPI collect-request scam',kn:'UPI collect request ವಂಚನೆ'},secrecy:{en:'Digital arrest / impersonation',kn:'ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್ / ನಟನೆ'},power:{en:'Power-cut scam',kn:'ವಿದ್ಯುತ್ ಕಡಿತ ವಂಚನೆ'},scheme:{en:'Government-scheme fee scam',kn:'ಸರ್ಕಾರಿ ಯೋಜನೆ ಶುಲ್ಕ ವಂಚನೆ'},challan:{en:'Fake e-challan',kn:'ನಕಲಿ ಇ-ಚಲನ್'},family:{en:'Relative impersonation',kn:'ಸಂಬಂಧಿಕರಂತೆ ನಟನೆ'},gulf:{en:'Overseas job scam',kn:'ವಿದೇಶಿ ಉದ್ಯೋಗ ವಂಚನೆ'},job:{en:'Task / job scam',kn:'ಟಾಸ್ಕ್ / ಉದ್ಯೋಗ ವಂಚನೆ'},otpshare:{en:'OTP theft',kn:'OTP ಕಳ್ಳತನ'},remote:{en:'Remote-access scam',kn:'ರಿಮೋಟ್ ಆಕ್ಸೆಸ್ ವಂಚನೆ'},prize:{en:'Prize / lottery scam',kn:'ಬಹುಮಾನ / ಲಾಟರಿ ವಂಚನೆ'},parcel:{en:'Parcel scam',kn:'ಪಾರ್ಸೆಲ್ ವಂಚನೆ'},creds:{en:'Credential phishing',kn:'ಲಾಗಿನ್ ಫಿಶಿಂಗ್'},link:{en:'Phishing link',kn:'ಫಿಶಿಂಗ್ ಲಿಂಕ್'},money:{en:'Payment fraud',kn:'ಪಾವತಿ ವಂಚನೆ'},threat:{en:'Threat-based scam',kn:'ಬೆದರಿಕೆ ವಂಚನೆ'},email:{en:'Spoofed email',kn:'ನಕಲಿ ಇಮೇಲ್'},site:{en:'Cloned website',kn:'ನಕಲಿ ವೆಬ್‌ಸೈಟ್'},jobfake:{en:'Fake job or internship',kn:'ನಕಲಿ ಉದ್ಯೋಗ / ಇಂಟರ್ನ್‌ಶಿಪ್'},qrpay:{en:'QR payment trap',kn:'QR ಪಾವತಿ ಬಲೆ'}};
@@ -1488,6 +1618,9 @@ function explain(r, s){
   } else if(s>=30){
     en = `This message has warning signs${org?` and mentions ${org}`:''}: ${bad.map(f=>f.label.en).join('; ')||'unusual wording'}. Check with the organisation through its official app before you act.`;
     kn = `ಈ ಸಂದೇಶದಲ್ಲಿ ಎಚ್ಚರಿಕೆಯ ಲಕ್ಷಣಗಳಿವೆ${org?` (${org} ಉಲ್ಲೇಖ)`:''}: ${bad.map(f=>f.label.kn||f.label.en).join('; ')||'ಅಸಾಮಾನ್ಯ ಪದಗಳು'}. ಕ್ರಮ ಕೈಗೊಳ್ಳುವ ಮೊದಲು ಅಧಿಕೃತ ಆ್ಯಪ್‌ನಲ್ಲಿ ಪರಿಶೀಲಿಸಿ.`;
+  } else if(r.ctx && r.ctx.length && (ctxAns.req==null||ctxAns.req==='unsure')){
+    en = `This message refers to an earlier request or conversation${r.specific?'':' but gives nothing that proves who sent it'}. Echchara will not call it safe or a scam without context. Answer the two questions below, and do not share codes or pay until you have checked with the organisation directly.`;
+    kn = `ಈ ಸಂದೇಶ ಹಿಂದಿನ ವಿನಂತಿ ಅಥವಾ ಮಾತುಕತೆಯನ್ನು ಉಲ್ಲೇಖಿಸುತ್ತದೆ${r.specific?'':', ಆದರೆ ಕಳುಹಿಸಿದವರು ಯಾರು ಎಂಬುದಕ್ಕೆ ಪುರಾವೆ ಇಲ್ಲ'}. ಸಂದರ್ಭ ತಿಳಿಯದೆ ಎಚ್ಚರ ಇದನ್ನು ಸುರಕ್ಷಿತ ಅಥವಾ ವಂಚನೆ ಎನ್ನುವುದಿಲ್ಲ. ಕೆಳಗಿನ ಎರಡು ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ. ಸಂಸ್ಥೆಯೊಂದಿಗೆ ನೇರವಾಗಿ ಖಚಿತಪಡಿಸುವವರೆಗೆ ಕೋಡ್ ಹಂಚಬೇಡಿ, ಹಣ ಕೊಡಬೇಡಿ.`;
   } else {
     const good = (r.flags||[]).filter(f=>f.sev==='safe').slice(0,2);
     en = `We found no strong scam signals${good.length?`. Reassuring signs: ${good.map(f=>f.label.en).join('; ')}`:''}. If money or a code is involved, confirm with the sender through a number you already know.`;
@@ -1552,17 +1685,20 @@ function renderVerdict(){
     return;
   }
   const s=finalScore();
-  const b = band(s);
-  const ex = explain(last, s);
+  const b = vband(s);
+  const cflags=[...ctxFlags(), ...(last.flags||[])];
+  const ex = explain({...last, flags:cflags}, s);
+  const col = b==='ctx' ? 'var(--warn)' : colorFor(s);
   const order={high:0,mid:1,low:2,safe:3};
-  const flags=[...(last.flags||[])].sort((a,c)=>order[a.sev]-order[c.sev] || c.w-a.w);
+  const flags=[...cflags].sort((a,c)=>order[a.sev]-order[c.sev] || c.w-a.w);
   const fic = {high:'x', mid:'warn', low:'info', safe:'ok'};
   const moves = (last.moves||[]).slice(0,4);
   const sumText = L(ex.summary);
   v.innerHTML = `
-    <div class="res-top"><div class="res-ic ${b}">${ico(RESICON[b])}</div><div style="min-width:0"><div class="res-t ${b}">${t('v.'+b)}</div><p class="res-s">${t('v.'+b+'Sub')}</p></div><div class="score"><b style="color:${colorFor(s)}">${s}</b><span>${t('risk')} / 100</span></div></div>
-    <div class="meter" role="img" aria-label="${t('risk')} ${s}/100"><b style="width:${Math.max(3,s)}%; background:${colorFor(s)}"></b></div>
+    <div class="res-top"><div class="res-ic ${b}">${ico(RESICON[b])}</div><div style="min-width:0"><div class="res-t ${b}">${t('v.'+b)}</div><p class="res-s">${t('v.'+b+'Sub')}</p></div><div class="score"><b style="color:${col}">${s}</b><span>${t('risk')} / 100</span></div></div>
+    <div class="meter" role="img" aria-label="${t('risk')} ${s}/100"><b style="width:${Math.max(3,s)}%; background:${col}"></b></div>
     <div class="block"><div class="block-h"><span>${t('sum.h')}</span>${canSpeak?`<button class="btn sec sm" id="ttsBtn">${speaking?t('ai.stop'):t('ai.listen')}</button>`:''}</div><div class="aisum"><p>${esc(sumText)}</p>${ex.type||ex.org?`<p class="meta">${ex.type?`${t('ai.type')}: ${esc(L(ex.type))}`:''}${ex.type&&ex.org?' · ':''}${ex.org?`${t('ai.imp')}: ${esc(ex.org)}`:''}</p>`:''}</div></div>
+    ${ctxHTML()}
     ${breakdownHTML(ex, b)}
     <div class="block"><p class="block-h">${t('eng.h')}</p><div class="engines">
       <div class="eng"><span class="nm">${ico('rules')}${t('sig.rules')}</span><span class="val"><span style="color:${colorFor(last.score)}">${last.score}</span><span class="muted small">/ 100</span></span></div>
@@ -1575,13 +1711,14 @@ function renderVerdict(){
     ${s>=30?shareHTML(s,b,sumText,moves):''}
     ${last.text && mode!=='url' && !last.qr?`<div class="block fb" id="fb"><span>${t('fb.q')}</span><button class="btn sec sm" data-y="1">${t('fb.yes')}</button><button class="btn sec sm" data-y="0">${t('fb.no')}</button></div>`:''}`;
   wireShare(s,b,sumText,moves);
+  const cq=$('ctxq'); if(cq) cq.onclick=e=>{ const k=e.target.closest('[data-cq]'); if(!k) return; const q=k.dataset.cq, v=k.dataset.v; ctxAns[q] = ctxAns[q]===v ? null : v; renderVerdict(); };
   const tb=$('ttsBtn'); if(tb) tb.onclick=()=>speak(`${t('v.'+b)}. ${sumText} ${moves.slice(0,2).map(m=>L(m)).join(' ')}`);
   const fb=$('fb'); if(fb) fb.onclick=e=>{ const y=e.target.closest('[data-y]')?.dataset.y; if(y==null) return; const txt = mode==='email'?parseEmail(inputs.email).body: mode==='web'?inputs.webc: last.text; if(txt && txt.trim()){ userRows.push([+y, txt]); store.set('ec-feedback', userRows.slice(-200)); retrain(); } fb.innerHTML=`<span>${t('fb.thanks')}</span>`; };
 }
 
 /* ======================= Home ======================= */
 function renderPreview(){
-  const txt = SAMPLES.msg[1].v; const a=analyzeText(txt); const s=fuse(a.score, predictNB(NB,txt)); const b=band(s);
+  const txt = SAMPLES.msg[1].v; const a=analyzeText(txt); const s=fuse(a.score, predictNB(NB,txt), a.safeCue); const b=band(s);
   const top=a.flags.filter(f=>f.sev==='high').slice(0,3);
   $('previewCard').innerHTML = `<p class="small muted" style="margin-bottom:10px">${lang==='kn'?'ಉದಾಹರಣೆ ಫಲಿತಾಂಶ':'Example result'}</p>
    <p class="quote" style="margin-bottom:14px">${highlight(txt, a.ranges)}</p>
@@ -1589,7 +1726,7 @@ function renderPreview(){
    <ul class="findings" style="margin-top:14px">${top.map(f=>`<li class="fi high">${ico('x')}<div><b>${esc(L(f.label))}</b></div></li>`).join('')}</ul>`;
 }
 const FEATS = [
- {m:'msg',h:{en:'SMS & WhatsApp',kn:'SMS ಮತ್ತು ವಾಟ್ಸಾಪ್'},p:{en:'KYC, UPI, power-cut, job and prize scams, in Kannada and English.',kn:'KYC, UPI, ವಿದ್ಯುತ್ ಕಡಿತ, ಉದ್ಯೋಗ, ಬಹುಮಾನ ವಂಚನೆಗಳು.'}},
+ {m:'msg',h:{en:'SMS & WhatsApp',kn:'SMS ಮತ್ತು ವಾಟ್ಸಾಪ್'},p:{en:'KYC, UPI, power-cut, job and prize scams in Kannada, English, Hindi, Tamil, Telugu and Malayalam.',kn:'ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು, ಮಲಯಾಳಂನಲ್ಲಿ KYC, UPI, ವಿದ್ಯುತ್ ಕಡಿತ, ಉದ್ಯೋಗ, ಬಹುಮಾನ ವಂಚನೆಗಳು.'}},
  {m:'email',h:{en:'Emails',kn:'ಇಮೇಲ್'},p:{en:'Spoofed senders, failed authentication, mismatched reply addresses, risky attachments.',kn:'ನಕಲಿ ಕಳುಹಿಸುವವರು, ದೃಢೀಕರಣ ವೈಫಲ್ಯ, ಅಪಾಯಕಾರಿ ಲಗತ್ತು.'}},
  {m:'url',h:{en:'Links',kn:'ಲಿಂಕ್'},p:{en:'Look-alike and misspelled domains, hidden redirects, IP links and app downloads.',kn:'ನಕಲಿ ಮತ್ತು ತಪ್ಪು ಕಾಗುಣಿತದ ಡೊಮೇನ್, IP ಲಿಂಕ್, ಆ್ಯಪ್ ಡೌನ್‌ಲೋಡ್.'}},
  {m:'web',h:{en:'Websites',kn:'ವೆಬ್‌ಸೈಟ್'},p:{en:'Cloned bank and booking pages that ask for passwords, OTPs or card details.',kn:'ಪಾಸ್‌ವರ್ಡ್, OTP, ಕಾರ್ಡ್ ಕೇಳುವ ನಕಲಿ ಬ್ಯಾಂಕ್ ಪುಟಗಳು.'}},
@@ -1639,7 +1776,7 @@ const LIVE = [
 ];
 let liveTimers=[];
 function renderSMS(m){
-  const a=analyzeText(m.text); const s=fuse(a.score, predictNB(NB,m.text)); const b=band(s);
+  const a=analyzeText(m.text); const s=fuse(a.score, predictNB(NB,m.text), a.safeCue); const b=band(s);
   const pick=a.flags.find(f=>f.sev==='high')||a.flags.find(f=>f.sev==='mid');
   const label = b==='danger'?(lang==='kn'?'ಬಹುಶಃ ವಂಚನೆ':'Likely scam'):b==='warn'?(lang==='kn'?'ಅನುಮಾನಾಸ್ಪದ':'Suspicious'):(lang==='kn'?'ಸುರಕ್ಷಿತ':'Looks safe');
   let body=esc(m.text);
@@ -1676,7 +1813,7 @@ function renderProtect(){
 }
 let botLog=[];
 function botReply(text){
-  const a=analyzeText(text); const s=fuse(a.score,predictNB(NB,text)); const b=band(s);
+  const a=analyzeText(text); const s=fuse(a.score,predictNB(NB,text),a.safeCue); const b=band(s);
   const top=a.flags.filter(f=>f.sev!=='safe').slice(0,2).map(f=>'• '+L(f.label)).join('\n');
   const mv=a.moves[0]?L(a.moves[0]):'';
   return `<div class="bub bt"><span class="badge ${b}" style="margin-bottom:6px"><span class="dot"></span>${t('v.'+b)} · ${s}/100</span>\n${esc(top||t('v.'+b+'Sub'))}${mv?'\n\n'+esc(mv):''}</div>`;
@@ -1715,7 +1852,7 @@ const fmt = s => String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padSt
 function callAnalysis(){
   const text=call.lines.join('\n');
   if(!text.trim()) return {s:0, a:{flags:[]}, ex:null};
-  const a=analyzeText(text); const s=fuse(a.score, predictNB(NB,text));
+  const a=analyzeText(text); const s=fuse(a.score, predictNB(NB,text), a.safeCue);
   return {s, a, ex:explain({flags:a.flags, text}, s)};
 }
 function renderCallControls(){
@@ -1831,9 +1968,9 @@ function renderCallShield(){ renderCallControls(); renderCallInfo(); if(call.sta
 /* ======================= Technology ======================= */
 function evalOn(rows, fn){ let tp=0,tn=0,fp=0,fn_=0; const wrong=[]; for(const [y,x] of rows){ const p=fn(x)?1:0; if(p&&y)tp++; else if(!p&&!y)tn++; else if(p&&!y){fp++; wrong.push([y,x]);} else {fn_++; wrong.push([y,x]);} } const acc=(tp+tn)/rows.length, prec=tp/(tp+fp)||0, rec=tp/(tp+fn_)||0, f1=2*prec*rec/(prec+rec)||0; return {tp,tn,fp,fn:fn_,acc,prec,rec,f1,wrong}; }
 function renderModelCard(){
-  const st=[[{en:'Input',kn:'ಇನ್‌ಪುಟ್'},{en:'SMS, email, link, website or screenshot',kn:'SMS, ಇಮೇಲ್, ಲಿಂಕ್, ವೆಬ್‌ಸೈಟ್, ಸ್ಕ್ರೀನ್‌ಶಾಟ್'},{en:'English, Kannada or Kanglish. Links are read as text and never opened.',kn:'ಇಂಗ್ಲಿಷ್, ಕನ್ನಡ ಅಥವಾ ಕಂಗ್ಲಿಷ್. ಲಿಂಕ್‌ಗಳನ್ನು ತೆರೆಯುವುದಿಲ್ಲ.'}],[{en:'Features',kn:'ಲಕ್ಷಣಗಳು'},{en:'URL anatomy and 20 scam rules',kn:'URL ರಚನೆ ಮತ್ತು 20 ನಿಯಮಗಳು'},{en:'Look-alike domains, IP links, risky endings, KYC / UPI / power-cut wording, email headers.',kn:'ನಕಲಿ ಡೊಮೇನ್, IP ಲಿಂಕ್, KYC / UPI / ವಿದ್ಯುತ್ ಕಡಿತ ಪದಗಳು, ಇಮೇಲ್ ಹೆಡರ್.'}],[{en:'Models',kn:'ಮಾದರಿಗಳು'},{en:'Naive Bayes classifier + OCR',kn:'Naive Bayes + OCR'},{en:'The classifier is trained in the browser. On-device OCR reads screenshots, and an explanation engine writes the summary.',kn:'ವರ್ಗೀಕರಣ ಬ್ರೌಸರ್‌ನಲ್ಲೇ ತರಬೇತಿ. ಸಾಧನದಲ್ಲೇ OCR ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಓದುತ್ತದೆ, ವಿವರಣಾ ಎಂಜಿನ್ ಸಾರಾಂಶ ಬರೆಯುತ್ತದೆ.'}],[{en:'Verdict',kn:'ತೀರ್ಪು'},{en:'Safe · Suspicious · Dangerous',kn:'ಸುರಕ್ಷಿತ · ಅನುಮಾನಾಸ್ಪದ · ಅಪಾಯಕಾರಿ'},{en:'A weighted combination of all three, with reasons and next steps.',kn:'ಮೂರರ ಸಂಯೋಜನೆ, ಕಾರಣ ಮತ್ತು ಮುಂದಿನ ಕ್ರಮದೊಂದಿಗೆ.'}],[{en:'Delivery',kn:'ವಿತರಣೆ'},{en:'Website + Android app',kn:'ವೆಬ್‌ಸೈಟ್ + Android ಆ್ಯಪ್'},{en:'The same engine everywhere, warning before the click or payment.',kn:'ಎಲ್ಲೆಡೆ ಒಂದೇ ಎಂಜಿನ್, ಕ್ಲಿಕ್ ಅಥವಾ ಪಾವತಿಯ ಮೊದಲೇ ಎಚ್ಚರಿಕೆ.'}]];
+  const st=[[{en:'Input',kn:'ಇನ್‌ಪುಟ್'},{en:'SMS, email, link, website or screenshot',kn:'SMS, ಇಮೇಲ್, ಲಿಂಕ್, ವೆಬ್‌ಸೈಟ್, ಸ್ಕ್ರೀನ್‌ಶಾಟ್'},{en:'Kannada, English, Hindi, Tamil, Telugu or Malayalam, or a mix. Links are read as text and never opened.',kn:'ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು ಅಥವಾ ಮಲಯಾಳಂ, ಅಥವಾ ಮಿಶ್ರ. ಲಿಂಕ್‌ಗಳನ್ನು ತೆರೆಯುವುದಿಲ್ಲ.'}],[{en:'Features',kn:'ಲಕ್ಷಣಗಳು'},{en:'URL anatomy and 20 scam rules',kn:'URL ರಚನೆ ಮತ್ತು 20 ನಿಯಮಗಳು'},{en:'Look-alike domains, IP links, risky endings, KYC / UPI / power-cut wording, email headers.',kn:'ನಕಲಿ ಡೊಮೇನ್, IP ಲಿಂಕ್, KYC / UPI / ವಿದ್ಯುತ್ ಕಡಿತ ಪದಗಳು, ಇಮೇಲ್ ಹೆಡರ್.'}],[{en:'Models',kn:'ಮಾದರಿಗಳು'},{en:'Naive Bayes classifier + OCR',kn:'Naive Bayes + OCR'},{en:'The classifier is trained in the browser. On-device OCR reads screenshots, and an explanation engine writes the summary.',kn:'ವರ್ಗೀಕರಣ ಬ್ರೌಸರ್‌ನಲ್ಲೇ ತರಬೇತಿ. ಸಾಧನದಲ್ಲೇ OCR ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಓದುತ್ತದೆ, ವಿವರಣಾ ಎಂಜಿನ್ ಸಾರಾಂಶ ಬರೆಯುತ್ತದೆ.'}],[{en:'Verdict',kn:'ತೀರ್ಪು'},{en:'Safe · Suspicious · Dangerous',kn:'ಸುರಕ್ಷಿತ · ಅನುಮಾನಾಸ್ಪದ · ಅಪಾಯಕಾರಿ'},{en:'A weighted combination of all three, with reasons and next steps.',kn:'ಮೂರರ ಸಂಯೋಜನೆ, ಕಾರಣ ಮತ್ತು ಮುಂದಿನ ಕ್ರಮದೊಂದಿಗೆ.'}],[{en:'Delivery',kn:'ವಿತರಣೆ'},{en:'Website + Android app',kn:'ವೆಬ್‌ಸೈಟ್ + Android ಆ್ಯಪ್'},{en:'The same engine everywhere, warning before the click or payment.',kn:'ಎಲ್ಲೆಡೆ ಒಂದೇ ಎಂಜಿನ್, ಕ್ಲಿಕ್ ಅಥವಾ ಪಾವತಿಯ ಮೊದಲೇ ಎಚ್ಚರಿಕೆ.'}]];
   $('pipe').innerHTML=st.map((s,i)=>`<div class="stage"><span class="k"><i>${i+1}</i>${esc(L(s[0]))}</span><h3>${esc(L(s[1]))}</h3><p>${esc(L(s[2]))}</p></div>`).join('');
-  const rules=evalOn(TEST,x=>analyzeText(x).score>=30), ml=evalOn(TEST,x=>predictNB(NB,x)>=.5), comb=evalOn(TEST,x=>fuse(analyzeText(x).score,predictNB(NB,x))>=30);
+  const rules=evalOn(TEST,x=>analyzeText(x).score>=30), ml=evalOn(TEST,x=>predictNB(NB,x)>=.5), comb=evalOn(TEST,x=>{ const a=analyzeText(x); return fuse(a.score,predictNB(NB,x),a.safeCue)>=30; });
   const pct=v=>(v*100).toFixed(0)+'%';
   $('dataInfo').textContent = lang==='kn'?`${TRAIN.length} ತರಬೇತಿ · ${TEST.length} ಪರೀಕ್ಷೆ`:`${TRAIN.length} training · ${TEST.length} test messages${userRows.length?` · ${userRows.length} from feedback`:''}`;
   const hdr=lang==='kn'?['ಎಂಜಿನ್','ನಿಖರತೆ','Precision','Recall','F1']:['Engine','Accuracy','Precision','Recall','F1'];
@@ -1841,8 +1978,8 @@ function renderModelCard(){
   const a=lang==='kn'?['ನಿಜ: ವಂಚನೆ','ನಿಜ: ಸರಿ','ಊಹೆ: ವಂಚನೆ','ಊಹೆ: ಸರಿ']:['Actual scam','Actual genuine','Flagged','Cleared'];
   $('cm').innerHTML=`<div class="h"></div><div class="h">${a[2]}</div><div class="h">${a[3]}</div><div class="h" style="text-align:right">${a[0]}</div><div class="ok"><b>${comb.tp}</b>${lang==='kn'?'ಹಿಡಿದದ್ದು':'caught'}</div><div class="bad"><b>${comb.fn}</b>${lang==='kn'?'ತಪ್ಪಿದ್ದು':'missed'}</div><div class="h" style="text-align:right">${a[1]}</div><div class="bad"><b>${comb.fp}</b>${lang==='kn'?'ತಪ್ಪು ಎಚ್ಚರಿಕೆ':'false alarm'}</div><div class="ok"><b>${comb.tn}</b>${lang==='kn'?'ಸರಿಯಾಗಿ ಬಿಟ್ಟದ್ದು':'cleared'}</div>`;
   const fpText=SAMPLES.msg[6].v, fnText="Hi Amma this is my new number, my old phone fell in water. Can you send 8000 to this UPI for college fees today? Will explain later.";
-  const fpB=analyzeText(fpText,{disable:['negation']}).score, fpA=fuse(analyzeText(fpText).score,predictNB(NB,fpText));
-  const fnB=analyzeText(fnText,{disable:['family']}).score, fnA=fuse(analyzeText(fnText).score,predictNB(NB,fnText));
+  const fpB=analyzeText(fpText,{disable:['negation']}).score, fpA=(a=>fuse(a.score,predictNB(NB,fpText),a.safeCue))(analyzeText(fpText));
+  const fnB=analyzeText(fnText,{disable:['family']}).score, fnA=(a=>fuse(a.score,predictNB(NB,fnText),a.safeCue))(analyzeText(fnText));
   const bw=s=>`<span class="v" style="color:${colorFor(s)}">${s}</span> <span class="small muted">${t('v.'+band(s))}</span>`;
   $('mistakes').innerHTML=[
    {h:{en:'False alarm: a real OTP flagged as a scam',kn:'ತಪ್ಪು ಎಚ್ಚರಿಕೆ: ನಿಜವಾದ OTP ಅನ್ನು ವಂಚನೆ ಎಂದಿತು'},q:fpText,b:fpB,a:fpA,fix:{en:'"Do not share this code" matched the share-a-code rule. We added negation handling and safe signals such as "do not share" and "ignore if already paid".',kn:'"ಈ ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಬೇಡಿ" ಕೋಡ್ ಹಂಚಿಕೆ ನಿಯಮಕ್ಕೆ ಹೊಂದಿತು. ನಿಷೇಧ ಪದಗಳ ನಿರ್ವಹಣೆ ಮತ್ತು ಸುರಕ್ಷಿತ ಸೂಚನೆಗಳನ್ನು ಸೇರಿಸಿದೆವು.'}},

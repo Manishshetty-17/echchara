@@ -1,6 +1,6 @@
 # Echchara (ಎಚ್ಚರ) – scam shield for Karnataka
 
-Echchara is an Android app that warns people about phishing and fraud **before** they click, pay or share a code. It works in **Kannada and English**, and every check runs on the phone.
+Echchara is an Android app that warns people about phishing and fraud **before** they click, pay or share a code. It works in **Kannada and English**, and every check runs on the phone. The website also reads **Hindi, Tamil, Telugu and Malayalam**, including messages that mix them with English.
 
 Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud Detection**.
 
