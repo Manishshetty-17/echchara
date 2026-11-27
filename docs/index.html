@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Echchara</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -20,7 +21,7 @@
   --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   --r:12px; --sh:0 1px 0 rgba(19,42,85,.06); --sh2:0 1px 0 rgba(19,42,85,.06), 0 16px 32px -20px rgba(19,42,85,.38);
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+@media (prefers-color-scheme: dark){:root[data-theme="dark"]{
   --paper:#0F1B31; --rule:rgba(150,180,230,.08); --margin:rgba(232,115,124,.45); --pen:#FF6B81; --pen-green:#4CC38A;
   --bg:#0F1B31; --surface:#15243F; --sunk:#112038; --ink:#EAF0FA; --ink2:#D5DEED; --muted:#ABBAD3; --line:#24375C; --line2:#304872;
   --brand:#DCE6F7; --brand-ink:#FFFFFF; --brand-soft:#1D3157; --on-brand:#0F1B31; --navy:#0A1427; --on-navy:#B9C7DE;
@@ -603,12 +604,12 @@ footer .brand svg path:last-child{stroke:var(--navy)}
 
 /* ===== video layout: header, hero, sections ===== */
 header.main{background:var(--paper); border-bottom:1px solid var(--line)}
-header.main .wrap{gap:18px; height:68px; max-width:1240px}
+header.main .wrap{gap:14px; height:68px; max-width:1400px}
 .brand{gap:10px; align-items:baseline}
 .brand b{font-size:1.75rem; font-weight:700; color:var(--ink); letter-spacing:0; line-height:1}
 .brand small{font-size:1rem; color:var(--muted); font-weight:500; border:0; padding:0; margin:0}
-nav.pages{justify-content:center; gap:6px}
-nav.pages a{font-size:.98rem; color:var(--ink2); padding:8px 12px}
+nav.pages{justify-content:center; gap:2px}
+nav.pages a{font-size:.95rem; color:var(--ink2); padding:7px 9px}
 header.main .tools{display:flex; align-items:center; gap:10px; flex:none}
 header.main .lang{display:inline-flex; border:1px solid var(--line2); border-radius:8px; padding:2px; background:var(--surface); margin:0}
 header.main .lang button{border:0; background:transparent; color:var(--ink2); font-size:.9rem; padding:4px 11px; border-radius:6px; font-weight:500}
@@ -669,6 +670,33 @@ svg.hbox{width:28px; height:28px; fill:none; stroke-linecap:round; stroke-linejo
 svg.hbox .b{stroke:var(--ink); stroke-width:1.6} svg.hbox .t{stroke:var(--pen-green); stroke-width:2.6; stroke-dasharray:40; stroke-dashoffset:40; transition:stroke-dashoffset .35s ease}
 .rc.on svg.hbox .t{stroke-dashoffset:0}
 .rc:focus-visible{outline:2px solid var(--ink); outline-offset:3px; border-radius:6px}
+
+/* ===== feels-fast layer ===== */
+/* 2. visible response within 100 ms on every press */
+button, .btn, .chip, .cta, nav.pages a, .feat, .va-fab, .va-b, [role="tab"]{transition:transform .08s ease, background-color .12s ease, box-shadow .12s ease}
+button:active, .btn:active, .chip:active, .cta:active, nav.pages a:active, .feat:active, .va-b:active, [role="tab"]:active{transform:scale(.97)}
+.va-fab:active{transform:scale(.95)}
+/* 4. no loader for waits under 300 ms */
+.later{opacity:0; animation:laterIn .2s ease .3s forwards}
+@keyframes laterIn{to{opacity:1}}
+/* 5. skeletons that look like the result */
+.waitbox{display:grid; gap:10px; justify-items:start; padding:6px 2px 16px}
+.waitbox b{color:var(--ink); font-size:1.05rem}
+.pbar{width:min(320px,100%); height:8px} .pbar b{background:var(--ink); transition:width .12s linear}
+.skel{display:grid; gap:12px}
+.skel i{display:block; border-radius:8px; background:linear-gradient(90deg, var(--sunk) 0%, color-mix(in srgb, var(--sunk) 40%, var(--surface)) 50%, var(--sunk) 100%); background-size:200% 100%; animation:skShine 1.2s ease-in-out infinite}
+.sk-top{display:grid; grid-template-columns:48px 1fr 56px; gap:14px; align-items:center}
+.sk-top > div{display:grid; gap:8px}
+.sk-ic{width:48px; height:48px; border-radius:12px!important} .sk-n{width:56px; height:40px}
+.sk-l{height:12px} .sk-bar{height:10px} .w60{width:60%} .w70{width:70%} .w80{width:80%} .w90{width:90%} .w100{width:100%}
+@keyframes skShine{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@media (prefers-reduced-motion: reduce){ .skel i{animation:none} .later{animation:none; opacity:1} }
+/* 7. blurred preview that sharpens when loaded */
+img.blurup{filter:blur(14px); transform:scale(1.02); transition:filter .35s ease, transform .35s ease}
+img.blurup.ok{filter:none; transform:none}
+.fastl{margin:0; padding-left:22px; display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:32px}
+@media (max-width:760px){ .fastl{grid-template-columns:minmax(0,1fr)} }
+.fastl li b{display:block; color:var(--ink)} .fastl li span{color:var(--ink2); font-size:.95rem}
 /* ===== voice assistant ===== */
 .va{position:fixed; right:max(16px, env(safe-area-inset-right)); bottom:max(16px, env(safe-area-inset-bottom)); z-index:50; display:flex; flex-direction:column; align-items:flex-end; gap:10px}
 .va-fab{display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--paper); border:0; border-radius:999px; padding:14px 22px 14px 18px; font:inherit; font-size:1.1rem; font-weight:700; box-shadow:0 0 0 2px var(--paper), 0 6px 22px rgba(19,42,85,.28); cursor:pointer}
@@ -700,7 +728,7 @@ footer{padding-bottom:72px}
       <button class="bigbtn" id="bigBtn" aria-pressed="false" title="Larger text" aria-label="Larger text">A<span>A</span></button>
       <div class="lang" role="group" aria-label="Language"><button data-lang="kn" aria-pressed="false" lang="kn">ಕನ್ನಡ</button><button data-lang="en" aria-pressed="true">English</button></div>
     </div>
-    <a class="cta" href="#check"><span data-i18n="nav.check"></span></a>
+    <a class="cta" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i18n="app.hdr"></span></a>
     <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mnav" aria-label="Menu"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
   <div class="mnav" id="mnav"></div>
@@ -729,6 +757,10 @@ footer{padding-bottom:72px}
     <div class="hsec">
       <div class="sec-h"><div><h2 data-i18n="home.how2"></h2><p data-i18n="home.howSub2"></p></div></div>
       <div class="steps3" id="homeSteps"></div>
+    </div>
+    <div class="hsec">
+      <div class="sec-h"><div><h2 data-i18n="home.what"></h2><p data-i18n="home.whatSub"></p></div></div>
+      <div class="feats" id="feats"></div>
     </div>
     <div class="hsec">
       <div class="sec-h"><div><h2 data-i18n="home.trend"></h2><p class="echo2" data-echo="home.trend"></p></div></div>
@@ -871,6 +903,7 @@ footer{padding-bottom:72px}
         <div class="block"><p class="block-h" data-i18n="te.still"></p><ul class="findings" id="stillWrong"></ul></div>
       </div></div>
       <div class="card" style="grid-column:1/-1"><div class="card-h"><div><h3 id="robH"></h3><p class="small muted" id="robSub"></p></div></div><div class="card-b"><div class="tbl"><table id="robTbl"></table></div><p class="small muted" style="margin-top:12px" id="robNote"></p></div></div>
+      <div class="card" style="grid-column:1/-1"><div class="card-h"><div><h3 id="fastH"></h3><p class="small muted" id="fastSub"></p></div></div><div class="card-b"><ol class="fastl" id="fastList"></ol></div></div>
       <div class="card" style="grid-column:1/-1"><div class="card-h"><div><h3 id="apH"></h3><p class="small muted" id="apSub"></p></div></div><div class="card-b" id="apBody"></div></div>
     </div>
   </div>
@@ -1618,7 +1651,7 @@ Your e-statement for October is ready. Open the iMobile app or type icicibank.co
 const PAGES = [['home','nav.home'],['check','nav.check'],['protect','nav.protect'],['learn','nav.learn'],['alerts','nav.alerts'],['technology','nav.tech'],['help','nav.help'],['partners','nav.partners']];
 let page = 'home';
 function renderNav(){
-  const links = PAGES.filter(p=>['protect','alerts','learn','help'].includes(p[0])).map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('');
+  const links = PAGES.filter(p=>p[0]!=='home').map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('');
   $('nav').innerHTML = links;
   $('mnav').innerHTML = PAGES.map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('') + `<button class="mbig" id="mBig">${lang==='kn'?'ದೊಡ್ಡ ಅಕ್ಷರ (AA)':'Larger text (AA)'}</button><a class="cta app" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener">${t('app.hdr')}</a><a class="cta" href="#check">${t('nav.check')}</a>`;
   const mb=$('mBig'); if(mb) mb.onclick=()=>{ store.set('ec-big', !store.get('ec-big',false)); applyBig(); };
@@ -1642,7 +1675,7 @@ function route(){
   if(changed) window.scrollTo(0,0);
   if(p==='protect') playLive(); else stopCallIfLive();
   if(typeof vaAfterRoute==='function') vaAfterRoute();
-  if(p==='technology') renderModelCard();
+  if(p==='technology'){ if(techFresh!==lang) renderModelCard(); techFresh=null; }
   if(p==='learn') renderQuiz();
   if(p==='home') queueMarks();
 }
@@ -1665,9 +1698,9 @@ function renderPane(){
   if(mode==='email') p.innerHTML = samplesHTML(SAMPLES.email)+`<label for="in-email" class="sr">${t('tab.email')}</label><textarea id="in-email" class="in mono" style="min-height:220px" spellcheck="false" placeholder="${esc(t('ph.email'))}">${esc(inputs.email)}</textarea>`;
   if(mode==='url') p.innerHTML = samplesHTML(SAMPLES.url)+`<div class="fld"><label for="in-url">${t('lbl.url')}</label><input id="in-url" class="in mono" spellcheck="false" autocomplete="off" placeholder="${esc(t('ph.url'))}" value="${esc(inputs.url)}"></div><div class="anat-wrap"><div class="anat" id="anat"></div></div>`;
   if(mode==='web') p.innerHTML = samplesHTML(SAMPLES.web)+`<div class="fld"><label for="in-web">${t('lbl.url')}</label><input id="in-web" class="in mono" spellcheck="false" autocomplete="off" placeholder="${esc(t('ph.url'))}" value="${esc(inputs.web)}"></div><div class="fld"><label for="in-webc">${t('lbl.web')}</label><textarea id="in-webc" class="in mono" style="min-height:120px" spellcheck="false" placeholder="${esc(t('ph.web'))}">${esc(inputs.webc)}</textarea></div><p class="note" style="margin-bottom:12px">${ico('info')}<span>${t('web.note')}</span></p>`;
-  if(mode==='shot') p.innerHTML = `<div style="height:14px"></div><div class="drop" id="drop">${shotURL?`<img src="${shotURL}" alt="Uploaded screenshot">`:ico('shot','i" style="width:36px;height:36px;color:var(--muted)')}<p>${t('shot.drop')}</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><label class="btn sec sm" for="in-shot" style="cursor:pointer">${t('shot.pick')}</label><button class="btn sec sm" id="sampleShot">${lang==='kn'?'ಮಾದರಿ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಪ್ರಯತ್ನಿಸಿ':'Try a sample screenshot'}</button></div><input type="file" id="in-shot" accept="image/png,image/jpeg,image/webp" hidden></div><p class="note" style="margin:12px 0">${ico('info')}<span>${t('shot.note')}</span></p>${ocrState.status==='done'&&ocrState.key===currentKey()?`<button class="btn sec sm" id="toSms" style="margin-bottom:12px">${lang==='kn'?'ಪಠ್ಯವನ್ನು SMS ಟ್ಯಾಬ್‌ನಲ್ಲಿ ತಿದ್ದಿ':'Edit the text in the SMS tab'}</button>`:''}`;
+  if(mode==='shot') p.innerHTML = `<div style="height:14px"></div><div class="drop" id="drop">${shotURL?`<img class="blurup" src="${shotURL}" alt="Uploaded screenshot" onload="this.classList.add('ok')">`:ico('shot','i" style="width:36px;height:36px;color:var(--muted)')}<p>${t('shot.drop')}</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><label class="btn sec sm" for="in-shot" style="cursor:pointer">${t('shot.pick')}</label><button class="btn sec sm" id="sampleShot">${lang==='kn'?'ಮಾದರಿ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಪ್ರಯತ್ನಿಸಿ':'Try a sample screenshot'}</button></div><input type="file" id="in-shot" accept="image/png,image/jpeg,image/webp" hidden></div><p class="note" style="margin:12px 0">${ico('info')}<span>${t('shot.note')}</span></p>${ocrState.status==='done'&&ocrState.key===currentKey()?`<button class="btn sec sm" id="toSms" style="margin-bottom:12px">${lang==='kn'?'ಪಠ್ಯವನ್ನು SMS ಟ್ಯಾಬ್‌ನಲ್ಲಿ ತಿದ್ದಿ':'Edit the text in the SMS tab'}</button>`:''}`;
   if(mode==='qr'){ const kn=lang==='kn'; const done=qrState.status==='done'&&qrState.key===currentKey();
-    p.innerHTML = `<div class="samples"><span>${t('lbl.samples')}</span>${QR_SAMPLES.map((s,i)=>`<button class="chip" data-qs="${i}">${esc(L(s.n))}</button>`).join('')}</div><div class="drop" id="qrDrop">${qrURL?`<img src="${qrURL}" alt="QR code" style="max-height:200px;image-rendering:pixelated">`:ico('qr','i" style="width:36px;height:36px;color:var(--muted)')}<p>${kn?'QR ಕೋಡ್‌ನ ಫೋಟೋ ಅಥವಾ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಇಲ್ಲಿ ಹಾಕಿ':'Drop a photo or screenshot of a QR code'}</p><label class="btn sec sm" for="in-qr" style="cursor:pointer">${t('shot.pick')}</label><input type="file" id="in-qr" accept="image/*" hidden></div>${done?`<div class="note" style="margin-top:12px;display:block"><b>${kn?'QR ಒಳಗಿನ ವಿಷಯ':'Inside this QR code'}:</b><br><code style="word-break:break-all">${esc(qrState.text)}</code></div>`:''}<p class="note" style="margin:12px 0">${ico('info')}<span>${kn?'QR ಅನ್ನು ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ. ಲಿಂಕ್ ತೆರೆಯುವುದಿಲ್ಲ, ಪಾವತಿ ಮಾಡುವುದಿಲ್ಲ.':'The QR code is read on your device. Echchara never opens the link or makes a payment.'}</span></p>`; }
+    p.innerHTML = `<div class="samples"><span>${t('lbl.samples')}</span>${QR_SAMPLES.map((s,i)=>`<button class="chip" data-qs="${i}">${esc(L(s.n))}</button>`).join('')}</div><div class="drop" id="qrDrop">${qrURL?`<img class="blurup" onload="this.classList.add('ok')" src="${qrURL}" alt="QR code" style="max-height:200px;image-rendering:pixelated">`:ico('qr','i" style="width:36px;height:36px;color:var(--muted)')}<p>${kn?'QR ಕೋಡ್‌ನ ಫೋಟೋ ಅಥವಾ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಇಲ್ಲಿ ಹಾಕಿ':'Drop a photo or screenshot of a QR code'}</p><label class="btn sec sm" for="in-qr" style="cursor:pointer">${t('shot.pick')}</label><input type="file" id="in-qr" accept="image/*" hidden></div>${done?`<div class="note" style="margin-top:12px;display:block"><b>${kn?'QR ಒಳಗಿನ ವಿಷಯ':'Inside this QR code'}:</b><br><code style="word-break:break-all">${esc(qrState.text)}</code></div>`:''}<p class="note" style="margin:12px 0">${ico('info')}<span>${kn?'QR ಅನ್ನು ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ. ಲಿಂಕ್ ತೆರೆಯುವುದಿಲ್ಲ, ಪಾವತಿ ಮಾಡುವುದಿಲ್ಲ.':'The QR code is read on your device. Echchara never opens the link or makes a payment.'}</span></p>`; }
   if(mode==='job') p.innerHTML = samplesHTML(JOB_SAMPLES)+`<label for="in-job" class="sr">${t('tab.job')}</label><textarea id="in-job" class="in" spellcheck="false" placeholder="${esc(lang==='kn'?'ಉದ್ಯೋಗ ಅಥವಾ ಇಂಟರ್ನ್‌ಶಿಪ್ ಆಫರ್, ನೇಮಕಾತಿ ಇಮೇಲ್ ಅಥವಾ ವಾಟ್ಸಾಪ್ ಸಂದೇಶ ಅಂಟಿಸಿ.':'Paste the job or internship offer, recruiter email or WhatsApp message, including any email addresses and links.')}">${esc(inputs.job)}</textarea>`;
   if(mode==='journey'){ const kn=lang==='kn';
     p.innerHTML = `<div class="samples"><span>${t('lbl.samples')}</span>${JOURNEY_SAMPLES.map((s,i)=>`<button class="chip" data-js="${i}">${esc(L(s.n))}</button>`).join('')}</div>
@@ -1685,7 +1718,7 @@ function wirePane(){
   p.querySelectorAll('[data-js]').forEach(c=>c.onclick=()=>{ JOURNEY_SAMPLES[+c.dataset.js].v.forEach((v,i)=>inputs['j'+(i+1)]=v); renderPane(); runScan(); });
   if(mode==='job') p.querySelectorAll('[data-s]').forEach(c=>c.onclick=()=>{ inputs.job=JOB_SAMPLES[+c.dataset.s].v; renderPane(); runScan(); });
   p.querySelectorAll(mode==='job'||mode==='qr'||mode==='journey'?'.none':'.chip').forEach(c=>c.onclick=()=>{ const s=SAMPLES[mode][+c.dataset.s]; if(mode==='web'){inputs.web=s.v; inputs.webc=s.c||'';} else inputs[mode]=s.v; renderPane(); runScan(true); });
-  const bind=(id,key)=>{ const el=$(id); if(el) el.addEventListener('input',()=>{ inputs[key]=el.value; clearTimeout(tmr); tmr=setTimeout(()=>runScan(false),260); }); };
+  const bind=(id,key)=>{ const el=$(id); if(el) el.addEventListener('input',()=>{ inputs[key]=el.value; clearTimeout(tmr); tmr=setTimeout(()=>runScan(false),120); }); };
   bind('in-msg','msg'); bind('in-email','email'); bind('in-url','url'); bind('in-web','web'); bind('in-webc','webc'); bind('in-job','job'); bind('in-j1','j1'); bind('in-j2','j2'); bind('in-j3','j3'); bind('in-j4','j4');
   const urlIn=$('in-url'); if(urlIn) urlIn.addEventListener('keydown',e=>{ if(e.key==='Enter') runScan(true); });
   const f=$('in-shot'); if(f) f.onchange=()=>{ if(f.files[0]) setShot(f.files[0]); };
@@ -2159,29 +2192,15 @@ function explain(r, s){
 /* ---- read aloud (browser voice) ---- */
 const canSpeak = 'speechSynthesis' in window;
 let speaking=false;
+const VCLIP_LIST=["01c3a684","025236de","02687aa0","04870822","0567ec16","0760d387","08289003","086cfe19","08add82f","0b661ab8","0b91801c","0cd98028","0d370f4b","0de5c7b2","12a7d68e","12add409","138727b0","15ff0a2a","1b1e1b2c","1b34a057","1b386975","1cbd607f","1df1f8c4","1e2df62e","22afa97d","233ed351","23581962","23cc7894","247e59e7","26cff778","2b709e58","2e94598f","2ece329a","2f2525c3","35269546","3b489b58","3cc8b4ac","3df2bce8","4116c341","42b0c7c1","43df6b04","44bbf809","44c548c3","45a22802","46dc1e1e","47dd699f","485b48ac","485f8981","486519e3","48f385ea","4c77c37d","4c8e5bcc","4ecaa217","51d18c94","52a24a2b","53d2018d","5498935b","54bfb369","54eaf1b7","568cdc06","58334007","597d5c17","5a6efc3a","5c605d08","5e110d81","5ea131af","602f2804","60cdcbef","612a7f17","612ef7bb","615805de","61adcc50","62645d2d","62e6e33c","67428e19","69f73f17","6a86f90a","6ce825d0","6e7a3ab5","70242675","71e7951e","7227d552","74b65e6b","74eb7e62","75436059","75fe342e","7744d03d","776f3726","77c6edf9","7af7496a","7f3da49c","807eee86","80a1ff84","80a7ec51","810bdaa2","824250b1","83975bdc","86f804ae","871a2aeb","8a10226e","8eac3837","8ebf5e09","8fa83cf9","91e0867c","94f02077","97935014","97ebbbad","982ff8ba","99824b85","99e69d63","9b9280cf","9c9bedef","9d37c814","9d7fef18","a0298868","a06be119","a0a4984f","a2c5464c","a49cf6ad","a4ba6864","a71e9bd9","a84f90fb","a908af30","ab390bdf","ac837889","ac8c8703","acafe885","acd230d4","ad10ffd9","ad4520a2","b05868d1","b0ad19f2","b3a7e72e","b4ae85ac","b5f86eaa","b6bcf903","b7480214","b889214d","b8d40844","b8d7f691","ba5ce17b","bfc81414","c1845d8e","c36c4d7a","c3a25aba","c48b2f8f","c762f86d","c7861505","cb848394","ce0d8e45","ce15e9c8","ce4d81d5","cffdcb09","d076b0a5","d2c211b8","d3f9f3f7","d51ab029","dd108ee5","dd6738e5","defc0af5","dfc95ace","e07b775f","e0db9c21","e0e5c09d","e31b1b19","e73e5b59","e7df6e2b","e831ece4","e96f45eb","ebd9c8df","ec7247f8","ee35f0c0","ef693f37","f003b419","f26d4c31","f4c33879","f51f193e","f67a2b19","fd2cb5e1","fed3a194","ff806953"];
 /* ---- voice assistant: reads pages and results aloud in Kannada or English, and listens to a spoken message ---- */
 const VA={rate:store.get('ec-va-rate',0.9), auto:store.get('ec-va-auto',false), queue:[], listening:false, lastSpoken:''};
 function voiceFor(code){ try{ return speechSynthesis.getVoices().find(v=>v.lang && v.lang.toLowerCase().replace('_','-').startsWith(code)); }catch(e){ return null; } }
 function vaVoice(lg){ return lg==='kn' ? voiceFor('kn') : (voiceFor('en-in')||voiceFor('en-gb')||voiceFor('en')); }
 function vaNote(msg){ const n=$('vaNote'); if(n) n.textContent=msg||''; }
 function vaChunks(text){ return (text.replace(/\s+/g,' ').match(/[^.!?।]+[.!?।]?/g)||[text]).map(x=>x.trim()).filter(Boolean).reduce((a,x)=>{ if(a.length && (a[a.length-1]+' '+x).length<180) a[a.length-1]+=' '+x; else a.push(x); return a; },[]); }
-function vaSpeak(text, opts={}){
-  if(!canSpeak){ vaNote(lang==='kn'?'ಈ ಬ್ರೌಸರ್ ಧ್ವನಿಯಲ್ಲಿ ಓದಲು ಬೆಂಬಲಿಸುವುದಿಲ್ಲ.':'This browser cannot read aloud.'); return; }
-  let lg=opts.lang||lang, txt=text;
-  if(lg==='kn' && !vaVoice('kn')){
-    // no Kannada voice on this device: say so, and read the English version instead
-    if(opts.en){ txt=opts.en; lg='en'; }
-    vaNote(lang==='kn'?'ಈ ಸಾಧನದಲ್ಲಿ ಕನ್ನಡ ಧ್ವನಿ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಓದುತ್ತಿದೆ. Android ಫೋನ್‌ನಲ್ಲಿ Chrome ಅಥವಾ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ Microsoft Edge ಬಳಸಿದರೆ ಕನ್ನಡದಲ್ಲಿ ಕೇಳಬಹುದು.':'This device has no Kannada voice, so it is reading in English. Kannada works in Chrome on Android phones and in Microsoft Edge on computers.');
-  } else vaNote('');
-  speechSynthesis.cancel();
-  const v=vaVoice(lg); const parts=vaChunks(txt); VA.lastSpoken=txt;
-  speaking=true; vaState();
-  parts.forEach((part,k)=>{ const u=new SpeechSynthesisUtterance(part); if(v) u.voice=v; u.lang=lg==='kn'?'kn-IN':'en-IN'; u.rate=VA.rate;
-    if(k===parts.length-1) u.onend=()=>{ speaking=false; vaState(); };
-    u.onerror=()=>{ speaking=false; vaState(); };
-    speechSynthesis.speak(u); });
-}
-function vaStop(){ if(canSpeak) speechSynthesis.cancel(); speaking=false; if(VA.rec){ try{ VA.rec.abort(); }catch(e){} } VA.listening=false; vaState(); }
+function vaSpeak(text){ vaPlay([text], lang); }
+function vaStop(){ VA.playing=false; if(VA.audio){ try{ VA.audio.pause(); }catch(e){} VA.audio=null; } if(canSpeak) speechSynthesis.cancel(); speaking=false; if(VA.rec){ try{ VA.rec.abort(); }catch(e){} } VA.listening=false; vaState(); }
 function vaState(){
   const fab=$('vaFab'); if(fab) fab.classList.toggle('on', speaking||VA.listening);
   const st=$('vaStop'); if(st) st.hidden=!(speaking||VA.listening);
@@ -2191,7 +2210,7 @@ function vaState(){
   const au=$('vaAuto'); if(au) au.checked=VA.auto;
   const tb=$('ttsBtn'); if(tb) tb.textContent = speaking ? t('ai.stop') : t('ai.listen');
 }
-function speak(text){ if(speaking){ vaStop(); return; } vaSpeak(text, {en: resultScript('en')}); }
+function speak(text){ if(speaking){ vaStop(); return; } vaReadResult(); }
 const PAGE_SCRIPTS={
  home:{en:'Welcome to Echchara. This website tells you if a message or a call is a scam. To check a message, press the dark blue button that says Check a message, and paste the message. Or press the Listen button, then Speak the message, and say it aloud. Echchara will tell you if it is safe or a scam, and what to do. If you have already lost money, call 1930 immediately. One. Nine. Three. Zero.',
        kn:'ಎಚ್ಚರಕ್ಕೆ ಸ್ವಾಗತ. ಈ ವೆಬ್‌ಸೈಟ್ ಒಂದು ಸಂದೇಶ ಅಥವಾ ಕರೆ ವಂಚನೆಯೇ ಎಂದು ತಿಳಿಸುತ್ತದೆ. ಸಂದೇಶ ಪರಿಶೀಲಿಸಲು, ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ ಎಂಬ ಕಡು ನೀಲಿ ಬಟನ್ ಒತ್ತಿ, ಸಂದೇಶವನ್ನು ಅಂಟಿಸಿ. ಅಥವಾ ಕೇಳಿ ಬಟನ್ ಒತ್ತಿ, ನಂತರ ಸಂದೇಶ ಹೇಳಿ ಒತ್ತಿ, ಸಂದೇಶವನ್ನು ಜೋರಾಗಿ ಹೇಳಿ. ಅದು ಸುರಕ್ಷಿತವೇ ಅಥವಾ ವಂಚನೆಯೇ, ಮತ್ತು ಏನು ಮಾಡಬೇಕು ಎಂದು ಎಚ್ಚರ ಹೇಳುತ್ತದೆ. ಈಗಾಗಲೇ ಹಣ ಕಳೆದುಕೊಂಡಿದ್ದರೆ, ತಕ್ಷಣ ಒಂದು ಒಂಬತ್ತು ಮೂರು ಸೊನ್ನೆ, ಹತ್ತೊಂಬತ್ತು ಮೂವತ್ತಕ್ಕೆ ಕರೆ ಮಾಡಿ.'},
@@ -2214,30 +2233,102 @@ function pageScript(lg){
   if(page==='alerts' && typeof ALERTS!=='undefined') return base+' '+ALERTS.slice(0,4).map((a,i)=>`${i+1}. ${a.t[lg]||a.t.en}. ${(a.move&&(a.move[lg]||a.move.en))||''}`).join(' ');
   return base;
 }
-function resultScript(lg){
-  if(!last || last.error || last.pending) return '';
+const VTXT={
+ verdict:{safe:{en:'Looks safe.',kn:'ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣುತ್ತದೆ.'},warn:{en:'Be careful. This looks suspicious.',kn:'ಎಚ್ಚರಿಕೆ. ಇದು ಅನುಮಾನಾಸ್ಪದವಾಗಿ ಕಾಣುತ್ತದೆ.'},danger:{en:'Danger. This is very likely a scam.',kn:'ಅಪಾಯ. ಇದು ಬಹುತೇಕ ವಂಚನೆ.'},ctx:{en:'Not sure yet. Answer the two questions on the screen.',kn:'ಇನ್ನೂ ಖಚಿತವಿಲ್ಲ. ಪರದೆಯ ಮೇಲಿನ ಎರಡು ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ.'}},
+ safeTail:{en:'If money or a code is involved, confirm with the sender on a number you already know.',kn:'ಹಣ ಅಥವಾ ಕೋಡ್ ವಿಷಯವಿದ್ದರೆ, ನಿಮಗೆ ತಿಳಿದ ಸಂಖ್ಯೆಯ ಮೂಲಕ ಕಳುಹಿಸಿದವರೊಂದಿಗೆ ಖಚಿತಪಡಿಸಿ.'},
+ dangerTail:{en:'Do not click, pay or share anything.',kn:'ಕ್ಲಿಕ್ ಮಾಡಬೇಡಿ, ಪಾವತಿಸಬೇಡಿ, ಏನನ್ನೂ ಹಂಚಿಕೊಳ್ಳಬೇಡಿ.'},
+ typeIntro:{en:'Type of scam:',kn:'ವಂಚನೆಯ ವಿಧ:'},
+ signsIntro:{en:'Warning signs:',kn:'ಎಚ್ಚರಿಕೆಯ ಲಕ್ಷಣಗಳು:'},
+ doIntro:{en:'What to do:',kn:'ಏನು ಮಾಡಬೇಕು:'},
+ riskyLink:{en:'A risky link.',kn:'ಅಪಾಯಕಾರಿ ಲಿಂಕ್.'},
+ listening:{en:'Listening. Say the message aloud.',kn:'ಕೇಳುತ್ತಿದ್ದೇನೆ. ಸಂದೇಶವನ್ನು ಜೋರಾಗಿ ಹೇಳಿ.'},
+ notHeard:{en:'I could not hear that. Please try again.',kn:'ಸರಿಯಾಗಿ ಕೇಳಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'},
+ noMic:{en:'This browser cannot listen to your voice. Please use Google Chrome or Microsoft Edge.',kn:'ಈ ಬ್ರೌಸರ್ ನಿಮ್ಮ ಧ್ವನಿಯನ್ನು ಕೇಳಲು ಸಾಧ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ಗೂಗಲ್ ಕ್ರೋಮ್ ಅಥವಾ ಮೈಕ್ರೋಸಾಫ್ಟ್ ಎಡ್ಜ್ ಬಳಸಿ.'},
+ micBlocked:{en:'The microphone is blocked. Allow it from the browser address bar, then try again.',kn:'ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ಇಲ್ಲ. ಬ್ರೌಸರ್ ವಿಳಾಸ ಪಟ್ಟಿಯಲ್ಲಿ ಅನುಮತಿಸಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.'}
+};
+/* the result as short fixed phrases, so every Kannada phrase can be a recorded clip */
+function resultSegments(lg){
+  if(!last || last.error || last.pending) return [];
   const s=finalScore(), b=(typeof vband==='function'?vband(s):band(s));
-  const ex=explain({...last, flags:[...(typeof ctxFlags==='function'?ctxFlags():[]), ...(last.flags||[])]}, s);
+  const flags=[...(typeof ctxFlags==='function'?ctxFlags():[]), ...(last.flags||[])];
+  const ex=explain({...last, flags}, s);
   const pick=o=>o==null?'':(typeof o==='string'?o:(o[lg]||o.en));
-  const verdict={safe:{en:'Looks safe.',kn:'ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣುತ್ತದೆ.'},warn:{en:'Be careful. This looks suspicious.',kn:'ಎಚ್ಚರಿಕೆ. ಇದು ಅನುಮಾನಾಸ್ಪದವಾಗಿ ಕಾಣುತ್ತದೆ.'},danger:{en:'Danger. This is very likely a scam.',kn:'ಅಪಾಯ. ಇದು ಬಹುತೇಕ ವಂಚನೆ.'},ctx:{en:'Not sure yet. Answer the two questions on the screen.',kn:'ಇನ್ನೂ ಖಚಿತವಿಲ್ಲ. ಪರದೆಯ ಮೇಲಿನ ಎರಡು ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ.'}}[b]||{en:'',kn:''};
-  const moves=(last.moves||[]).slice(0,2).map(pick).join(' ');
-  const what=lg==='kn'?'ಏನು ಮಾಡಬೇಕು:':'What to do:';
-  return `${verdict[lg]} ${pick(ex.summary)} ${moves?what+' '+moves:''}`;
+  const seg=[VTXT.verdict[b][lg]];
+  if(ex.type){ seg.push(VTXT.typeIntro[lg], pick(ex.type)); }
+  const bad=flags.filter(f=>f.sev==='high'||f.sev==='mid').sort((a,c)=>(c.w||0)-(a.w||0)).slice(0,3);
+  if(bad.length){ seg.push(VTXT.signsIntro[lg]); bad.forEach(f=>seg.push(/^Risky link/.test(f.label.en)?VTXT.riskyLink[lg]:pick(f.label))); }
+  if(b==='danger') seg.push(VTXT.dangerTail[lg]); else if(b==='safe') seg.push(VTXT.safeTail[lg]);
+  const mv=(last.moves||[]).slice(0,2).map(pick).filter(Boolean);
+  if(mv.length && b!=='safe'){ seg.push(VTXT.doIntro[lg], ...mv); }
+  return seg.filter(Boolean);
 }
-function vaReadPage(){ vaSpeak(pageScript(lang), {en: pageScript('en')}); }
-function vaReadResult(){ const t2=resultScript(lang); if(t2) vaSpeak(t2, {en: resultScript('en')}); }
+function pageSegments(lg){
+  if(page==='check' && last && !last.error && !last.pending) return resultSegments(lg);
+  const seg=[(PAGE_SCRIPTS[page]||PAGE_SCRIPTS.home)[lg]];
+  if(page==='alerts' && typeof ALERTS!=='undefined') ALERTS.slice(0,4).forEach(a=>{ seg.push(a.t[lg]||a.t.en); if(a.move) seg.push(a.move[lg]||a.move.en); });
+  return seg;
+}
+/* recorded Kannada clips: voice/kn/<hash>.mp3, listed in VCLIPS */
+function vHash(x){ let h=0x811c9dc5; const t=x.replace(/\s+/g,' ').trim(); for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return h.toString(16).padStart(8,'0'); }
+const VCLIPS=new Set(typeof VCLIP_LIST!=='undefined'?VCLIP_LIST:[]);
+function clipUrl(x){ const h=vHash(x); return VCLIPS.has(h) ? 'voice/kn/'+h+'.mp3' : null; }
+function vaPlay(segs, lg){
+  vaStop();
+  const items=segs.filter(Boolean).map(x=>({x, url: lg==='kn'?clipUrl(x):null}));
+  if(!items.length) return;
+  VA.replay=()=>vaPlay(segs, lg);
+  const dev=vaVoice(lg);
+  if(lg==='kn' && items.some(it=>!it.url) && !dev) vaNote('');
+  VA.playing=true; speaking=true; vaState(); vaNote('');
+  let i=0;
+  const next=()=>{
+    if(!VA.playing) return;
+    if(i>=items.length){ VA.playing=false; speaking=false; vaState(); return; }
+    const it=items[i++];
+    const after=items[i]; if(after && after.url){ const pre=new Audio(); pre.preload='auto'; pre.src=after.url; }   // preload the next phrase
+    if(it.url){ const a=new Audio(it.url); VA.audio=a; const slow=setTimeout(()=>vaNote(lang==='kn'?'ಕನ್ನಡ ಧ್ವನಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ…':'Loading the voice…'),1000); a.onplaying=()=>{ clearTimeout(slow); vaNote(''); }; a.playbackRate=VA.rate<0.85?0.85:1; a.onended=next; a.onerror=()=>sayWithDevice(it.x, lg, dev, next); a.play().catch(()=>sayWithDevice(it.x, lg, dev, next)); }
+    else sayWithDevice(it.x, lg, dev, next);
+  };
+  next();
+}
+function sayWithDevice(x, lg, v, done){
+  if(!canSpeak || (lg==='kn' && !v)){ done(); return; }
+  const parts=vaChunks(x); let k=0;
+  const one=()=>{ if(!VA.playing) return; if(k>=parts.length){ done(); return; } const u=new SpeechSynthesisUtterance(parts[k++]); if(v) u.voice=v; u.lang=lg==='kn'?'kn-IN':'en-IN'; u.rate=VA.rate; u.onend=one; u.onerror=one; speechSynthesis.speak(u); };
+  one();
+}
+function voiceCorpus(){
+  const out=new Set(); const add=x=>{ if(x && typeof x==='string') out.add(x.replace(/\s+/g,' ').trim()); };
+  const lg='kn', pick=o=>o==null?'':(typeof o==='string'?o:(o[lg]||''));
+  Object.values(PAGE_SCRIPTS).forEach(o=>add(o.kn));
+  if(typeof ALERTS!=='undefined') ALERTS.forEach(a=>{ add(pick(a.t)); add(pick(a.move)); });
+  Object.values(VTXT).forEach(v=>{ if(v.kn) add(v.kn); else Object.values(v).forEach(x=>add(x.kn)); });
+  Object.values(TYPES).forEach(x=>add(x.kn));
+  RULES.forEach(r=>{ add(r.label.kn); if(r.do) add(r.do.kn); });
+  const keep={mode, lang, inputs:{...inputs}, last};
+  lang='kn';
+  const runText=(m, v)=>{ mode=m; if(m==='journey') v.forEach((x,k)=>inputs['j'+(k+1)]=x); else inputs[m]=v; runScan(false); if(!last||last.error||last.pending) return; resultSegments('kn').forEach(add); (last.flags||[]).forEach(f=>{ if(f.sev==='high'||f.sev==='mid') add(pick(f.label)); }); (last.moves||[]).forEach(m2=>add(pick(m2))); };
+  Object.entries(SAMPLES).forEach(([m,list])=>{ if(m==='web') return; list.forEach(x=>runText(m, x.v)); });
+  if(typeof JOB_SAMPLES!=='undefined') JOB_SAMPLES.forEach(x=>runText('job', x.v));
+  if(typeof JOURNEY_SAMPLES!=='undefined') JOURNEY_SAMPLES.forEach(x=>runText('journey', x.v));
+  if(typeof QR_SAMPLES!=='undefined') QR_SAMPLES.forEach(x=>{ last=analyzeQR(x.v); resultSegments('kn').forEach(add); });
+  mode=keep.mode; lang=keep.lang; Object.assign(inputs, keep.inputs); last=keep.last;
+  return [...out].filter(x=>/[ಀ-೿]/.test(x));
+}
+function vaReadPage(){ vaPlay(pageSegments(lang), lang); }
+function vaReadResult(){ const segs=resultSegments(lang); if(segs.length) vaPlay(segs, lang); }
 function vaListen(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){ vaSpeak(lang==='kn'?'ಈ ಬ್ರೌಸರ್ ನಿಮ್ಮ ಧ್ವನಿಯನ್ನು ಕೇಳಲು ಸಾಧ್ಯವಿಲ್ಲ. Android ಫೋನ್‌ನಲ್ಲಿ Chrome ಬಳಸಿ.':'This browser cannot listen to your voice. Please use Chrome on an Android phone.', {en:'This browser cannot listen to your voice. Please use Chrome on an Android phone.'}); return; }
+  if(!SR){ vaNote(VTXT.noMic[lang]); vaPlay([VTXT.noMic[lang]], lang); return; }
   if(VA.listening){ vaStop(); return; }
   if(canSpeak) speechSynthesis.cancel(); speaking=false;
   const rec=new SR(); VA.rec=rec; rec.lang=lang==='kn'?'kn-IN':'en-IN'; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1;
   let heard='';
   rec.onresult=e=>{ heard=[...e.results].map(r=>r[0].transcript).join(' '); vaNote((lang==='kn'?'ಕೇಳಿದ್ದು: ':'Heard: ')+heard); };
-  rec.onerror=e=>{ VA.listening=false; vaState(); vaNote(e.error==='not-allowed'||e.error==='service-not-allowed' ? (lang==='kn'?'ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ಇಲ್ಲ. ಬ್ರೌಸರ್ ವಿಳಾಸ ಪಟ್ಟಿಯಲ್ಲಿ ಮೈಕ್ ಅನುಮತಿಸಿ.':'Microphone permission was blocked. Allow the microphone from the browser address bar.') : (lang==='kn'?'ಸರಿಯಾಗಿ ಕೇಳಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.':'I could not hear that. Please try again.')); };
+  rec.onerror=e=>{ VA.listening=false; vaState(); const m=(e.error==='not-allowed'||e.error==='service-not-allowed')?VTXT.micBlocked:VTXT.notHeard; vaNote(m[lang]); if(e.error!=='aborted') vaPlay([m[lang]], lang); };
   rec.onend=()=>{ VA.listening=false; vaState();
     if(heard.trim()){ mode='msg'; inputs.msg=heard.trim(); renderTabs(); renderPane(); runScan(false); go('check'); setTimeout(vaReadResult, 350); } };
-  VA.listening=true; vaState(); vaNote(lang==='kn'?'ಕೇಳುತ್ತಿದ್ದೇನೆ… ಸಂದೇಶವನ್ನು ಜೋರಾಗಿ ಹೇಳಿ.':'Listening… say the message aloud.');
+  VA.listening=true; vaState(); vaNote(VTXT.listening[lang]);
   try{ rec.start(); }catch(e){ VA.listening=false; vaState(); }
 }
 function vaAfterRoute(){ vaState(); if(VA.auto){ clearTimeout(VA.rt); VA.rt=setTimeout(vaReadPage, 400); } }
@@ -2246,14 +2337,20 @@ function vaAfterResult(){ vaState(); if(!VA.auto || page!=='check' || !last || l
 const TESS_SRC='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
 let tessLoad=null;
 function loadTess(){ if(window.Tesseract) return Promise.resolve(); if(!tessLoad) tessLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=TESS_SRC; s.onload=res; s.onerror=()=>{ tessLoad=null; rej(new Error('load')); }; document.head.appendChild(s); }); return tessLoad; }
+let ocrShown=0, ocrTarget=0, ocrTick=null;
+function ocrProgress(target){ ocrTarget=Math.max(ocrTarget, target); if(ocrTick) return;
+  ocrTick=setInterval(()=>{ if(ocrState.status!=='loading'){ clearInterval(ocrTick); ocrTick=null; return; }
+    // move towards the real progress quickly; between updates creep forward so the bar never stalls
+    const cap=Math.min(96, ocrTarget+12); ocrShown += ocrShown<ocrTarget ? (ocrTarget-ocrShown)*.35+.6 : (cap-ocrShown)*.02;
+    const bar=$('ocrBar'); if(bar) bar.style.width=Math.min(96,ocrShown).toFixed(1)+'%'; }, 120); }
 async function runOCR(){
   if(!shotFile) return;
   const key=currentKey();
-  ocrState={status:'loading', key, progress:0, stage:''}; runScan();
+  ocrShown=2; ocrTarget=4; ocrState={status:'loading', key, progress:0, stage:''}; runScan(); ocrProgress(6);
   setTimeout(()=>{ if(ocrState.key===key && ocrState.status==='loading' && !/recogniz/i.test(ocrState.stage||'')){ ocrState={status:'error', key, blocked:true}; renderVerdict(); } }, 30000);
   try{
     await loadTess();
-    const r = await Tesseract.recognize(shotFile, 'eng+kan', { logger: m => { if(currentKey()!==key) return; if(typeof m.progress==='number') ocrState.progress=m.progress; ocrState.stage=m.status||''; const bar=$('ocrBar'); if(bar) bar.style.width=Math.round((m.status==='recognizing text'?50+m.progress*50:m.progress*50))+'%'; const st=$('ocrStage'); if(st) st.textContent=ocrStageText(m.status); } });
+    const r = await Tesseract.recognize(shotFile, 'eng+kan', { logger: m => { if(currentKey()!==key) return; if(typeof m.progress==='number') ocrState.progress=m.progress; ocrState.stage=m.status||''; ocrProgress(m.status==='recognizing text'?50+m.progress*50:m.progress*50); const st=$('ocrStage'); if(st) st.textContent=ocrStageText(m.status); } });
     if(currentKey()!==key) return;
     const text=(r.data && r.data.text || '').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
     ocrState={status: text.length>3?'done':'empty', key, text};
@@ -2262,7 +2359,7 @@ async function runOCR(){
 }
 function ocrStageText(s){
   const kn=lang==='kn';
-  if(/load|initializ/i.test(s||'')) return kn?'ಓದುವ ಎಂಜಿನ್ ಸಿದ್ಧಪಡಿಸುತ್ತಿದೆ (ಮೊದಲ ಬಾರಿ ಸ್ವಲ್ಪ ಸಮಯ)':'Preparing text recognition (first run takes a little longer)';
+  if(/load|initializ/i.test(s||'')) return kn?'ಪಠ್ಯ ಓದುವ ಎಂಜಿನ್ ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ (ಮೊದಲ ಬಾರಿ ಮಾತ್ರ, ಸುಮಾರು 10 MB)':'Downloading the text reader (first time only, about 10 MB)';
   if(/recogniz/i.test(s||'')) return kn?'ಚಿತ್ರದಲ್ಲಿನ ಪಠ್ಯ ಓದುತ್ತಿದೆ':'Reading the text in the image';
   return kn?'ಆರಂಭಿಸುತ್ತಿದೆ':'Starting';
 }
@@ -2274,14 +2371,14 @@ function renderVerdict(){
     const kn=lang==='kn';
     if(qrState.status==='none') v.innerHTML=`<div class="empty-state">${ico('info')}<b style="color:var(--ink)">${kn?'QR ಕೋಡ್ ಓದಲಾಗಲಿಲ್ಲ':'No QR code found'}</b><p>${kn?'QR ಸ್ಪಷ್ಟವಾಗಿ ಕಾಣುವ ಫೋಟೋ ಬಳಸಿ, ಹತ್ತಿರದಿಂದ ಮತ್ತು ನೇರವಾಗಿ.':'Use a clear photo with the whole QR code visible, taken straight on.'}</p></div>`;
     else if(qrState.status==='error') v.innerHTML=`<div class="empty-state">${ico('warn')}<b style="color:var(--ink)">${kn?'QR ಓದುವ ಎಂಜಿನ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ':'QR reader could not load'}</b><p>${kn?'ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.':'Check your internet connection and try again.'}</p></div>`;
-    else v.innerHTML=`<div class="empty-state"><span class="spin" style="width:28px;height:28px;border-width:3px"></span><b style="color:var(--ink)">${kn?'QR ಕೋಡ್ ಓದುತ್ತಿದೆ':'Reading the QR code'}</b></div>`;
+    else { v.innerHTML=`<div class="waitbox later"><b>${kn?'QR ಕೋಡ್ ಓದುತ್ತಿದೆ':'Reading the QR code'}</b><p class="small muted" id="qrSlow" hidden>${kn?'ದೊಡ್ಡ ಫೋಟೋ ಓದಲು ಒಂದು ಕ್ಷಣ ಬೇಕು. ಎಲ್ಲವೂ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ.':'Large photos take a moment. Everything stays on your device.'}</p></div><div class="skel later" aria-hidden="true"><div class="sk-top"><i class="sk-ic"></i><div><i class="sk-l w60"></i><i class="sk-l w80"></i></div><i class="sk-n"></i></div><i class="sk-bar"></i><i class="sk-l w100"></i><i class="sk-l w90"></i><i class="sk-l w70"></i></div>`; setTimeout(()=>{ const q=$('qrSlow'); if(q) q.hidden=false; }, 1000); }
     return;
   }
   if(last.pending){
     const kn=lang==='kn';
     if(ocrState.status==='error') v.innerHTML=`<div class="empty-state">${ico('warn')}<b style="color:var(--ink)">${kn?'ಪಠ್ಯ ಓದುವ ಎಂಜಿನ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ':'Text recognition could not load'}</b><p>${ocrState.blocked?(kn?'ಈ ಮುನ್ನೋಟದಲ್ಲಿ ಪಠ್ಯ ಗುರುತಿಸುವಿಕೆಯ ಫೈಲ್‌ಗಳು ತಡೆಯಲ್ಪಟ್ಟಿವೆ. ಸೈಟ್ ಅನ್ನು ನೇರವಾಗಿ ತೆರೆದಾಗ ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಸದ್ಯಕ್ಕೆ ಪಠ್ಯವನ್ನು SMS ಟ್ಯಾಬ್‌ಗೆ ಅಂಟಿಸಿ.':'This preview blocks the text-recognition files. It works when the website is opened directly. For now, paste the text into the SMS tab.'):(kn?'ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಪಠ್ಯವನ್ನು SMS ಟ್ಯಾಬ್‌ಗೆ ಅಂಟಿಸಿ.':'Check your internet connection and try again, or paste the text into the SMS tab.')}</p><button class="btn sec sm" id="ocrRetry">${kn?'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ':'Try again'}</button></div>`;
     else if(ocrState.status==='empty') v.innerHTML=`<div class="empty-state">${ico('info')}<b style="color:var(--ink)">${kn?'ಚಿತ್ರದಲ್ಲಿ ಪಠ್ಯ ಕಾಣಲಿಲ್ಲ':'No text found in the image'}</b><p>${kn?'ಸ್ಪಷ್ಟವಾದ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಪ್ರಯತ್ನಿಸಿ.':'Try a sharper screenshot that shows the message text.'}</p></div>`;
-    else v.innerHTML=`<div class="empty-state"><span class="spin" style="width:28px;height:28px;border-width:3px"></span><b style="color:var(--ink)" id="ocrStage">${ocrStageText(ocrState.stage)}</b><div class="meter" style="width:220px"><b id="ocrBar" style="width:${Math.round(ocrState.progress*50)}%; background:var(--brand)"></b></div><p class="small">${kn?'ಚಿತ್ರ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ. ಯಾವುದೂ ಅಪ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ.':'The image is read on your device. Nothing is uploaded.'}</p></div>`;
+    else v.innerHTML=`<div class="waitbox later"><b id="ocrStage">${ocrStageText(ocrState.stage)}</b><div class="meter pbar"><b id="ocrBar" style="width:${Math.max(4,Math.round(ocrShown))}%"></b></div><p class="small">${kn?'ಚಿತ್ರ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ. ಯಾವುದೂ ಅಪ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ.':'The image is read on your device. Nothing is uploaded.'}</p></div><div class="skel later" aria-hidden="true"><div class="sk-top"><i class="sk-ic"></i><div><i class="sk-l w60"></i><i class="sk-l w80"></i></div><i class="sk-n"></i></div><i class="sk-bar"></i><i class="sk-l w100"></i><i class="sk-l w90"></i><i class="sk-l w70"></i></div>`;
     const rb=$('ocrRetry'); if(rb) rb.onclick=runOCR;
     return;
   }
@@ -2398,6 +2495,7 @@ const FEATS = [
  {m:'qr',h:{en:'QR codes',kn:'QR ಕೋಡ್‌ಗಳು'},p:{en:'Decodes a QR code and warns you if scanning it would pay someone or open a fake site.',kn:'QR ಕೋಡ್ ಓದಿ, ಅದು ಹಣ ಕಳುಹಿಸುವುದಾದರೆ ಅಥವಾ ನಕಲಿ ಸೈಟ್ ತೆರೆಯುವುದಾದರೆ ಎಚ್ಚರಿಸುತ್ತದೆ.'}},
  {m:'job',h:{en:'Job & internship offers',kn:'ಉದ್ಯೋಗ ಮತ್ತು ಇಂಟರ್ನ್‌ಶಿಪ್ ಆಫರ್'},p:{en:'Spots registration fees, fake recruiters and unrealistic pay before you share documents.',kn:'ದಾಖಲೆ ಕೊಡುವ ಮೊದಲು ನೋಂದಣಿ ಶುಲ್ಕ, ನಕಲಿ ನೇಮಕಾತಿದಾರ, ಅತಿ ಸಂಬಳ ಪತ್ತೆ.'}},
  {m:'call',h:{en:'Phone calls',kn:'ಫೋನ್ ಕರೆಗಳು'},p:{en:'Call Shield turns an unknown caller’s words into text and warns you mid-call. Live in the Android app.',kn:'ಕಾಲ್ ಶೀಲ್ಡ್ ಅಪರಿಚಿತ ಕರೆಯ ಮಾತನ್ನು ಪಠ್ಯವಾಗಿಸಿ ಕರೆಯ ಮಧ್ಯೆಯೇ ಎಚ್ಚರಿಸುತ್ತದೆ. Android ಆ್ಯಪ್‌ನಲ್ಲಿ ಲಭ್ಯ.'}},
+ {m:'journey',h:{en:'Scam journey',kn:'ವಂಚನೆಯ ಪ್ರಯಾಣ'},p:{en:'Links a message, link or QR, a fake page or caller and a payment into one case, and finds where they don’t match.',kn:'ಸಂದೇಶ, ಲಿಂಕ್ ಅಥವಾ QR, ನಕಲಿ ಪುಟ ಅಥವಾ ಕರೆ, ಪಾವತಿಯನ್ನು ಒಂದೇ ಪ್ರಕರಣವಾಗಿ ಜೋಡಿಸಿ ಹೊಂದಾಣಿಕೆ ಇಲ್ಲದಲ್ಲಿ ಹುಡುಕುತ್ತದೆ.'}},
  {m:'shot',h:{en:'Screenshots',kn:'ಸ್ಕ್ರೀನ್‌ಶಾಟ್'},p:{en:'Upload a picture of the message. Built-in text recognition reads it on your device.',kn:'ಸಂದೇಶದ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಸಾಧನದಲ್ಲೇ ಪಠ್ಯ ಓದಲಾಗುತ್ತದೆ.'}}
 ];
 const PATTERNS=[
@@ -2421,6 +2519,7 @@ function renderHome(){
   document.querySelectorAll('[data-echo]').forEach(el=>{ el.textContent=I18N[other][el.dataset.echo]||''; el.lang=other; });
   renderPreview();
   const st=[[{en:'Paste or share it',kn:'ಅಂಟಿಸಿ ಅಥವಾ ಹಂಚಿಕೊಳ್ಳಿ'},{en:'Any SMS, WhatsApp message, email or link. You can also add a screenshot.',kn:'ಯಾವುದೇ SMS, ವಾಟ್ಸಾಪ್ ಸಂದೇಶ, ಇಮೇಲ್ ಅಥವಾ ಲಿಂಕ್. ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಕೂಡ ಹಾಕಬಹುದು.'}],[{en:'Read on your phone',kn:'ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ'},{en:'Twenty Karnataka scam rules and a trained classifier check it. Nothing is uploaded.',kn:'ಇಪ್ಪತ್ತು ಕರ್ನಾಟಕ ವಂಚನೆ ನಿಯಮಗಳು ಮತ್ತು ತರಬೇತಿ ಪಡೆದ ವರ್ಗೀಕರಣ ಪರಿಶೀಲಿಸುತ್ತವೆ. ಏನೂ ಅಪ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ.'}],[{en:'See why, then act',kn:'ಕಾರಣ ನೋಡಿ, ನಂತರ ಕ್ರಮ ಕೈಗೊಳ್ಳಿ'},{en:'A verdict with the reasons and what to do next, in Kannada or English.',kn:'ಕಾರಣಗಳು ಮತ್ತು ಮುಂದೇನು ಮಾಡಬೇಕು ಎಂಬುದರೊಂದಿಗೆ ತೀರ್ಪು, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ.'}]];
+  $('feats').innerHTML = FEATS.map(f=>`<button class="feat" data-m="${f.m}"><span class="ficon">${ico(f.m)}</span><h3>${esc(L(f.h))}</h3><p>${esc(L(f.p))}</p></button>`).join('');
   $('homeSteps').innerHTML = st.map((s,i)=>`<div class="step"><span class="n">${i+1}</span><h3>${esc(L(s[0]))}</h3><p>${esc(L(s[1]))}</p></div>`).join('');
   const hd=kn?['ವಂಚನೆ','ಹೇಗೆ ತಲುಪುತ್ತದೆ','ಗುರುತು','ಏನು ಮಾಡಬೇಕು']:['The scam','How it reaches you','The tell','What to do'];
   $('homePatterns').innerHTML = `<table class="pt"><thead><tr>${hd.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${PATTERNS.map((r,i)=>`<tr><td data-h="${hd[0]}"><b>${esc(L(r.s))}</b></td><td data-h="${hd[1]}" class="muted">${esc(L(r.r))}</td><td data-h="${hd[2]}">${i===0?`<span class="pen-u">${esc(L(r.t))}</span>`:esc(L(r.t))}</td><td data-h="${hd[3]}">${esc(L(r.d))}</td></tr>`).join('')}</tbody></table>`;
@@ -2439,8 +2538,35 @@ function playWhenSeen(el){
   el._io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ el.classList.add('play'); el._io.disconnect(); } },{threshold:.35});
   el._io.observe(el);
 }
+$('feats').addEventListener('click',e=>{ const b=e.target.closest('[data-m]'); if(!b) return; if(b.dataset.m==='call'){ go('protect'); setTimeout(()=>$('callshield').scrollIntoView(),50); return; } mode=b.dataset.m; renderTabs(); renderPane(); runScan(false); go('check'); });
 $('recovList').addEventListener('click',e=>{ const b=e.target.closest('[data-rc]'); if(!b) return; const d=store.get('ec-recov',[]); const i=+b.dataset.rc; d[i]=!d[i]; store.set('ec-recov',d); b.classList.toggle('on',!!d[i]); b.setAttribute('aria-checked',String(!!d[i])); });
 $('qcForm').onsubmit=e=>{ e.preventDefault(); const v=$('qcIn').value.trim(); if(!v) { $('qcIn').focus(); return; } if(/^\S+\.\S+$/.test(v) && !/\s/.test(v)){ mode='url'; inputs.url=v; } else { mode='msg'; inputs.msg=v; } renderTabs(); renderPane(); runScan(false); go('check'); };
+
+
+/* ===== feels-fast layer ===== */
+/* 3. press before the lift: with a mouse, buttons act on press, not on release (touch keeps tap so scrolling is safe) */
+const PRESS_SEL='#tabs button, .chip, nav.pages a, .mnav a, .lang button, .va-b, .va-fab, .feat, .cq, .seg button, .qchoices button, [data-qs], [data-js], [data-rc]';
+document.addEventListener('pointerdown', e=>{
+  if(e.pointerType!=='mouse' || e.button!==0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  const el=e.target.closest(PRESS_SEL); if(!el || el.disabled) return;
+  el._pressed=true; el.click();
+}, true);
+document.addEventListener('click', e=>{ const el=e.target.closest(PRESS_SEL); if(el && el._pressed && e.isTrusted){ el._pressed=false; e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+/* 6. preload the next tap: hovering or focusing a tab, link or the Listen button gets its data ready */
+const warmed=new Set();
+function warm(kind){ if(warmed.has(kind)) return; warmed.add(kind);
+  if(kind==='shot') loadTess().catch(()=>warmed.delete('shot'));
+  if(kind==='qr') loadScript(JSQR_SRC).catch(()=>warmed.delete('qr'));
+  if(kind==='technology') (window.requestIdleCallback||setTimeout)(()=>{ try{ renderModelCard(); techFresh=lang; }catch(e){} });
+  if(kind==='voice' && lang==='kn'){ pageSegments('kn').slice(0,2).forEach(x=>{ const u=clipUrl(x); if(u){ const a=new Audio(); a.preload='auto'; a.src=u; } }); warmed.delete('voice'); }
+}
+let techFresh=null;
+['pointerenter','focusin','touchstart'].forEach(ev=>document.addEventListener(ev, e=>{
+  const t=e.target; if(!(t instanceof Element)) return;
+  const tab=t.closest('#tabs [data-m]'); if(tab){ if(tab.dataset.m==='shot') warm('shot'); if(tab.dataset.m==='qr') warm('qr'); }
+  const a=t.closest('a[href="#technology"]'); if(a) warm('technology');
+  if(t.closest('#vaFab')) warm('voice');
+}, {capture:true, passive:true}));
 
 /* ======================= Alerts ======================= */
 const ALERTS = [
@@ -2668,6 +2794,25 @@ function renderCallInfo(){
 function renderCallShield(){ renderCallControls(); renderCallInfo(); if(call.state!=='live') renderCall(); }
 
 /* ======================= Technology ======================= */
+const FAST=[
+ [{en:'Optimistic UI',kn:'ತಕ್ಷಣದ ಬದಲಾವಣೆ'},{en:'Everything runs on your device, so results, checklist ticks, language and appeals change the screen at once. There is no server to wait for.',kn:'ಎಲ್ಲವೂ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ನಡೆಯುವುದರಿಂದ ಫಲಿತಾಂಶ, ಪಟ್ಟಿಯ ಗುರುತು, ಭಾಷೆ ಮತ್ತು ಮೇಲ್ಮನವಿ ತಕ್ಷಣ ಬದಲಾಗುತ್ತವೆ. ಸರ್ವರ್‌ಗಾಗಿ ಕಾಯುವುದಿಲ್ಲ.'}],
+ [{en:'Reply in 100 ms',kn:'100 ms ನಲ್ಲಿ ಪ್ರತಿಕ್ರಿಯೆ'},{en:'Every button visibly presses in, and the verdict updates 120 ms after you stop typing.',kn:'ಪ್ರತಿ ಬಟನ್ ಒತ್ತಿದಂತೆ ಕಾಣುತ್ತದೆ, ಟೈಪ್ ನಿಲ್ಲಿಸಿದ 120 ms ನಲ್ಲಿ ತೀರ್ಪು ಬದಲಾಗುತ್ತದೆ.'}],
+ [{en:'Press before the lift',kn:'ಬೆರಳು ಎತ್ತುವ ಮೊದಲೇ'},{en:'With a mouse, tabs, examples, menu links and voice buttons act on press, not on release. Touch keeps a normal tap so scrolling never triggers anything.',kn:'ಮೌಸ್‌ನಲ್ಲಿ ಟ್ಯಾಬ್, ಉದಾಹರಣೆ, ಮೆನು ಮತ್ತು ಧ್ವನಿ ಬಟನ್‌ಗಳು ಒತ್ತಿದ ಕ್ಷಣವೇ ಕೆಲಸ ಮಾಡುತ್ತವೆ. ಸ್ಕ್ರೋಲ್ ಸುರಕ್ಷತೆಗಾಗಿ ಟಚ್‌ನಲ್ಲಿ ಸಾಮಾನ್ಯ ಟ್ಯಾಪ್.'}],
+ [{en:'No loader under 300 ms',kn:'300 ms ಒಳಗೆ ಲೋಡರ್ ಇಲ್ಲ'},{en:'Waiting states only fade in after 300 ms, so fast checks never flash a loader.',kn:'ಕಾಯುವ ಸ್ಥಿತಿ 300 ms ನಂತರ ಮಾತ್ರ ಕಾಣುತ್ತದೆ, ವೇಗದ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಲೋಡರ್ ಮಿನುಗುವುದಿಲ್ಲ.'}],
+ [{en:'Skeletons, not spinners',kn:'ಸ್ಪಿನ್ನರ್ ಬದಲು ಅಸ್ಥಿಪಂಜರ'},{en:'While a screenshot or QR code is read, the result area shows the shape of the verdict card.',kn:'ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಅಥವಾ QR ಓದುವಾಗ ಫಲಿತಾಂಶದ ಕಾರ್ಡ್‌ನ ಆಕಾರ ಕಾಣುತ್ತದೆ.'}],
+ [{en:'Preload the next tap',kn:'ಮುಂದಿನ ಟ್ಯಾಪ್ ಮೊದಲೇ ಸಿದ್ಧ'},{en:'Hovering the Screenshot or QR tab loads its reader, hovering Technology prepares this page, and the next voice clip loads while the current one plays.',kn:'ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಅಥವಾ QR ಟ್ಯಾಬ್ ಮೇಲೆ ಹೋದಾಗ ಓದುವ ಎಂಜಿನ್, ತಂತ್ರಜ್ಞಾನ ಲಿಂಕ್ ಮೇಲೆ ಹೋದಾಗ ಈ ಪುಟ, ಒಂದು ಧ್ವನಿ ಆಡುವಾಗ ಮುಂದಿನದು ಸಿದ್ಧವಾಗುತ್ತದೆ.'}],
+ [{en:'Blur images',kn:'ಮಸುಕು ಚಿತ್ರ ಮೊದಲು'},{en:'An uploaded screenshot or QR photo appears blurred at once, then sharpens when fully loaded.',kn:'ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಚಿತ್ರ ತಕ್ಷಣ ಮಸುಕಾಗಿ ಕಂಡು, ಪೂರ್ಣ ಲೋಡ್ ಆದಾಗ ಸ್ಪಷ್ಟವಾಗುತ್ತದೆ.'}],
+ [{en:'Progress bars speed up',kn:'ಮುಂದುವರಿಯುವ ಪ್ರಗತಿ ಪಟ್ಟಿ'},{en:'The text-reading bar catches up quickly and keeps creeping forward between updates, so it never looks stuck.',kn:'ಪಠ್ಯ ಓದುವ ಪಟ್ಟಿ ಬೇಗ ಮುಂದೆ ಸಾಗಿ, ನಡುವೆಯೂ ನಿಧಾನವಾಗಿ ಚಲಿಸುತ್ತದೆ. ನಿಂತಂತೆ ಕಾಣುವುದಿಲ್ಲ.'}],
+ [{en:'Explain waits over 1 second',kn:'1 ಸೆಕೆಂಡ್‌ಗಿಂತ ಹೆಚ್ಚಿನ ಕಾಯುವಿಕೆಗೆ ಕಾರಣ'},{en:'Long steps say what is happening: downloading the text reader the first time, reading a large QR photo, loading the voice.',kn:'ದೀರ್ಘ ಹಂತಗಳು ಏನಾಗುತ್ತಿದೆ ಎಂದು ಹೇಳುತ್ತವೆ: ಮೊದಲ ಬಾರಿ ಓದುವ ಎಂಜಿನ್ ಡೌನ್‌ಲೋಡ್, ದೊಡ್ಡ QR ಫೋಟೋ, ಧ್ವನಿ ಲೋಡ್.'}],
+ [{en:'Load on tap',kn:'ಒತ್ತಿದಾಗ ಮಾತ್ರ ಲೋಡ್'},{en:'Text recognition, the QR reader and the Kannada voice clips download only when someone uses them.',kn:'ಪಠ್ಯ ಓದುವಿಕೆ, QR ಓದುವ ಎಂಜಿನ್ ಮತ್ತು ಕನ್ನಡ ಧ್ವನಿಗಳು ಬಳಸಿದಾಗ ಮಾತ್ರ ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತವೆ.'}]
+];
+function renderFast(){
+  const kn=lang==='kn';
+  $('fastH').textContent=kn?'ವೇಗವಾಗಿ ಅನಿಸುವಂತೆ ನಿರ್ಮಿಸಲಾಗಿದೆ':'Built to feel fast';
+  $('fastSub').textContent=kn?'ನಿಧಾನ ಇಂಟರ್ನೆಟ್‌ನಲ್ಲೂ ಎಚ್ಚರ ತಕ್ಷಣ ಪ್ರತಿಕ್ರಿಯಿಸುವಂತೆ ಮಾಡುವ ಹತ್ತು ನಿಯಮಗಳು.':'Ten rules that make Echchara respond instantly, even on a slow connection.';
+  $('fastList').innerHTML=FAST.map(([h,d])=>`<li><b>${esc(L(h))}</b><span>${esc(L(d))}</span></li>`).join('');
+}
+
 /* red-team: attack the scam messages the way real scammers dodge filters, then measure */
 const ATK_VOCAB=/\b(otp|kyc|account|blocked|verify|update|pin|bank|refund|prize|password|suspended|lottery|money|urgent|click|immediately|police|arrest|electricity|aadhaar|winner|card)\b/gi;
 const atkLeet=x=>x.replace(ATK_VOCAB,w=>w.replace(/o/gi,'0').replace(/i/gi,'1').replace(/e/gi,'3').replace(/a/gi,'@'));
@@ -2727,6 +2872,7 @@ function renderModelCard(){
   $('featScam').innerHTML=sc.slice(0,14).map(([k])=>`<span>${esc(nice(k))}</span>`).join('');
   $('featHam').innerHTML=sc.slice(-12).reverse().map(([k])=>`<span>${esc(nice(k))}</span>`).join('');
   try{ renderRobust(); }catch(e){ console.error(e); }
+  renderFast();
   $('stillWrong').innerHTML=comb.wrong.length?comb.wrong.map(([y,x])=>`<li class="fi ${y?'high':'mid'}">${ico(y?'x':'warn')}<div><b>${y?(lang==='kn'?'ತಪ್ಪಿದ ವಂಚನೆ':'Missed scam'):(lang==='kn'?'ತಪ್ಪು ಎಚ್ಚರಿಕೆ':'False alarm')}</b><span>${esc(x)}</span></div></li>`).join(''):`<li class="small muted">${t('te.none')}</li>`;
 }
 
@@ -2786,7 +2932,7 @@ $('vaFab').onclick=()=>{ const p=$('vaPanel'); const open=p.hidden; p.hidden=!op
 $('vaClose').onclick=()=>{ $('vaPanel').hidden=true; $('vaFab').setAttribute('aria-expanded','false'); vaStop(); };
 $('vaRead').onclick=vaReadPage; $('vaSay').onclick=vaListen; $('vaResult').onclick=vaReadResult; $('vaStop').onclick=vaStop;
 $('vaAuto').onchange=e=>{ VA.auto=e.target.checked; store.set('ec-va-auto', VA.auto); if(VA.auto) vaReadPage(); };
-document.querySelector('.va-speed').addEventListener('click',e=>{ const b=e.target.closest('[data-rate]'); if(!b) return; VA.rate=+b.dataset.rate; store.set('ec-va-rate', VA.rate); vaState(); if(VA.lastSpoken) vaSpeak(VA.lastSpoken); });
+document.querySelector('.va-speed').addEventListener('click',e=>{ const b=e.target.closest('[data-rate]'); if(!b) return; VA.rate=+b.dataset.rate; store.set('ec-va-rate', VA.rate); vaState(); if(VA.replay) VA.replay(); });
 if(canSpeak) speechSynthesis.onvoiceschanged=()=>vaState();
 document.querySelector('.lang').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||b.dataset.lang===lang) return; lang=b.dataset.lang; store.set('ec-lang',lang); applyLang(); });
 $('scanBtn').onclick=()=>{ if(mode==='shot' && shotFile && ocrState.status!=='loading' && ocrState.status!=='done') runOCR(); else runScan(); };
