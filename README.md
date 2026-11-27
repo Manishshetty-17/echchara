@@ -8,7 +8,7 @@ Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud De
 
 **[⬇ Download the latest Echchara.apk](../../releases/latest/download/Echchara.apk)** (Android 10 or newer, about 2 MB)
 
-**🌐 Website:** https://manishshetty-17.github.io/echchara/ — check SMS, WhatsApp messages, emails, links, websites, screenshots, QR codes and job offers in the browser, plus the Learn & Play scam simulator. The website source is in [`docs/index.html`](docs/index.html).
+**🌐 Website:** https://niranjan19m-source.github.io/echchara/ — check SMS, WhatsApp messages, emails, links, websites, screenshots, QR codes and job offers in the browser, plus the Learn & Play scam simulator. The website source is in [`docs/index.html`](docs/index.html).
 
 ## What it does
 
