@@ -8,6 +8,9 @@ on:
     paths: ['app/**', 'gradle/**', 'build.gradle', 'settings.gradle', 'gradle.properties', 'gradlew', '.github/workflows/android.yml']
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,3 +29,11 @@ jobs:
         with:
           name: Echchara-apk
           path: Echchara.apk
+      - name: Publish as the latest release (the website's download button uses it)
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(grep -oP 'versionName "\K[^"]+' app/build.gradle)
+          TAG="v${VERSION}-build${{ github.run_number }}"
+          gh release create "$TAG" Echchara.apk --title "Echchara $VERSION (build ${{ github.run_number }})" --notes "Android app built from ${GITHUB_SHA::7}. Install Echchara.apk on your phone; if an older Echchara is installed, uninstall it first." --latest
