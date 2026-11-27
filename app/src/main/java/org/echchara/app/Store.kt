@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.provider.ContactsContract
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -22,6 +24,8 @@ data class HistoryItem(val time: Long, val source: String, val sender: String, v
 object Store {
     private var prefs: SharedPreferences? = null
     val listeners = mutableListOf<() -> Unit>()
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private fun notifyListeners() { mainHandler.post { listeners.toList().forEach { it() } } }
 
     fun init(ctx: Context) { if (prefs == null) prefs = ctx.applicationContext.getSharedPreferences("echchara", Context.MODE_PRIVATE) }
 
@@ -51,10 +55,10 @@ object Store {
             arr.put(JSONObject().put("t", it.time).put("src", it.source).put("from", it.sender).put("text", it.text.take(2000)).put("s", it.score).put("type", it.type ?: "").put("typeKn", it.typeKn ?: ""))
         }
         prefs?.edit()?.putString("history", arr.toString())?.apply()
-        listeners.toList().forEach { it() }
+        notifyListeners()
     }
 
-    fun clearHistory() { prefs?.edit()?.putString("history", "[]")?.apply(); listeners.toList().forEach { it() } }
+    fun clearHistory() { prefs?.edit()?.putString("history", "[]")?.apply(); notifyListeners() }
 
     fun feedbackRows(): List<Pair<Int, String>> {
         val arr = JSONArray(prefs?.getString("feedback", "[]") ?: "[]")
@@ -97,7 +101,7 @@ object Store {
             .setContentTitle(title).setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setColor(0xFFB42318.toInt())
+            .setColor(0xFFD21F3C.toInt())
             .setAutoCancel(true).setContentIntent(pi).build()
         try { NotificationManagerCompat.from(ctx).notify(id, n) } catch (e: SecurityException) { }
     }

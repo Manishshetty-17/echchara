@@ -1417,6 +1417,7 @@ function fuse(rule, ml, safe){
   if(ml!=null && rule<20 && ml<.35) s = Math.min(s, 20);
   if(safe && rule<20) s = Math.min(s, 20);
   if(rule>=40) s = Math.max(s, rule>=55 ? 60 : 45);
+  if(ml!=null && rule<20) s = Math.min(s, 55); // the small classifier alone can warn, not condemn
   return Math.max(0, Math.min(100, s));
 }
 const band = s => s>=60?'danger':s>=30?'warn':'safe';
@@ -1990,7 +1991,7 @@ function explain(r, s){
     if(ids.has('id') && (ids.has('creds')||riskyLink)) typeKey='kyc';
     else if([...ids].some(i=>i.startsWith('q_pay')||i.startsWith('q_refund')||i.startsWith('q_name'))) typeKey='qrpay';
     else if([...ids].some(i=>i.startsWith('j_'))) typeKey='jobfake';
-    else if(ids.has('prize') && !ids.has('threat')) typeKey='prize';
+    else if(ids.has('prize') && !ids.has('threat') && !ids.has('invest')) typeKey='prize';
     else typeKey = PRIORITY.find(k=>ids.has(k)) || (mode==='email'?'email': mode==='web'?'site': riskyLink||mode==='url'?'link':null);
   }
   const txt = (r.text||'');

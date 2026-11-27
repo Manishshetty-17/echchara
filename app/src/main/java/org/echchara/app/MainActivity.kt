@@ -41,16 +41,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val Brand = Color(0xFF1554D1)
-private val Navy = Color(0xFF0B1B36)
-private val Danger = Color(0xFFB42318)
-private val DangerBg = Color(0xFFFEF3F2)
-private val Warn = Color(0xFFB54708)
-private val WarnBg = Color(0xFFFFFAEB)
-private val Safe = Color(0xFF067647)
-private val SafeBg = Color(0xFFECFDF3)
-private val Muted = Color(0xFF667085)
-private val Line = Color(0xFFE1E6ED)
+private val Brand = Color(0xFF132A55)
+private val Navy = Color(0xFF132A55)
+private val Danger = Color(0xFFD21F3C)
+private val DangerBg = Color(0xFFFDEEF0)
+private val Warn = Color(0xFFA6590B)
+private val WarnBg = Color(0xFFFFF4E2)
+private val Safe = Color(0xFF13753F)
+private val SafeBg = Color(0xFFEAF6EF)
+private val Muted = Color(0xFF5B6B86)
+private val Line = Color(0xFFDAE3EE)
+private val Paper = Color(0xFFFCFDFE)
 
 private fun bandColor(b: Band) = when (b) { Band.DANGER -> Danger; Band.WARN -> Warn; Band.SAFE -> Safe }
 private fun bandBg(b: Band) = when (b) { Band.DANGER -> DangerBg; Band.WARN -> WarnBg; Band.SAFE -> SafeBg }
@@ -84,6 +85,8 @@ private val SAMPLE_MSGS = listOf(
     Txt("SBI KYC", "SBI ಕೆವೈಸಿ") to "Dear Customer, your SBI YONO account will be suspended today due to incomplete KYC. Update your PAN immediately at sbi-yono-kyc.top/verify",
     Txt("UPI refund", "UPI ರೀಫಂಡ್") to "flipkart.refund@ybl has sent you a collect request of Rs 4,999. Enter your UPI PIN to receive the refund.",
     Txt("Kannada prize", "ಕನ್ನಡ ಬಹುಮಾನ") to "ಅಭಿನಂದನೆಗಳು! ನೀವು ₹25,00,000 ಬಹುಮಾನ ಗೆದ್ದಿದ್ದೀರಿ. ಬಹುಮಾನ ಪಡೆಯಲು ಇಂದೇ ₹4,999 ಶುಲ್ಕ ಪಾವತಿಸಿ.",
+    Txt("Trading tips group", "ಟ್ರೇಡಿಂಗ್ ಟಿಪ್ಸ್ ಗುಂಪು") to "Welcome to the VIP Stock Tips group. Our members made 18% profit this week with guaranteed returns. Pay Rs 4,999 to vipprofit.trade@ybl today to unlock the next tips.",
+    Txt("Wedding invite APK", "ಮದುವೆ ಆಮಂತ್ರಣ APK") to "Namaskara! You are invited to the wedding of our daughter Priya. Please download Wedding_Invitation.apk to see the venue and date.",
     Txt("Real OTP", "ನಿಜವಾದ OTP") to "482913 is your OTP to log in to Swiggy. Do not share this code with anyone."
 )
 
@@ -113,12 +116,12 @@ private fun App(tick: Int, shared: MutableState<String?>, startTab: MutableIntSt
     var kn by remember { mutableStateOf(Store.kannada) }
     var tab by startTab
     fun t(en: String, k: String) = if (kn) k else en
-    val scheme = lightColorScheme(primary = Brand, onPrimary = Color.White, background = Color(0xFFF5F7FA), surface = Color.White, onSurface = Color(0xFF101828), surfaceVariant = Color(0xFFEEF2F6), outline = Color(0xFFD0D5DD))
+    val scheme = lightColorScheme(primary = Brand, onPrimary = Color.White, background = Paper, surface = Color.White, onSurface = Color(0xFF132A55), surfaceVariant = Color(0xFFEEF1F6), outline = Color(0xFFC3D0E0))
     MaterialTheme(colorScheme = scheme) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Filled.Lock, null, tint = Color.White, modifier = Modifier.size(20.dp)); Spacer(Modifier.width(8.dp)); Text("Echchara", fontWeight = FontWeight.Bold); Spacer(Modifier.width(8.dp)); Text("ಎಚ್ಚರ", fontSize = 13.sp, color = Color(0xFFB7C2D4)) } },
+                    title = { Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Filled.Lock, null, tint = Color.White, modifier = Modifier.size(20.dp)); Spacer(Modifier.width(8.dp)); Text("ಎಚ್ಚರ", fontWeight = FontWeight.Bold); Spacer(Modifier.width(8.dp)); Text("Echchara", fontSize = 13.sp, color = Color(0xFFD6E0EF)) } },
                     actions = {
                         Row(Modifier.padding(end = 8.dp).clip(RoundedCornerShape(8.dp)).background(Color(0x22FFFFFF))) {
                             listOf(false to "EN", true to "ಕನ್ನಡ").forEach { (v, label) ->
@@ -138,7 +141,7 @@ private fun App(tick: Int, shared: MutableState<String?>, startTab: MutableIntSt
                 }
             }
         ) { pad ->
-            Box(Modifier.padding(pad).fillMaxSize().background(Color(0xFFF5F7FA))) {
+            Box(Modifier.padding(pad).fillMaxSize().background(Paper)) {
                 when (tab) {
                     0 -> ProtectionScreen(kn, tick)
                     1 -> CheckScreen(kn, shared)
@@ -251,7 +254,7 @@ private fun ShieldCard(icon: ImageVector, title: String, desc: String, ready: Bo
     Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(16.dp), border = androidx.compose.foundation.BorderStroke(1.dp, Line)) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color(0xFFEBF1FF)), contentAlignment = Alignment.Center) { Icon(icon, null, tint = Brand) }
+                Box(Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color(0xFFE7EDF7)), contentAlignment = Alignment.Center) { Icon(icon, null, tint = Brand) }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(title, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
@@ -320,7 +323,7 @@ private fun ResultCard(a: Analysis, kn: Boolean, feedbackGiven: Boolean, onFeedb
                 Column(horizontalAlignment = Alignment.End) { Text("${a.score}", color = bandColor(b), fontSize = 24.sp, fontWeight = FontWeight.Bold); Text(t("risk / 100", "ಅಪಾಯ / 100"), fontSize = 11.sp, color = Muted) }
             }
             LinearProgressIndicator(progress = { maxOf(.03f, a.score / 100f) }, modifier = Modifier.fillMaxWidth().height(6.dp).clip(CircleShape), color = bandColor(b), trackColor = Color(0xFFEEF2F6))
-            Text(a.summary.get(kn), fontSize = 14.sp, modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFFEBF1FF)).padding(12.dp))
+            Text(a.summary.get(kn), fontSize = 14.sp, modifier = Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFFEEF1F6)).padding(12.dp))
             Row { Text(t("Pattern engine", "ಮಾದರಿ ಎಂಜಿನ್") + ": ${a.ruleScore}/100", fontSize = 12.sp, color = Muted, modifier = Modifier.weight(1f)); Text(t("ML classifier", "ML ವರ್ಗೀಕರಣ") + ": ${(a.ml * 100).toInt()}%", fontSize = 12.sp, color = Muted) }
             if (a.flags.isNotEmpty()) {
                 Text(t("Findings", "ಕಂಡುಬಂದವು"), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)

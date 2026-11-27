@@ -56,6 +56,7 @@ object Guard {
     private var partial = ""
     private var alerted = false
     private var silentErrors = 0
+    private var errorStreak = 0
     private var recognizer: SpeechRecognizer? = null
     private var listening = false
     private var telephonyCallback: Any? = null
@@ -95,7 +96,7 @@ object Guard {
         if (active) finish(false)
         Store.init(c)
         ctx = c.applicationContext; mode = m; number = num; active = true; answered = false
-        lines.clear(); partial = ""; alerted = false; silentErrors = 0
+        lines.clear(); partial = ""; alerted = false; silentErrors = 0; errorStreak = 0
         showOverlay()
         val hints = Engine.numberHints(num).joinToString(" · ") { it.get(kn) }
         tTitle?.text = s("Unknown number", "ಅಪರಿಚಿತ ಸಂಖ್ಯೆ") + "  " + num.ifBlank { s("(hidden)", "(ಮರೆಮಾಚಲಾಗಿದೆ)") }
@@ -223,6 +224,7 @@ object Guard {
         override fun onResults(b: Bundle?) {
             val t = b?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()?.trim().orEmpty()
             partial = ""
+            errorStreak = 0
             if (t.isNotEmpty()) { silentErrors = 0; addLine(t) } else renderTranscript()
             main.postDelayed({ listenOnce() }, 150)
         }
@@ -235,7 +237,11 @@ object Guard {
                     if (silentErrors == 3 && lines.isEmpty()) status(s("Can't hear the caller yet. Turn on speaker and keep the phone near you.", "ಕರೆ ಮಾಡಿದವರು ಕೇಳಿಸುತ್ತಿಲ್ಲ. ಸ್ಪೀಕರ್ ಆನ್ ಮಾಡಿ."))
                 }
             }
-            val delay = if (error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY || error == SpeechRecognizer.ERROR_CLIENT) 800L else 250L
+            val hard = error != SpeechRecognizer.ERROR_NO_MATCH && error != SpeechRecognizer.ERROR_SPEECH_TIMEOUT
+            if (hard) errorStreak++ else errorStreak = 0
+            if (hard && errorStreak == 4) status(s("Speech recognition is not responding. Check your internet connection; Echchara will keep trying.", "ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆ ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತಿಲ್ಲ. ಇಂಟರ್ನೆಟ್ ಪರಿಶೀಲಿಸಿ; ಎಚ್ಚರ ಪ್ರಯತ್ನಿಸುತ್ತಲೇ ಇರುತ್ತದೆ."))
+            val base = if (error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY || error == SpeechRecognizer.ERROR_CLIENT) 800L else 250L
+            val delay = if (hard) minOf(5000L, base * (1L shl minOf(errorStreak, 4))) else base
             if (error == SpeechRecognizer.ERROR_CLIENT || error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY) {
                 try { recognizer?.destroy() } catch (e: Exception) { }
                 recognizer = ctx?.let { SpeechRecognizer.createSpeechRecognizer(it).apply { setRecognitionListener(this@Guard.listener) } }
@@ -256,7 +262,7 @@ object Guard {
         val text = lines.joinToString("\n")
         if (text.isBlank()) { tRisk?.text = s("Call risk: no fraud signs yet", "ಕರೆಯ ಅಪಾಯ: ಇನ್ನೂ ಲಕ್ಷಣಗಳಿಲ್ಲ"); bar?.progress = 2; tint(Color.parseColor("#12B76A")); return }
         val a = Engine.analyze(text)
-        val col = when (a.band) { Band.DANGER -> "#F04438"; Band.WARN -> "#F79009"; else -> "#12B76A" }
+        val col = when (a.band) { Band.DANGER -> "#D21F3C"; Band.WARN -> "#A6590B"; else -> "#13753F" }
         tRisk?.text = s("Call risk", "ಕರೆಯ ಅಪಾಯ") + ": " + a.score + "/100" + (a.type?.let { " · " + it.get(kn) } ?: "")
         bar?.progress = maxOf(2, a.score); tint(Color.parseColor(col))
         if (!alerted && Engine.shouldAlertCall(a)) showAlert(a)
@@ -268,7 +274,7 @@ object Guard {
         tReasons?.text = s("Likely fraud call", "ಬಹುಶಃ ವಂಚನೆಯ ಕರೆ") + (a.org?.let { " · " + s("posing as ", "ನಟನೆ: ") + it } ?: "") + "\n" + reasons + "\n" +
             s("Do not share any OTP, PIN or money. Hang up now.", "OTP, PIN ಅಥವಾ ಹಣ ಕೊಡಬೇಡಿ. ಈಗಲೇ ಕರೆ ಕಡಿತಗೊಳಿಸಿ.")
         alertBox?.visibility = View.VISIBLE
-        (root?.background as? GradientDrawable)?.setStroke(dp(3), Color.parseColor("#D92D20"))
+        (root?.background as? GradientDrawable)?.setStroke(dp(3), Color.parseColor("#D21F3C"))
         vibrate()
         ctx?.let { Store.notifyAlert(it, 7000, s("Likely fraud call", "ಬಹುಶಃ ವಂಚನೆಯ ಕರೆ"), a.summary.get(kn)) }
     }
@@ -304,7 +310,7 @@ object Guard {
         if (!Settings.canDrawOverlays(c)) return
         removeOverlay()
         val wm = c.getSystemService(WindowManager::class.java)
-        val ink = Color.parseColor("#101828"); val muted = Color.parseColor("#475467")
+        val ink = Color.parseColor("#132A55"); val muted = Color.parseColor("#5B6B86")
         fun tv(size: Float, color: Int, bold: Boolean = false) = TextView(c).apply { setTextSize(TypedValue.COMPLEX_UNIT_SP, size); setTextColor(color); if (bold) setTypeface(typeface, Typeface.BOLD) }
 
         val box = LinearLayout(c).apply {
@@ -314,7 +320,7 @@ object Guard {
             elevation = dp(10).toFloat()
         }
         val head = LinearLayout(c).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
-        val brand = tv(12f, Color.parseColor("#1554D1"), true).apply { text = "🛡 Echchara Call Shield" }
+        val brand = tv(12f, Color.parseColor("#132A55"), true).apply { text = "🛡 ಎಚ್ಚರ Echchara Call Shield" }
         val close = tv(20f, muted).apply { text = "×"; setPadding(dp(12), 0, dp(4), 0); setOnClickListener { stop() } }
         head.addView(brand, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)); head.addView(close)
         tTitle = tv(16f, ink, true).apply { setPadding(0, dp(6), 0, 0) }
@@ -325,9 +331,9 @@ object Guard {
         val listenBtn = Button(c).apply { text = s("Listen now", "ಈಗ ಆಲಿಸಿ"); isAllCaps = false; setOnClickListener { answered = true; if (!listening) startListening() } }
 
         alertBox = LinearLayout(c).apply { orientation = LinearLayout.VERTICAL; visibility = View.GONE; setPadding(0, dp(10), 0, 0) }
-        tReasons = tv(14f, Color.parseColor("#B42318"), true)
+        tReasons = tv(14f, Color.parseColor("#D21F3C"), true)
         val row = LinearLayout(c).apply { orientation = LinearLayout.HORIZONTAL; setPadding(0, dp(8), 0, 0) }
-        val hang = Button(c).apply { text = s("Hang up now", "ಕರೆ ಕಡಿತಗೊಳಿಸಿ"); isAllCaps = false; setTextColor(Color.WHITE); background = GradientDrawable().apply { setColor(Color.parseColor("#D92D20")); cornerRadius = dp(10).toFloat() }; setOnClickListener { hangUp() } }
+        val hang = Button(c).apply { text = s("Hang up now", "ಕರೆ ಕಡಿತಗೊಳಿಸಿ"); isAllCaps = false; setTextColor(Color.WHITE); background = GradientDrawable().apply { setColor(Color.parseColor("#D21F3C")); cornerRadius = dp(10).toFloat() }; setOnClickListener { hangUp() } }
         val keep = Button(c).apply { text = s("Keep listening", "ಆಲಿಸುತ್ತಿರಿ"); isAllCaps = false; setOnClickListener { alertBox?.visibility = View.GONE } }
         row.addView(hang, LinearLayout.LayoutParams(0, dp(46), 1f).apply { marginEnd = dp(8) }); row.addView(keep, LinearLayout.LayoutParams(0, dp(46), 1f))
         alertBox?.addView(tReasons); alertBox?.addView(row)
