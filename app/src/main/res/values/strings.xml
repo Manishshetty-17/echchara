@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Echchara</string>
     <string name="share_label">Check with Echchara</string>
+    <string name="listener_label">Echchara chat scam check</string>
 </resources>

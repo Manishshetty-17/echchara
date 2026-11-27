@@ -4,11 +4,14 @@ package org.echchara.app
 
 import android.Manifest
 import android.app.role.RoleManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -98,15 +101,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Store.init(this); Store.channels(this)
-        handleIntent(intent)
+        handleIntent(intent, fresh = savedInstanceState == null)
         setContent { App(resumeTick.intValue, sharedText, startTab) }
     }
 
-    override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleIntent(intent) }
+    override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleIntent(intent, fresh = true) }
     override fun onResume() { super.onResume(); resumeTick.intValue++ }
 
-    private fun handleIntent(i: Intent?) {
+    private fun handleIntent(i: Intent?, fresh: Boolean) {
         if (i?.action == Intent.ACTION_SEND) i.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText.value = it; startTab.intValue = 1 }
+        else if (i?.action == Links.ACTION_REPORT) { startTab.intValue = 2; if (fresh) Links.report(this, i.getStringExtra("text").orEmpty()) }
         else if (i?.hasExtra("tab") == true) startTab.intValue = i.getIntExtra("tab", 0)
     }
 }
@@ -166,23 +170,31 @@ private fun ProtectionScreen(kn: Boolean, tick: Int) {
     val callPermsOk = remember(key) { callPerms.all { has(it) } }
     val smsOk = remember(key) { has(Manifest.permission.RECEIVE_SMS) }
     val notifOk = remember(key) { Build.VERSION.SDK_INT < 33 || has(Manifest.permission.POST_NOTIFICATIONS) }
+    val usageOk = remember(key) { PayWatch.hasUsageAccess(ctx) }
+    val listenerOk = remember(key) { Guardian.isEnabled(ctx) }
     var callOn by remember { mutableStateOf(Store.callShield) }
     var smsOn by remember { mutableStateOf(Store.smsShield) }
+    var deviceOn by remember { mutableStateOf(Store.deviceShield) }
     var note by remember { mutableStateOf("") }
 
     val permLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { refresh++ }
     val roleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { refresh++ }
+    // Settings screens differ between phone makers: try the exact screen first, then the general one.
+    fun openFirst(vararg intents: Intent) {
+        for (i in intents) { try { roleLauncher.launch(i); return } catch (e: Exception) { } }
+    }
 
     val callReady = roleHeld && overlay && callPermsOk
-    val shieldsOn = (if (callReady && callOn) 1 else 0) + (if (smsOk && smsOn) 1 else 0)
+    val deviceReady = usageOk && overlay
+    val shieldsOn = (if (callReady && callOn) 1 else 0) + (if (smsOk && smsOn) 1 else 0) + (if (deviceReady && deviceOn) 1 else 0)
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Card(colors = CardDefaults.cardColors(containerColor = Navy), shape = RoundedCornerShape(16.dp)) {
             Column(Modifier.padding(18.dp)) {
                 Text(t("Protection status", "ರಕ್ಷಣೆಯ ಸ್ಥಿತಿ"), color = Color(0xFFB7C2D4), fontSize = 13.sp)
-                Text(if (shieldsOn == 2) t("You are protected", "ನೀವು ರಕ್ಷಿತರಾಗಿದ್ದೀರಿ") else t("$shieldsOn of 2 shields on", "2 ರಲ್ಲಿ $shieldsOn ರಕ್ಷಣೆ ಆನ್"), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text(if (shieldsOn == 3) t("You are protected", "ನೀವು ರಕ್ಷಿತರಾಗಿದ್ದೀರಿ") else t("$shieldsOn of 3 shields on", "3 ರಲ್ಲಿ $shieldsOn ರಕ್ಷಣೆ ಆನ್"), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(4.dp))
-                Text(t("Checks calls from unknown numbers and every SMS, on this phone.", "ಅಪರಿಚಿತ ಕರೆಗಳು ಮತ್ತು ಪ್ರತಿ SMS ಅನ್ನು ಈ ಫೋನ್‌ನಲ್ಲೇ ಪರಿಶೀಲಿಸುತ್ತದೆ."), color = Color(0xFFD6DEEB), fontSize = 13.sp)
+                Text(t("Checks unknown calls, every SMS, chat messages and new apps, on this phone.", "ಅಪರಿಚಿತ ಕರೆಗಳು, ಪ್ರತಿ SMS, ಚಾಟ್ ಸಂದೇಶಗಳು ಮತ್ತು ಹೊಸ ಆ್ಯಪ್‌ಗಳನ್ನು ಈ ಫೋನ್‌ನಲ್ಲೇ ಪರಿಶೀಲಿಸುತ್ತದೆ."), color = Color(0xFFD6DEEB), fontSize = 13.sp)
             }
         }
 
@@ -215,10 +227,36 @@ private fun ProtectionScreen(kn: Boolean, tick: Int) {
             }
         }
 
+        ShieldCard(
+            icon = Icons.Filled.Lock, title = t("Phone Shield", "ಫೋನ್ ಶೀಲ್ಡ್"),
+            desc = t("Pauses payment and screen-sharing apps during an unknown call and for 20 minutes after a scam warning. Also checks WhatsApp and Telegram messages, flags risky apps from outside the Play Store, and warns if your SIM suddenly stops working.",
+                "ಅಪರಿಚಿತ ಕರೆಯ ಸಮಯದಲ್ಲಿ ಮತ್ತು ವಂಚನೆಯ ಎಚ್ಚರಿಕೆಯ ನಂತರ 20 ನಿಮಿಷ, ಪಾವತಿ ಅಥವಾ ಪರದೆ ಹಂಚುವ ಆ್ಯಪ್ ತೆರೆಯುವ ಮೊದಲು ನಿಲ್ಲಿಸಿ ಕೇಳುತ್ತದೆ. ವಾಟ್ಸಾಪ್ ಮತ್ತು ಟೆಲಿಗ್ರಾಮ್ ಸಂದೇಶಗಳನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ, Play Store ಹೊರಗಿನ ಅಪಾಯಕಾರಿ ಆ್ಯಪ್‌ಗಳನ್ನು ಗುರುತಿಸುತ್ತದೆ, SIM ಇದ್ದಕ್ಕಿದ್ದಂತೆ ನಿಂತರೆ ಎಚ್ಚರಿಸುತ್ತದೆ."),
+            ready = deviceReady, on = deviceOn, onToggle = { deviceOn = it; Store.deviceShield = it }, kn = kn
+        ) {
+            SetupRow(t("Notice payment apps", "ಪಾವತಿ ಆ್ಯಪ್‌ಗಳನ್ನು ಗುರುತಿಸಲು"), t("Usage access, so the pause screen appears before a payment or screen-sharing app opens.", "ಬಳಕೆ ಪ್ರವೇಶ. ಪಾವತಿ ಅಥವಾ ಪರದೆ ಹಂಚುವ ಆ್ಯಪ್ ತೆರೆಯುವ ಮೊದಲು ವಿರಾಮ ಪರದೆ ತೋರಿಸಲು."), usageOk, kn) {
+                openFirst(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS, Uri.parse("package:" + ctx.packageName)), Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+            }
+            SetupRow(t("Show the pause screen", "ವಿರಾಮ ಪರದೆ ತೋರಿಸಲು"), t("Allow \"Display over other apps\".", "\"ಇತರ ಆ್ಯಪ್‌ಗಳ ಮೇಲೆ ತೋರಿಸು\" ಅನುಮತಿಸಿ."), overlay, kn) {
+                roleLauncher.launch(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + ctx.packageName)))
+            }
+            SetupRow(t("Check chat messages", "ಚಾಟ್ ಸಂದೇಶಗಳ ಪರಿಶೀಲನೆ"),
+                t("Notification access, for WhatsApp, Telegram and other chat apps. It also runs the new-app check and the SIM alarm. If Android says the setting is restricted, open App info › ⋮ › Allow restricted settings, then try again.",
+                    "ವಾಟ್ಸಾಪ್, ಟೆಲಿಗ್ರಾಮ್ ಮುಂತಾದ ಚಾಟ್ ಆ್ಯಪ್‌ಗಳಿಗಾಗಿ ಅಧಿಸೂಚನೆ ಪ್ರವೇಶ. ಹೊಸ ಆ್ಯಪ್ ಪರಿಶೀಲನೆ ಮತ್ತು SIM ಎಚ್ಚರಿಕೆಯೂ ಇದರಿಂದಲೇ ನಡೆಯುತ್ತದೆ. ಸೆಟ್ಟಿಂಗ್ ನಿರ್ಬಂಧಿತ ಎಂದು ಬಂದರೆ, ಆ್ಯಪ್ ಮಾಹಿತಿ › ⋮ › ನಿರ್ಬಂಧಿತ ಸೆಟ್ಟಿಂಗ್ ಅನುಮತಿಸಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."),
+                listenerOk, kn) {
+                val detail = if (Build.VERSION.SDK_INT >= 30) Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS)
+                    .putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME, ComponentName(ctx, Guardian::class.java).flattenToString()) else null
+                openFirst(*listOfNotNull(detail, Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)).toTypedArray())
+            }
+            if (Build.VERSION.SDK_INT >= 33 && !notifOk) SetupRow(t("Notifications", "ಅಧಿಸೂಚನೆಗಳು"), t("So warnings can reach you.", "ಎಚ್ಚರಿಕೆಗಳು ತಲುಪಲು."), false, kn) {
+                permLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+            }
+            AppScan(kn, key)
+        }
+
         Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(16.dp), border = androidx.compose.foundation.BorderStroke(1.dp, Line)) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(t("Try Call Shield now", "ಈಗ ಕಾಲ್ ಶೀಲ್ಡ್ ಪ್ರಯತ್ನಿಸಿ"), fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
-                Text(t("Run a sample scam call to see the real pop-up, or test live speech with your microphone. For a real test, ask a friend whose number isn't saved to call you and play a scam script on speaker.", "ನಿಜವಾದ ಪಾಪ್-ಅಪ್ ನೋಡಲು ಮಾದರಿ ಕರೆ ಚಲಾಯಿಸಿ, ಅಥವಾ ಮೈಕ್ರೊಫೋನ್ ಮೂಲಕ ಪರೀಕ್ಷಿಸಿ. ನಿಜವಾದ ಪರೀಕ್ಷೆಗೆ, ಉಳಿಸದ ಸಂಖ್ಯೆಯ ಸ್ನೇಹಿತರಿಂದ ಕರೆ ಮಾಡಿಸಿ."), fontSize = 13.sp, color = Muted)
+                Text(t("Run a sample scam call to see the real pop-up, or test live speech with your microphone. For a real test, ask a friend whose number isn't saved to call you and play a scam script on speaker. With Phone Shield on, opening a payment app in the 20 minutes after a sample scam call shows the payment pause.", "ನಿಜವಾದ ಪಾಪ್-ಅಪ್ ನೋಡಲು ಮಾದರಿ ಕರೆ ಚಲಾಯಿಸಿ, ಅಥವಾ ಮೈಕ್ರೊಫೋನ್ ಮೂಲಕ ಪರೀಕ್ಷಿಸಿ. ನಿಜವಾದ ಪರೀಕ್ಷೆಗೆ, ಉಳಿಸದ ಸಂಖ್ಯೆಯ ಸ್ನೇಹಿತರಿಂದ ಕರೆ ಮಾಡಿಸಿ. ಫೋನ್ ಶೀಲ್ಡ್ ಆನ್ ಇದ್ದರೆ, ಮಾದರಿ ವಂಚನೆ ಕರೆಯ ನಂತರ 20 ನಿಮಿಷದೊಳಗೆ ಪಾವತಿ ಆ್ಯಪ್ ತೆರೆದಾಗ ಪಾವತಿ ವಿರಾಮ ಕಾಣುತ್ತದೆ."), fontSize = 13.sp, color = Muted)
                 SAMPLE_CALLS.forEach { (name, data) ->
                     OutlinedButton(onClick = {
                         if (!Settings.canDrawOverlays(ctx)) note = t("Turn on \"Show pop-up over calls\" first.", "ಮೊದಲು \"ಕರೆಯ ಮೇಲೆ ಪಾಪ್-ಅಪ್\" ಆನ್ ಮಾಡಿ.")
@@ -236,15 +274,8 @@ private fun ProtectionScreen(kn: Boolean, tick: Int) {
             }
         }
 
-        Card(colors = CardDefaults.cardColors(containerColor = DangerBg), shape = RoundedCornerShape(16.dp)) {
-            Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(t("Lost money to fraud?", "ವಂಚನೆಯಿಂದ ಹಣ ಕಳೆದುಕೊಂಡಿರಾ?"), fontWeight = FontWeight.SemiBold)
-                    Text(t("Call the Cyber Crime Helpline in the first hour.", "ಮೊದಲ ಗಂಟೆಯಲ್ಲಿ ಸೈಬರ್ ಸಹಾಯವಾಣಿಗೆ ಕರೆ ಮಾಡಿ."), fontSize = 13.sp, color = Muted)
-                }
-                Button(onClick = { ctx.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:1930"))) }, colors = ButtonDefaults.buttonColors(containerColor = Danger)) { Text("1930", fontWeight = FontWeight.Bold) }
-            }
-        }
+        FamilyCodeCard(kn)
+        FirstHourCard(kn)
         Spacer(Modifier.height(8.dp))
     }
 }
@@ -279,6 +310,105 @@ private fun SetupRow(title: String, sub: String, done: Boolean, kn: Boolean, act
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) { Text(title, fontSize = 14.sp, fontWeight = FontWeight.Medium); Text(sub, fontSize = 12.sp, color = Muted) }
         if (!done) TextButton(onClick = action) { Text(if (kn) "ಆನ್ ಮಾಡಿ" else "Turn on") }
+    }
+}
+
+@Composable
+private fun AppScan(kn: Boolean, tick: Int) {
+    val ctx = LocalContext.current
+    fun t(en: String, k: String) = if (kn) k else en
+    var scanning by remember { mutableStateOf(false) }
+    var found by remember { mutableStateOf<List<AppCheck.Risk>?>(null) }
+    fun scan() {
+        if (scanning) return
+        scanning = true
+        val app = ctx.applicationContext
+        Thread {
+            val r = AppCheck.scanAll(app)
+            Handler(Looper.getMainLooper()).post { found = r; scanning = false }
+        }.start()
+    }
+    // After an uninstall, coming back to Echchara refreshes the list.
+    LaunchedEffect(tick) { if (found != null) scan() }
+    HorizontalDivider(color = Line)
+    Spacer(Modifier.height(10.dp))
+    OutlinedButton(onClick = { scan() }, enabled = !scanning, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(10.dp)) {
+        Icon(Icons.Filled.Search, null); Spacer(Modifier.width(6.dp))
+        Text(if (scanning) t("Checking your apps…", "ಆ್ಯಪ್‌ಗಳನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದೆ…") else t("Check my apps now", "ನನ್ನ ಆ್ಯಪ್‌ಗಳನ್ನು ಈಗ ಪರಿಶೀಲಿಸಿ"))
+    }
+    found?.let { list ->
+        if (list.isEmpty()) Text(t("No risky apps found. Echchara lists apps from outside an app store that can read SMS or notifications, use Accessibility or become a device admin.",
+            "ಅಪಾಯಕಾರಿ ಆ್ಯಪ್ ಕಂಡುಬಂದಿಲ್ಲ. ಆ್ಯಪ್ ಸ್ಟೋರ್ ಹೊರಗಿನಿಂದ ಬಂದು SMS ಅಥವಾ ಅಧಿಸೂಚನೆ ಓದುವ, ಆಕ್ಸೆಸಿಬಿಲಿಟಿ ಬಳಸುವ ಅಥವಾ ಸಾಧನ ನಿರ್ವಾಹಕವಾಗುವ ಆ್ಯಪ್‌ಗಳನ್ನು ಎಚ್ಚರ ತೋರಿಸುತ್ತದೆ."),
+            fontSize = 12.sp, color = Safe, modifier = Modifier.padding(top = 8.dp))
+        list.forEach { r ->
+            Column(Modifier.fillMaxWidth().padding(top = 8.dp).clip(RoundedCornerShape(10.dp)).background(DangerBg).padding(12.dp)) {
+                Text(r.label, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text(t("Installed from outside the Play Store", "Play Store ಹೊರಗಿನಿಂದ ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿದೆ"), fontSize = 12.sp, color = Muted)
+                r.reasons.forEach { Text("• " + it.get(kn), fontSize = 13.sp) }
+                Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Button(onClick = { if (!Links.start(ctx, Links.uninstall(r.pkg))) Links.start(ctx, Links.appInfo(r.pkg)) }, colors = ButtonDefaults.buttonColors(containerColor = Danger), shape = RoundedCornerShape(10.dp)) { Text(t("Uninstall", "ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್")) }
+                    Spacer(Modifier.width(8.dp))
+                    TextButton(onClick = { Links.start(ctx, Links.appInfo(r.pkg)) }) { Text(t("App info", "ಆ್ಯಪ್ ಮಾಹಿತಿ")) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FamilyCodeCard(kn: Boolean) {
+    val ctx = LocalContext.current
+    fun t(en: String, k: String) = if (kn) k else en
+    Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(16.dp), border = androidx.compose.foundation.BorderStroke(1.dp, Line)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(40.dp).clip(RoundedCornerShape(10.dp)).background(Color(0xFFE7EDF7)), contentAlignment = Alignment.Center) { Icon(Icons.Filled.Face, null, tint = Brand) }
+                Spacer(Modifier.width(12.dp))
+                Text(t("Family code word", "ಕುಟುಂಬದ ಗುಪ್ತ ಪದ"), fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+            }
+            Text(t("Scammers can copy a relative's or a boss's voice with AI and call asking for money urgently. Agree on a secret word with your family, in person. If a caller says they are one of them, ask for the word or call them back on their saved number. Echchara reminds you when a call or message sounds like this.",
+                "ವಂಚಕರು AI ಬಳಸಿ ಸಂಬಂಧಿಕರ ಅಥವಾ ಬಾಸ್‌ನ ಧ್ವನಿ ನಕಲಿಸಿ ತುರ್ತಾಗಿ ಹಣ ಕೇಳಬಹುದು. ಕುಟುಂಬದೊಂದಿಗೆ ನೇರವಾಗಿ ಒಂದು ಗುಪ್ತ ಪದ ನಿಗದಿಪಡಿಸಿ. ಕರೆ ಮಾಡಿದವರು ಅವರಲ್ಲೊಬ್ಬರು ಎಂದರೆ, ಆ ಪದ ಕೇಳಿ ಅಥವಾ ಉಳಿಸಿದ ಸಂಖ್ಯೆಗೆ ನೀವೇ ಕರೆ ಮಾಡಿ. ಇಂತಹ ಕರೆ ಅಥವಾ ಸಂದೇಶ ಬಂದಾಗ ಎಚ್ಚರ ನೆನಪಿಸುತ್ತದೆ."), fontSize = 13.sp, color = Muted)
+            OutlinedButton(onClick = {
+                val msg = t("Let's agree on a family code word for emergencies. If anyone calls or messages saying they are one of us and asks for money urgently, we ask for the word first. Let's decide the word in person, not over chat.",
+                    "ತುರ್ತು ಸಂದರ್ಭಗಳಿಗಾಗಿ ಒಂದು ಕುಟುಂಬದ ಗುಪ್ತ ಪದ ಇಟ್ಟುಕೊಳ್ಳೋಣ. ನಮ್ಮಲ್ಲೊಬ್ಬರು ಎಂದು ಹೇಳಿ ಯಾರಾದರೂ ಕರೆ ಅಥವಾ ಸಂದೇಶದಲ್ಲಿ ತುರ್ತಾಗಿ ಹಣ ಕೇಳಿದರೆ, ಮೊದಲು ಆ ಪದ ಕೇಳೋಣ. ಪದವನ್ನು ಚಾಟ್‌ನಲ್ಲಲ್ಲ, ನೇರವಾಗಿ ನಿರ್ಧರಿಸೋಣ.")
+                Links.start(ctx, Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, msg), null))
+            }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(10.dp)) { Icon(Icons.Filled.Share, null); Spacer(Modifier.width(6.dp)); Text(t("Message my family about it", "ಕುಟುಂಬಕ್ಕೆ ಸಂದೇಶ ಕಳುಹಿಸಿ")) }
+        }
+    }
+}
+
+@Composable
+private fun FirstHourCard(kn: Boolean) {
+    val ctx = LocalContext.current
+    fun t(en: String, k: String) = if (kn) k else en
+    val steps = listOf(
+        t("Call 1930, the Cyber Crime Helpline. Keep the transaction ID ready.", "1930 ಸೈಬರ್ ಅಪರಾಧ ಸಹಾಯವಾಣಿಗೆ ಕರೆ ಮಾಡಿ. ವಹಿವಾಟು ಸಂಖ್ಯೆ ಸಿದ್ಧವಿಡಿ."),
+        t("Call your bank on the number printed on your card or passbook. Ask them to block your card, UPI and net banking.", "ಕಾರ್ಡ್ ಅಥವಾ ಪಾಸ್‌ಬುಕ್‌ನಲ್ಲಿರುವ ಸಂಖ್ಯೆಗೆ ಬ್ಯಾಂಕ್‌ಗೆ ಕರೆ ಮಾಡಿ. ಕಾರ್ಡ್, UPI ಮತ್ತು ನೆಟ್ ಬ್ಯಾಂಕಿಂಗ್ ತಡೆಹಿಡಿಯಲು ಕೇಳಿ."),
+        t("Report it at cybercrime.gov.in and note the acknowledgement number.", "cybercrime.gov.in ನಲ್ಲಿ ದೂರು ನೀಡಿ, ಸ್ವೀಕೃತಿ ಸಂಖ್ಯೆ ಬರೆದಿಡಿ."),
+        t("Uninstall any app the caller asked you to install, then change your UPI PIN and passwords.", "ಕರೆ ಮಾಡಿದವರು ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಲು ಹೇಳಿದ ಆ್ಯಪ್ ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ, ನಂತರ UPI PIN ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್‌ಗಳನ್ನು ಬದಲಿಸಿ."),
+        t("Keep screenshots, transaction IDs and the caller's number.", "ಸ್ಕ್ರೀನ್‌ಶಾಟ್, ವಹಿವಾಟು ಸಂಖ್ಯೆ ಮತ್ತು ಕರೆ ಮಾಡಿದವರ ಸಂಖ್ಯೆ ಉಳಿಸಿಡಿ."),
+        t("Report the number or message on Chakshu so it can be blocked.", "ಆ ಸಂಖ್ಯೆ ಅಥವಾ ಸಂದೇಶವನ್ನು ನಿರ್ಬಂಧಿಸಲು ಚಕ್ಷುವಿನಲ್ಲಿ ವರದಿ ಮಾಡಿ.")
+    )
+    Card(colors = CardDefaults.cardColors(containerColor = DangerBg), shape = RoundedCornerShape(16.dp)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(t("Lost money or shared an OTP?", "ಹಣ ಕಳೆದುಕೊಂಡಿರಾ ಅಥವಾ OTP ಹಂಚಿದಿರಾ?"), fontWeight = FontWeight.SemiBold)
+                    Text(t("Do these in the first hour, while the money can still be stopped.", "ಹಣ ತಡೆಯಲು ಸಾಧ್ಯವಿರುವ ಮೊದಲ ಗಂಟೆಯಲ್ಲೇ ಇವನ್ನು ಮಾಡಿ."), fontSize = 13.sp, color = Muted)
+                }
+                Button(onClick = { Links.start(ctx, Links.dial("1930")) }, colors = ButtonDefaults.buttonColors(containerColor = Danger)) { Text("1930", fontWeight = FontWeight.Bold) }
+            }
+            steps.forEachIndexed { i, step ->
+                Row {
+                    Text("${i + 1}.", fontWeight = FontWeight.Bold, fontSize = 13.sp, modifier = Modifier.width(22.dp))
+                    Text(step, fontSize = 13.sp)
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { Links.start(ctx, Links.view(Links.CYBERCRIME)) }, shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1f)) { Text("cybercrime.gov.in", fontSize = 12.sp, maxLines = 1) }
+                OutlinedButton(onClick = { Links.start(ctx, Links.view(Links.CHAKSHU)) }, shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1f)) { Text(t("Report on Chakshu", "ಚಕ್ಷುವಿನಲ್ಲಿ ವರದಿ"), fontSize = 12.sp, maxLines = 1) }
+            }
+        }
     }
 }
 
@@ -354,6 +484,7 @@ private fun ResultCard(a: Analysis, kn: Boolean, feedbackGiven: Boolean, onFeedb
 // ---------------- Alerts ----------------
 @Composable
 private fun AlertsScreen(kn: Boolean) {
+    val ctx = LocalContext.current
     fun t(en: String, k: String) = if (kn) k else en
     var items by remember { mutableStateOf(Store.history()) }
     DisposableEffect(Unit) { val l = { items = Store.history() }; Store.listeners.add(l); onDispose { Store.listeners.remove(l) } }
@@ -369,24 +500,31 @@ private fun AlertsScreen(kn: Boolean) {
                 Icon(Icons.Filled.CheckCircle, null, tint = Safe, modifier = Modifier.size(44.dp))
                 Spacer(Modifier.height(8.dp))
                 Text(t("No scams caught yet", "ಇನ್ನೂ ಯಾವುದೇ ವಂಚನೆ ಪತ್ತೆಯಾಗಿಲ್ಲ"), fontWeight = FontWeight.SemiBold)
-                Text(t("Suspicious SMS and calls checked by Echchara appear here.", "ಎಚ್ಚರ ಪರಿಶೀಲಿಸಿದ ಅನುಮಾನಾಸ್ಪದ SMS ಮತ್ತು ಕರೆಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ."), fontSize = 13.sp, color = Muted)
+                Text(t("Suspicious SMS, chats, calls and risky apps found by Echchara appear here.", "ಎಚ್ಚರ ಪತ್ತೆಹಚ್ಚಿದ ಅನುಮಾನಾಸ್ಪದ SMS, ಚಾಟ್, ಕರೆಗಳು ಮತ್ತು ಅಪಾಯಕಾರಿ ಆ್ಯಪ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ."), fontSize = 13.sp, color = Muted)
             }
         }
         items.forEach { h ->
             val b = bandOf(h.score)
+            val icon = when (h.source) { "call" -> Icons.Filled.Call; "chat" -> Icons.Filled.Face; "app" -> Icons.Filled.Build; else -> Icons.Filled.Email }
+            val src = when (h.source) { "call" -> t("Call", "ಕರೆ"); "chat" -> t("Chat", "ಚಾಟ್"); "app" -> t("App", "ಆ್ಯಪ್"); else -> "SMS" }
             Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(14.dp), border = androidx.compose.foundation.BorderStroke(1.dp, Line), modifier = Modifier.clickable { open = if (open == h.time) null else h.time }) {
                 Column(Modifier.padding(14.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(if (h.source == "call") Icons.Filled.Call else Icons.Filled.Email, null, tint = bandColor(b), modifier = Modifier.size(20.dp))
+                        Icon(icon, null, tint = bandColor(b), modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(10.dp))
                         Column(Modifier.weight(1f)) {
                             Text(h.sender.ifBlank { t("Unknown", "ಅಪರಿಚಿತ") }, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            Text((if (h.source == "call") t("Call", "ಕರೆ") else "SMS") + " · " + fmt.format(Date(h.time)), fontSize = 12.sp, color = Muted)
+                            Text(src + " · " + fmt.format(Date(h.time)), fontSize = 12.sp, color = Muted)
                         }
                         Text(b.label.get(kn) + " · ${h.score}", color = bandColor(b), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.clip(RoundedCornerShape(99.dp)).background(bandBg(b)).padding(horizontal = 8.dp, vertical = 3.dp))
                     }
                     (if (kn) h.typeKn else h.type)?.let { Text(it, fontSize = 13.sp, modifier = Modifier.padding(top = 6.dp)) }
                     Text(h.text, fontSize = 12.sp, color = Muted, maxLines = if (open == h.time) 40 else 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 4.dp))
+                    if (open == h.time && h.score >= 30 && h.source != "app") Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedButton(onClick = { Links.report(ctx, h.sender + "\n" + h.text) }, shape = RoundedCornerShape(10.dp)) { Text(t("Report on Chakshu", "ಚಕ್ಷುವಿನಲ್ಲಿ ವರದಿ"), fontSize = 12.sp) }
+                        Spacer(Modifier.width(8.dp))
+                        TextButton(onClick = { Links.start(ctx, Links.dial("1930")) }) { Text(t("Call 1930", "1930 ಗೆ ಕರೆ"), fontSize = 12.sp) }
+                    }
                 }
             }
         }

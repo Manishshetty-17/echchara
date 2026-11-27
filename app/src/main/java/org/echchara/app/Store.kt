@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.ContactsContract
@@ -40,6 +41,30 @@ object Store {
     var smsShield: Boolean
         get() = prefs?.getBoolean("smsShield", true) ?: true
         set(v) { prefs?.edit()?.putBoolean("smsShield", v)?.apply() }
+
+    /** Phone Shield: payment pause, screen-share guard, message check, app check and SIM alarm. */
+    var deviceShield: Boolean
+        get() = prefs?.getBoolean("deviceShield", true) ?: true
+        set(v) { prefs?.edit()?.putBoolean("deviceShield", v)?.apply() }
+
+    // ---------- Phone Shield state ----------
+    private fun long(key: String) = prefs?.getLong(key, 0L) ?: 0L
+    private fun putLong(key: String, v: Long) { prefs?.edit()?.putLong(key, v)?.apply() }
+    private fun int(key: String, def: Int) = prefs?.getInt(key, def) ?: def
+    private fun putInt(key: String, v: Int) { prefs?.edit()?.putInt(key, v)?.apply() }
+
+    var riskStart: Long get() = long("riskStart"); set(v) = putLong("riskStart", v)
+    var riskUntil: Long get() = long("riskUntil"); set(v) = putLong("riskUntil", v)
+    var riskReason: Txt
+        get() = Txt(prefs?.getString("riskWhy", null) ?: "a scam warning", prefs?.getString("riskWhyKn", null) ?: "ವಂಚನೆಯ ಎಚ್ಚರಿಕೆ")
+        set(v) { prefs?.edit()?.putString("riskWhy", v.en)?.putString("riskWhyKn", v.kn)?.apply() }
+    var simRiskAt: Long get() = long("simRiskAt"); set(v) = putLong("simRiskAt", v)
+    var lastSimAlarm: Long get() = long("lastSimAlarm"); set(v) = putLong("lastSimAlarm", v)
+    var pkgSeq: Int get() = int("pkgSeq", -1); set(v) = putInt("pkgSeq", v)
+    var pkgBoot: Int get() = int("pkgBoot", -1); set(v) = putInt("pkgBoot", v)
+    var alertedApps: Set<String>
+        get() = prefs?.getStringSet("alertedApps", null)?.toSet() ?: emptySet()
+        set(v) { prefs?.edit()?.putStringSet("alertedApps", HashSet(v.toList().takeLast(300)))?.apply() }
 
     fun history(): List<HistoryItem> {
         val arr = JSONArray(prefs?.getString("history", "[]") ?: "[]")
@@ -92,17 +117,20 @@ object Store {
         nm.createNotificationChannel(NotificationChannel(CH_GUARD, "Call Shield", NotificationManager.IMPORTANCE_LOW).apply { description = "Shown while Echchara checks a call" })
     }
 
-    fun notifyAlert(ctx: Context, id: Int, title: String, body: String) {
-        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
+    fun notifyAlert(ctx: Context, id: Int, title: String, body: String, actions: List<Pair<String, PendingIntent>> = emptyList()) {
+        // POST_NOTIFICATIONS only exists on Android 13+. Checking it on older phones always says "denied" and hid every alert.
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         channels(ctx)
         val pi = PendingIntent.getActivity(ctx, 0, Intent(ctx, MainActivity::class.java).putExtra("tab", 2).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        val n = NotificationCompat.Builder(ctx, CH_ALERT)
+        val b = NotificationCompat.Builder(ctx, CH_ALERT)
             .setSmallIcon(android.R.drawable.stat_sys_warning)
             .setContentTitle(title).setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setColor(0xFFD21F3C.toInt())
-            .setAutoCancel(true).setContentIntent(pi).build()
+            .setAutoCancel(true).setContentIntent(pi)
+        actions.forEach { (label, action) -> b.addAction(0, label, action) }
+        val n = b.build()
         try { NotificationManagerCompat.from(ctx).notify(id, n) } catch (e: SecurityException) { }
     }
 }

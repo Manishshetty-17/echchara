@@ -48,8 +48,8 @@ object Guard {
 
     private val main = Handler(Looper.getMainLooper())
     private var ctx: Context? = null
-    private var mode = Mode.CALL
-    private var active = false
+    @Volatile private var mode = Mode.CALL
+    @Volatile private var active = false
     private var answered = false
     private var number = ""
     private val lines = mutableListOf<String>()
@@ -73,6 +73,8 @@ object Guard {
     private var lp: WindowManager.LayoutParams? = null
 
     val isActive get() = active
+    /** True while Call Shield is checking a real call from a number that is not in the contacts. */
+    val inUnknownCall get() = active && mode == Mode.CALL
     private val kn get() = Store.kannada
     private fun s(en: String, knText: String) = if (kn) knText else en
 
@@ -103,6 +105,19 @@ object Guard {
         status(s("Not in your contacts. Echchara will check this call when you answer. Turn on speaker for best results.", "ನಿಮ್ಮ ಸಂಪರ್ಕಗಳಲ್ಲಿ ಇಲ್ಲ. ಉತ್ತರಿಸಿದಾಗ ಎಚ್ಚರ ಈ ಕರೆಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಉತ್ತಮ ಫಲಿತಾಂಶಕ್ಕೆ ಸ್ಪೀಕರ್ ಆನ್ ಮಾಡಿ.") + if (hints.isNotEmpty()) "\n⚠ $hints" else "")
         updateRisk()
         try { ContextCompat.startForegroundService(c, Intent(c, CallGuardService::class.java).putExtra("number", num)) } catch (e: Exception) { }
+        if (m == Mode.CALL) PayWatch.ensure(c) // pause payment and screen-sharing apps during the call
+    }
+
+    /** SMS Shield calls this when an OTP arrives during a call from an unknown number. */
+    fun otpArrived() = main.post {
+        val c = ctx ?: return@post
+        if (!inUnknownCall) return@post
+        val warn = Tips.OTP_ALERT.get(kn)
+        tReasons?.text = if (alertBox?.visibility == View.VISIBLE) warn + "\n\n" + (tReasons?.text ?: "") else warn
+        alertBox?.visibility = View.VISIBLE
+        (root?.background as? GradientDrawable)?.setStroke(dp(3), Color.parseColor("#D21F3C"))
+        vibrate()
+        Store.notifyAlert(c, 7003, Tips.OTP_TITLE.get(kn), warn)
     }
 
     private fun finish(showSummary: Boolean) {
@@ -113,7 +128,10 @@ object Guard {
         if (c != null && text.isNotBlank() && mode != Mode.SAMPLE) {
             val a = Engine.analyze(text)
             Store.addHistory(HistoryItem(System.currentTimeMillis(), "call", number, text, a.score, a.type?.en, a.type?.kn))
-            if (a.score >= 30) Store.notifyAlert(c, 7001, s("Call from $number looked like fraud", "$number ಕರೆ ವಂಚನೆಯಂತೆ ಕಂಡಿತು"), a.summary.get(kn))
+            if (a.score >= 30) Store.notifyAlert(c, 7001, s("Call from $number looked like fraud", "$number ಕರೆ ವಂಚನೆಯಂತೆ ಕಂಡಿತು"),
+                a.summary.get(kn) + (Tips.codeWord(a)?.let { " " + it.get(kn) } ?: ""), Links.reportActions(c, 900_000, "$number\n$text"))
+            if (mode == Mode.CALL && a.score >= 60) RiskWindow.start(c, Txt("a likely fraud call", "ವಂಚನೆಯ ಕರೆ"))
+            if (a.score >= 30 && a.flags.any { it.id == "esim" }) Store.simRiskAt = System.currentTimeMillis()
         }
         active = false
         c?.let { try { it.stopService(Intent(it, CallGuardService::class.java)) } catch (e: Exception) { } }
@@ -272,11 +290,21 @@ object Guard {
         alerted = true
         val reasons = a.flags.filter { it.sev == Sev.HIGH || it.sev == Sev.MID }.take(3).joinToString("\n") { "• " + it.label.get(kn) }
         tReasons?.text = s("Likely fraud call", "ಬಹುಶಃ ವಂಚನೆಯ ಕರೆ") + (a.org?.let { " · " + s("posing as ", "ನಟನೆ: ") + it } ?: "") + "\n" + reasons + "\n" +
-            s("Do not share any OTP, PIN or money. Hang up now.", "OTP, PIN ಅಥವಾ ಹಣ ಕೊಡಬೇಡಿ. ಈಗಲೇ ಕರೆ ಕಡಿತಗೊಳಿಸಿ.")
+            s("Do not share any OTP, PIN or money. Hang up now.", "OTP, PIN ಅಥವಾ ಹಣ ಕೊಡಬೇಡಿ. ಈಗಲೇ ಕರೆ ಕಡಿತಗೊಳಿಸಿ.") +
+            (Tips.codeWord(a)?.let { "\n" + it.get(kn) } ?: "")
         alertBox?.visibility = View.VISIBLE
         (root?.background as? GradientDrawable)?.setStroke(dp(3), Color.parseColor("#D21F3C"))
         vibrate()
-        ctx?.let { Store.notifyAlert(it, 7000, s("Likely fraud call", "ಬಹುಶಃ ವಂಚನೆಯ ಕರೆ"), a.summary.get(kn)) }
+        ctx?.let {
+            Store.notifyAlert(it, 7000, s("Likely fraud call", "ಬಹುಶಃ ವಂಚನೆಯ ಕರೆ"), a.summary.get(kn))
+            // Payment pause for the next 20 minutes. After a sample call this lets you try the pause screen.
+            RiskWindow.start(it, when (mode) {
+                Mode.SAMPLE -> Txt("the sample scam call", "ಮಾದರಿ ವಂಚನೆ ಕರೆ")
+                Mode.MIC -> Txt("a scam warning", "ವಂಚನೆಯ ಎಚ್ಚರಿಕೆ")
+                Mode.CALL -> Txt("a likely fraud call", "ವಂಚನೆಯ ಕರೆ")
+            })
+            if (mode != Mode.SAMPLE && a.flags.any { f -> f.id == "esim" }) Store.simRiskAt = System.currentTimeMillis()
+        }
     }
 
     private fun hangUp() {

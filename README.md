@@ -17,9 +17,17 @@ Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud De
 | **Call Shield** | When a number that is **not in your contacts** calls, a pop-up appears over the call screen. After you answer (on speaker), the caller's words are turned into text and every sentence is checked. If the call turns into fraud, the pop-up turns red: *"Likely fraud call · posing as MESCOM · Hang up now"*. |
 | **SMS Shield** | Every incoming SMS is checked automatically. Scams such as fake KYC, UPI collect requests, power-cut threats and job offers trigger a warning notification. |
 | **Check a message** | Paste any message or link, or share a WhatsApp message to Echchara, and get a verdict with the reasons and what to do next. |
-| **Alerts** | A history of every suspicious SMS and call that Echchara caught. |
+| **Payment pause** (Phone Shield) | During a call from an unknown number, and for 20 minutes after a scam call, SMS or chat, opening GPay, PhonePe, Paytm, BHIM or a bank app first shows *"Pause before you pay"* with **Call 1930**. "Continue" unlocks after 5 seconds, to break the scammer's rush. |
+| **Screen-share guard** (Phone Shield) | The same pause appears before AnyDesk, TeamViewer QuickSupport, RustDesk or AirDroid opens during an unknown call or after a scam warning. |
+| **Chat check** (Phone Shield) | With notification access, WhatsApp, Telegram, Instagram, Messenger, Signal and Gmail messages go through the same engine, including `.apk` files sent as wedding invitations or bills. |
+| **App check** (Phone Shield) | Flags newly installed apps from outside an app store that can read SMS or notifications, use Accessibility or become a device admin, with an **Uninstall** button. **Check my apps now** scans the whole phone. |
+| **SIM alarm** (Phone Shield) | If the SIM loses service while Wi-Fi still works, which is what a SIM swap looks like from the phone, Echchara warns you: after about 90 seconds if a SIM or eSIM scam was flagged in the last 6 hours, otherwise after 15 minutes. |
+| **OTP warning** | If an OTP arrives while you are on a call with an unknown number, the Call Shield pop-up turns red: *"Don't read out this OTP"*. |
+| **Family code word** | When a call or message claims to be a relative or your boss, the warning reminds you to call back on the saved number or ask for your family code word. The Protection tab helps you message your family to set one. |
+| **First-hour kit** | Lost money or shared an OTP? A checklist with 1930, your bank, cybercrime.gov.in, removing the caller's app, keeping evidence and reporting on Chakshu. |
+| **Alerts** | A history of every suspicious SMS, chat, call and risky app that Echchara caught. |
 | **Learns from you** | "Was this right?" feedback retrains the on-device classifier. |
-| **Report it** | On the website, a scam message comes with one-tap copy and a link to report it on the government's Chakshu portal (Sanchar Saathi). |
+| **Report it** | Scam alerts in the app and on the website have **Report on Chakshu**: the message is copied and the government's Chakshu portal (Sanchar Saathi) opens, ready to paste. |
 
 ## How it decides
 
@@ -27,7 +35,9 @@ Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud De
 2. **ML classifier**: a Naive Bayes model trained on English, Kannada and Kanglish messages.
 3. **Explanation engine**: a plain-language summary in Kannada or English, the scam type, and who the scammer is pretending to be.
 
-Nothing is uploaded and no audio is stored. Speech-to-text uses the phone's built-in speech recognition.
+Echchara itself uploads nothing and stores no audio. Speech-to-text uses the phone's speech recognition service, which on many phones works online unless offline speech packs are installed.
+
+**Phone Shield permissions.** *Usage access* lets Echchara see which app comes to the front, and it only looks during an unknown call or in the 20 minutes after a scam warning. *Notification access* is used only for the chat and mail apps listed above. *See all apps* is used by the app check. Everything stays on the phone.
 
 ## Install
 
@@ -48,8 +58,12 @@ gradlew assembleRelease
 
 The APK is written to `app/build/outputs/apk/release/`.
 
+Every push that changes the app is also built by GitHub Actions: open **Actions → Build Android app → the latest run → Echchara-apk**. An APK built on a different computer is signed with a different key, so uninstall an older Echchara before installing it.
+
 ## Limits
 
 - Android does not let regular apps hear call audio directly, so Call Shield works best with the call on **speaker**. Phone makers and telecom operators can build the same check in without this limit.
+- Some phone makers block apps from opening screens from the background. Echchara then draws the pause as an overlay; if neither appears, allow Echchara to *display pop-up windows while running in the background* (Xiaomi, Redmi, POCO) or turn off battery optimisation for it.
+- The SIM alarm can't tell a SIM swap from a place with no signal, so ordinary alarms come at most once every three days. After a SIM or eSIM scam warning it always warns.
 - The training data is a small demo set; production training would use the UCI SMS Spam Collection, PhishTank and Kaggle phishing datasets plus 1930 complaint samples.
 - Echchara gives guidance, not a guarantee. If you lost money, call **1930** or report at **cybercrime.gov.in**.
