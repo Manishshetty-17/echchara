@@ -281,7 +281,7 @@ object Engine {
         }
         fun inLink(r: IntRange) = linkRanges.any { r.first <= it.last && r.last >= it.first }
         val hits = LinkedHashMap<String, MutableList<String>>()
-        for (rule in RULES) for (re in listOfNotNull(rule.en, rule.kn)) for (m in re.findAll(text)) {
+        for (rule in RULES) for (re in listOfNotNull(rule.en, rule.kn, SPOKEN_KN[rule.id])) for (m in re.findAll(text)) {
             if (inLink(m.range)) continue
             if (rule.id == "apk" && STORE_RE.containsMatchIn(text.substring(m.range.first, min(text.length, m.range.last + 61)))) continue
             if (rule.id in setOf("otpshare", "creds", "upipin")) {
@@ -297,6 +297,11 @@ object Engine {
         }
         val safe = SAFE_CUES.filter { it.first.containsMatchIn(text) }.map { it.second }.distinctBy { it.en }
         val ws = hits.keys.map { id -> RULES.first { it.id == id }.w }.toMutableList()
+        // classic combinations
+        val combos = mutableListOf<Flag>()
+        if ("prize" in hits && "money" in hits) combos.add(Flag("combo_prize", Sev.HIGH, .3, Txt("Pay a fee to claim a prize", "ಬಹುಮಾನ ಪಡೆಯಲು ಶುಲ್ಕ ಕಟ್ಟಿ"), Txt("A real prize never asks you to pay first.", "ನಿಜವಾದ ಬಹುಮಾನಕ್ಕೆ ಮೊದಲು ಹಣ ಕೇಳುವುದಿಲ್ಲ."), Txt("Never pay to receive money.", "ಹಣ ಪಡೆಯಲು ಹಣ ಕಟ್ಟಬೇಡಿ.")))
+        if ("parcel" in hits && ("threat" in hits || "secrecy" in hits)) combos.add(Flag("combo_courier", Sev.HIGH, .3, Txt("Courier + police case: digital-arrest script", "ಕೊರಿಯರ್ + ಪೊಲೀಸ್ ಕೇಸ್: ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್ ತಂತ್ರ"), Txt("“A parcel in your name had drugs” is how digital-arrest scams begin.", "“ನಿಮ್ಮ ಹೆಸರಿನ ಪಾರ್ಸೆಲ್‌ನಲ್ಲಿ ಡ್ರಗ್ಸ್” ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್ ವಂಚನೆಯ ಆರಂಭ."), Txt("Hang up. No agency arrests anyone over the phone.", "ಕರೆ ಕಡಿತಗೊಳಿಸಿ. ಯಾವ ಸಂಸ್ಥೆಯೂ ಫೋನ್‌ನಲ್ಲಿ ಬಂಧಿಸುವುದಿಲ್ಲ.")))
+        combos.forEach { ws.add(it.w) }
         links.filter { it.score >= 20 }.forEach { ws.add(min(.7, it.score / 100.0 * .8)) }
         var score = combine(ws)
         if (safe.isNotEmpty() && "otpshare" !in hits && "upipin" !in hits) score = (score * .55).roundToInt()
@@ -310,6 +315,7 @@ object Engine {
             }
         }
         for ((id, ex) in hits) { val r = RULES.first { it.id == id }; flags.add(Flag(id, r.sev, r.w, r.label, r.why, r.todo, ex)) }
+        flags.addAll(combos)
         safe.forEach { flags.add(Flag(null, Sev.SAFE, 0.0, it, Txt("Genuine messages often include this.", "ನಿಜವಾದ ಸಂದೇಶಗಳಲ್ಲಿ ಸಾಮಾನ್ಯ."))) }
         val todos = mutableListOf<Txt>()
         if (links.any { it.score >= 25 }) todos.add(Txt("Do not open the link. Use the official app instead.", "ಲಿಂಕ್ ತೆರೆಯಬೇಡಿ. ಅಧಿಕೃತ ಆ್ಯಪ್ ಬಳಸಿ."))
@@ -350,7 +356,9 @@ object Engine {
         val lp = doubleArrayOf(ln(m.c[0] / N), ln(m.c[1] / N))
         for (t in tokens(text)) { if (t !in m.v) continue; for (y in 0..1) lp[y] += ln(((m.f[y][t] ?: 0) + 1) / (m.tc[y] + V)) }
         val mx = max(lp[0], lp[1]); val e0 = exp(lp[0] - mx); val e1 = exp(lp[1] - mx)
-        return e1 / (e0 + e1)
+        val p = e1 / (e0 + e1)
+        val ind = text.count { it.code in 0x0900..0x0D7F }; val lat = text.count { it in 'a'..'z' || it in 'A'..'Z' }
+        return if (ind > lat) 0.5 + (p - 0.5) * 0.4 else p
     }
 
     fun fuse(rule: Int, ml: Double?, safeCue: Boolean = false): Int {
@@ -382,11 +390,29 @@ object Engine {
         "link" to Txt("Phishing link", "ಫಿಶಿಂಗ್ ಲಿಂಕ್"), "money" to Txt("Payment fraud", "ಪಾವತಿ ವಂಚನೆ"), "threat" to Txt("Threat-based scam", "ಬೆದರಿಕೆ ವಂಚನೆ")
     )
     private val PRIORITY = listOf("upipin","secrecy","esim","apk","novalid","invest","mule","power","scheme","challan","boss","family","gulf","job","otpshare","remote","prize","parcel","creds","link","money","threat")
+    /** Spoken Kannada, as speech-to-text writes it (ಓಟಿಪಿ ಹೇಳಿ, ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್, ಕಾಲ್ ಕಟ್ ಮಾಡಬೇಡಿ, ಕಳ್ಸಿ…). Same patterns as the website. */
+    private val SPOKEN_KN: Map<String, Regex> = mapOf(
+        "otpshare" to rx("""(ಒಟಿಪಿ|ಓಟಿಪಿ|ಓ ಟಿ ಪಿ|ಒ ಟಿ ಪಿ|otp|ಕೋಡ್|ಪಿನ್|ಪಾಸ್ ?ವರ್ಡ್|ಪಾಸ್‌ವರ್ಡ್|ಸಿವಿವಿ|ಎಂ ?ಪಿನ್)[^.\n]{0,45}(ಹೇಳಿ|ಹೇಳು|ಹೇಳ್ಬೇಕು|ಹೇಳಬೇಕು|ಹೇಳ್ಬಿಡಿ|ಹೇಳ್ತೀರಾ|ಹೇಳ್ತೀರ|ಕಳಿಸಿ|ಕಳುಹಿಸಿ|ಕಳ್ಸಿ|ಕಳಿಸಬೇಕು|ಶೇರ್ ಮಾಡಿ|ಕೊಡಿ|ಕೊಡ್ಬೇಕು|ಕೊಡಬೇಕು|ಓದಿ|ಟೈಪ್ ಮಾಡಿ)"""),
+        "secrecy" to rx("""ಡಿಜಿಟಲ್ ?ಅರೆಸ್ಟ್?|ಯಾರಿಗೂ ಹೇಳ(ಬೇಡಿ|ಬೇಡ|ಬಾರದು|ಬೇಡ್ರಿ)|ಯಾರ್ಗೂ ಹೇಳ|ಮನೆಯವರಿಗೆ ಹೇಳ(ಬೇಡಿ|ಬೇಡ|ಬಾರದು)|ಫ್ಯಾಮಿಲಿ ?ಗೆ ಹೇಳ|(ಕಾಲ್|ಫೋನ್|ಕರೆ) ?(ಕಟ್|ಕಡಿತ) ?ಮಾಡ(ಬೇಡಿ|ಬೇಡ|ಬಾರದು)|ವಿಡಿಯೋ ಕಾಲ್ ?ಅಲ್ಲೇ|ಗೌಪ್ಯವಾಗಿ"""),
+        "threat" to rx("""ಅರೆಸ್ಟ್|ಬಂಧಿಸ|ಬಂಧನ|ಪೊಲೀಸ್|ಪೋಲೀಸ್|ಸಿಬಿಐ|ಸಿ ಬಿ ಐ|ಕೇಸ್ (ದಾಖಲ|ಆಗುತ್ತೆ|ಆಗುತ್ತದೆ|ಹಾಕ)|ಎಫ್ ?ಐ ?ಆರ್|ವಾರಂಟ್|ಮನಿ ?ಲಾಂಡರಿಂಗ್|ಕೋರ್ಟ್|ಜೈಲ್|ಜೈಲು|ಬ್ಲಾಕ್ (ಆಗುತ್ತೆ|ಆಗುತ್ತದೆ|ಆಗುತ್ತ|ಮಾಡ್ತೀವಿ|ಮಾಡುತ್ತೇವೆ|ಆಗಿದೆ)|ಸಸ್ಪೆಂಡ್|ಡಿಆಕ್ಟಿವೇಟ್|ಫೈನ್ ಕಟ್ಟ"""),
+        "creds" to rx("""(ಕೆವೈಸಿ|ಕೆ ವೈ ಸಿ|ಪ್ಯಾನ್|ಪಾನ್|ಆಧಾರ್|ಅಕೌಂಟ್|ಖಾತೆ)[^.\n]{0,25}(ಅಪ್ ?ಡೇಟ್|ಅಪ್‌ಡೇಟ್|ವೆರಿಫೈ|ಪರಿಶೀಲಿಸ|ಲಿಂಕ್)|ಕಾರ್ಡ್ ನಂಬರ್|ಅಕೌಂಟ್ ನಂಬರ್|ಎಟಿಎಂ ಪಿನ್|ಬ್ಯಾಂಕ್ ಡೀಟೇಲ್ಸ್|ನೆಟ್ ?ಬ್ಯಾಂಕಿಂಗ್ (ಪಾಸ್|ಐಡಿ|ಡೀಟೇಲ್ಸ್)"""),
+        "money" to rx("""(ಹಣ|ದುಡ್ಡು|ದುಡ್ಡ|ಮನಿ|ಅಮೌಂಟ್|ಸೇವಿಂಗ್ಸ್|ರೂಪಾಯಿ|ಸಾವಿರ)[^.\n]{0,30}(ಕಳಿಸಿ|ಕಳುಹಿಸಿ|ಕಳ್ಸಿ|ಟ್ರಾನ್ಸ್ ?ಫರ್|ಟ್ರಾನ್ಸ್‌ಫರ್|ಹಾಕಿ|ಪೇ ಮಾಡಿ|ಕಟ್ಟಿ|ಪಾವತಿಸಿ|ವರ್ಗಾಯಿಸಿ)|ಸೇಫ್ ಅಕೌಂಟ್|ಸುರಕ್ಷಿತ ಖಾತೆ|ಆರ್ ?ಬಿ ?ಐ ಅಕೌಂಟ್|ವೆರಿಫಿಕೇಶನ್ ಅಕೌಂಟ್|ಪ್ರೊಸೆಸಿಂಗ್ ಫೀ|ರಿಜಿಸ್ಟ್ರೇಶನ್ ಫೀ|ಗಿಫ್ಟ್ ಕಾರ್ಡ್"""),
+        "remote" to rx("""ಎನಿ ?ಡೆಸ್ಕ್|ಟೀಮ್ ?ವ್ಯೂವರ್|(ಆ್ಯಪ್|ಆಪ್|ಅಪ್ಲಿಕೇಶನ್)[^.\n]{0,15}(ಡೌನ್ ?ಲೋಡ್|ಡೌನ್‌ಲೋಡ್|ಇನ್ ?ಸ್ಟಾಲ್|ಇನ್‌ಸ್ಟಾಲ್)|ಸ್ಕ್ರೀನ್ ?ಶೇರ್|ಎ ?ಪಿ ?ಕೆ"""),
+        "upipin" to rx("""(ಯುಪಿಐ|ಯು ಪಿ ಐ|upi) ?(ಪಿನ್|pin)[^.\n]{0,30}(ಹಾಕಿ|ಎಂಟರ್|ಟೈಪ್)|ಕಲೆಕ್ಟ್ ರಿಕ್ವೆಸ್ಟ್|ಹಣ ಪಡೆಯ[^.\n]{0,20}ಪಿನ್"""),
+        "urgency" to rx("""ಈಗಲೇ|ಈಗ್ಲೇ|ತಕ್ಷಣ|ಅರ್ಜೆಂಟ್|ಇವತ್ತೇ|ಕೂಡಲೇ|ಟೈಮ್ ಇಲ್ಲ|ಇವತ್ತು ರಾತ್ರಿ|ಇಂದು ರಾತ್ರಿ|ಬೇಗ ಬೇಗ|ಐದು ನಿಮಿಷದಲ್ಲಿ|ಹತ್ತು ನಿಮಿಷದಲ್ಲಿ"""),
+        "power" to rx("""(ಕರೆಂಟ್|ವಿದ್ಯುತ್|ಲೈಟ್|ಪವರ್|ಕನೆಕ್ಷನ್)[^.\n]{0,30}(ಕಟ್|ಕಡಿತ|ತೆಗೆ|ಡಿಸ್ಕನೆಕ್ಟ್|ನಿಲ್ಲಿಸ)"""),
+        "prize" to rx("""ಲಾಟರಿ|ಬಹುಮಾನ|ಪ್ರೈಸ್|ಗೆದ್ದಿದ್ದೀರ|ಗೆದ್ದಿದೀರ|ಲಕ್ಕಿ ಡ್ರಾ|ಜಾಕ್ ?ಪಾಟ್"""),
+        "parcel" to rx("""(ಪಾರ್ಸೆಲ್|ಕೊರಿಯರ್|ಫೆಡೆಕ್ಸ್|ಫೆಡ್ ?ಎಕ್ಸ್)[^.\n]{0,50}(ಡ್ರಗ್ಸ್|ಸೀಜ್|ವಶ|ಹೋಲ್ಡ್|ಅಕ್ರಮ|ಮಾದಕ|ಸಿಕ್ಕಿದೆ)"""),
+        "callback" to rx("""(ಈ ನಂಬರ್ ?ಗೆ|ಈ ನಂಬರ್‌ಗೆ|ಈ ಸಂಖ್ಯೆಗೆ)[^.\n]{0,20}(ಕಾಲ್|ಕರೆ|ಫೋನ್)"""),
+        "id" to rx("""ಆಧಾರ್|ಪ್ಯಾನ್ ಕಾರ್ಡ್|ಪಾನ್ ಕಾರ್ಡ್|ಕೆವೈಸಿ|ಕೆ ವೈ ಸಿ|ಪಾಸ್ ?ಪೋರ್ಟ್"""),
+        "family" to rx("""(ನಾನು|ನಾನ್) (ನಿಮ್ಮ|ನಿನ್ನ) (ಫ್ರೆಂಡ್|ಸ್ನೇಹಿತ|ಮಗ|ಮಗಳು|ತಮ್ಮ|ಅಣ್ಣ|ಸಂಬಂಧಿ)|ಹೊಸ ನಂಬರ್|ಫೋನ್ ಕಳೆದು|ದುಡ್ಡು ಬೇಕು|ಹಣ ಬೇಕು"""),
+        "job" to rx("""ಮನೆಯಿಂದ(ಲೇ)? ಕೆಲಸ|ವರ್ಕ್ ಫ್ರಮ್ ಹೋಮ್|ಪಾರ್ಟ್ ?ಟೈಮ್|ಟಾಸ್ಕ್|ಟೆಲಿಗ್ರಾಮ್ ಗ್ರೂಪ್|ದಿನಕ್ಕೆ[^.\n]{0,15}ಸಾವಿರ""")
+    )
     private val ORGS = listOf(
         rx("""\bsebi\b""") to "SEBI", rx("""\bjio\b""") to "Jio",
         rx("""\bsbi\b|state bank|yono""") to "SBI", rx("canara") to "Canara Bank", rx("karnataka ?bank") to "Karnataka Bank",
         rx("""\bhdfc""") to "HDFC Bank", rx("""\bicici""") to "ICICI Bank", rx("mescom|ಮೆಸ್ಕಾಂ") to "MESCOM", rx("bescom|ಬೆಸ್ಕಾಂ") to "BESCOM",
-        rx("""\bcbi\b""") to "CBI", rx("police|crime branch|ಪೊಲೀಸ್") to "Police", rx("fedex") to "FedEx", rx("""\brbi\b""") to "RBI",
+        rx("""\bcbi\b|ಸಿಬಿಐ|ಸಿ ಬಿ ಐ""") to "CBI", rx("police|crime branch|ಪೊಲೀಸ್") to "Police", rx("fedex") to "FedEx", rx("""\brbi\b""") to "RBI",
         rx("flipkart") to "Flipkart", rx("amazon") to "Amazon", rx("airtel") to "Airtel", rx("ksrtc") to "KSRTC",
         rx("gruha ?lakshmi|ಗೃಹಲಕ್ಷ್ಮಿ") to "Govt of Karnataka", rx("income ?tax") to "Income Tax Dept"
     )

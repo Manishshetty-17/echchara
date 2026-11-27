@@ -41,6 +41,30 @@ class EngineTest {
         assertTrue("Missed scams: $missed", missed.isEmpty())
     }
 
+    private val spokenScams = listOf(
+        "ಹಲೋ ನಾನು ಮುಂಬೈ ಸೈಬರ್ ಕ್ರೈಂ ಪೊಲೀಸ್ ಇಂದ ಮಾತಾಡ್ತಾ ಇದೀನಿ ನಿಮ್ಮ ಆಧಾರ್ ನಂಬರ್ ಮನಿ ಲಾಂಡರಿಂಗ್ ಕೇಸ್ ಅಲ್ಲಿ ಇದೆ ನಿಮ್ಮನ್ನ ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್ ಮಾಡ್ತಾ ಇದೀವಿ ಯಾರಿಗೂ ಹೇಳಬೇಡಿ ಕಾಲ್ ಕಟ್ ಮಾಡಬೇಡಿ",
+        "ನಮಸ್ತೆ ಸರ್ ನಾನು ಎಸ್ ಬಿ ಐ ಬ್ಯಾಂಕ್ ಇಂದ ಕಾಲ್ ಮಾಡ್ತಿದೀನಿ ನಿಮ್ಮ ಕೆವೈಸಿ ಅಪ್ಡೇಟ್ ಆಗಿಲ್ಲ ಅಕೌಂಟ್ ಬ್ಲಾಕ್ ಆಗುತ್ತೆ ನಿಮ್ಮ ಮೊಬೈಲ್ ಗೆ ಒಂದು ಓಟಿಪಿ ಬಂದಿದೆ ಅದನ್ನ ಹೇಳಿ",
+        "ನಿಮಗೆ ಲಾಟರಿ ಬಂದಿದೆ ಇಪ್ಪತ್ತೈದು ಲಕ್ಷ ಬಹುಮಾನ ಪಡೆಯೋಕೆ ಪ್ರೊಸೆಸಿಂಗ್ ಫೀ ಐದು ಸಾವಿರ ಕಳಿಸಿ",
+        "ನಿಮ್ಮ ಕರೆಂಟ್ ಬಿಲ್ ಕಟ್ಟಿಲ್ಲ ಇವತ್ತು ರಾತ್ರಿ ಕರೆಂಟ್ ಕಟ್ ಮಾಡ್ತೀವಿ ಈ ಆ್ಯಪ್ ಡೌನ್ಲೋಡ್ ಮಾಡಿ",
+        "ನಿಮ್ಮ ಹೆಸರಲ್ಲಿ ಒಂದು ಕೊರಿಯರ್ ಬಂದಿದೆ ಅದರಲ್ಲಿ ಡ್ರಗ್ಸ್ ಸಿಕ್ಕಿದೆ ಸಿಬಿಐ ಕೇಸ್ ಆಗುತ್ತೆ",
+        "ಹಲೋ ನಾನು ನಿಮ್ಮ ಫ್ರೆಂಡ್ ರಾಜು ತುಂಬಾ ಅರ್ಜೆಂಟ್ ಹಣ ಬೇಕು ಈಗಲೇ ಗೂಗಲ್ ಪೇ ಮಾಡಿ"
+    )
+    private val spokenGenuine = listOf(
+        "ಅಮ್ಮ ನಾನು ಸಂಜೆ ಆರು ಗಂಟೆಗೆ ಮನೆಗೆ ಬರ್ತೀನಿ ಊಟ ರೆಡಿ ಮಾಡು",
+        "ಸರ್ ನಿಮ್ಮ ಪಾರ್ಸೆಲ್ ಗೇಟ್ ಹತ್ತಿರ ಇದೆ ಸೆಕ್ಯೂರಿಟಿ ಹತ್ರ ಕೊಡ್ಲಾ",
+        "ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಐದು ಸಾವಿರ ರೂಪಾಯಿ ಜಮೆ ಆಗಿದೆ"
+    )
+
+    @Test fun spokenKannadaScamsAreCaught() {
+        val missed = spokenScams.filter { val a = Engine.analyze(it); println("KN scam  score=${a.score} rules=${a.ruleScore} | ${it.take(40)}"); a.score < 30 }
+        assertTrue("Missed spoken Kannada scams: $missed", missed.isEmpty())
+    }
+
+    @Test fun spokenKannadaGenuineIsSafe() {
+        val wrong = spokenGenuine.filter { val a = Engine.analyze(it); println("KN ok    score=${a.score} rules=${a.ruleScore} | ${it.take(40)}"); a.score >= 30 }
+        assertTrue("False alarms on everyday Kannada: $wrong", wrong.isEmpty())
+    }
+
     @Test fun shortLinksOfBrandsAreKnown() {
         assertTrue(Engine.analyzeUrl("fkrt.it/abc")!!.known)
         assertTrue(Engine.analyzeUrl("https://spoti.fi/x")!!.known)

@@ -459,16 +459,48 @@ private fun CheckScreen(kn: Boolean, shared: MutableState<String?>) {
         if (!heard.isNullOrBlank()) { input = heard; val a = Engine.analyze(heard); result = a; feedback = false; Voice.sayResult(ctx, a) }
     }
     LaunchedEffect(shared.value) { shared.value?.let { input = it; show(Engine.analyze(it)); shared.value = null } }
+    // in-app listening: keeps going through pauses until Done (or 8 s of silence after speaking)
+    var dictation by remember { mutableStateOf<Dictation?>(null) }
+    var liveText by remember { mutableStateOf("") }
+    fun finishWith(all: String) {
+        dictation = null; liveText = ""
+        if (all.isNotBlank()) { input = all; val a = Engine.analyze(all); result = a; feedback = false; Voice.sayResult(ctx, a) }
+        else voiceNote = t("I could not hear anything. Please try again, closer to the phone.", "ಏನೂ ಕೇಳಲಿಲ್ಲ. ಫೋನ್ ಹತ್ತಿರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.")
+    }
+    fun startDictation() {
+        voiceNote = ""; Voice.stop()
+        if (!android.speech.SpeechRecognizer.isRecognitionAvailable(ctx)) {
+            try { listen.launch(Voice.listenIntent(kn)) } catch (e: Exception) { voiceNote = t("This phone has no speech input. Install the Google app or Speech Services by Google.", "ಈ ಫೋನ್‌ನಲ್ಲಿ ಧ್ವನಿ ಇನ್‌ಪುಟ್ ಇಲ್ಲ. Google ಆ್ಯಪ್ ಅಥವಾ Speech Services by Google ಹಾಕಿಕೊಳ್ಳಿ.") }
+            return
+        }
+        val d = Dictation(ctx, kn, onText = { liveText = it }, onDone = { finishWith(it) })
+        dictation = d; liveText = ""; d.start()
+    }
+    val micPerm = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
+        if (ok) startDictation() else try { listen.launch(Voice.listenIntent(kn)) } catch (e: Exception) { }
+    }
+    DisposableEffect(Unit) { onDispose { dictation?.cancel() } }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(t("Check a message or link", "ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಪರಿಶೀಲಿಸಿ"), fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
             TextButton(onClick = { if (speaking) Voice.stop() else Voice.say(ctx, Voice.CHECK_GUIDE.en, Voice.CHECK_GUIDE.kn) }) { Icon(Icons.Filled.PlayArrow, null, modifier = Modifier.size(18.dp)); Spacer(Modifier.width(4.dp)); Text(t("Read screen", "ಪರದೆ ಓದಿ"), fontSize = 13.sp) }
         }
-        Button(onClick = {
-            Voice.stop()
-            try { listen.launch(Voice.listenIntent(kn)) } catch (e: Exception) { voiceNote = t("This phone has no speech input. Install the Google app or Speech Services by Google.", "ಈ ಫೋನ್‌ನಲ್ಲಿ ಧ್ವನಿ ಇನ್‌ಪುಟ್ ಇಲ್ಲ. Google ಆ್ಯಪ್ ಅಥವಾ Speech Services by Google ಹಾಕಿಕೊಳ್ಳಿ.") }
+        val listening = dictation != null
+        if (!listening) Button(onClick = {
+            if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) startDictation()
+            else micPerm.launch(Manifest.permission.RECORD_AUDIO)
         }, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(12.dp), colors = ButtonDefaults.buttonColors(containerColor = Danger)) {
             Text("🎤", fontSize = 20.sp); Spacer(Modifier.width(8.dp)); Text(t("Speak the message, I will check it", "ಸಂದೇಶ ಹೇಳಿ, ನಾನು ಪರಿಶೀಲಿಸುತ್ತೇನೆ"), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+        }
+        else Card(colors = CardDefaults.cardColors(containerColor = DangerBg), shape = RoundedCornerShape(14.dp)) {
+            Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text("🎤 " + t("Listening… speak fully, then tap Done", "ಕೇಳುತ್ತಿದ್ದೇನೆ… ಪೂರ್ತಿ ಹೇಳಿ, ನಂತರ ಮುಗಿಯಿತು ಒತ್ತಿ"), color = Danger, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                Text(liveText.ifBlank { t("(waiting for your voice)", "(ನಿಮ್ಮ ಧ್ವನಿಗಾಗಿ ಕಾಯುತ್ತಿದೆ)") }, fontSize = 15.sp, color = if (liveText.isBlank()) Muted else Color(0xFF132A55))
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Button(onClick = { dictation?.finish() }, modifier = Modifier.weight(1f).height(52.dp), shape = RoundedCornerShape(12.dp), colors = ButtonDefaults.buttonColors(containerColor = Danger)) { Text(t("Done – check it", "ಮುಗಿಯಿತು – ಪರಿಶೀಲಿಸಿ"), fontSize = 16.sp, fontWeight = FontWeight.SemiBold) }
+                    OutlinedButton(onClick = { dictation?.cancel(); dictation = null; liveText = "" }, modifier = Modifier.height(52.dp), shape = RoundedCornerShape(12.dp)) { Text(t("Cancel", "ರದ್ದು")) }
+                }
+            }
         }
         if (voiceNote.isNotEmpty()) Text(voiceNote, fontSize = 12.sp, color = Muted)
         Text(t("Paste an SMS, WhatsApp message or link. Tip: in WhatsApp, long-press a message → Share → Echchara.", "SMS, ವಾಟ್ಸಾಪ್ ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಅಂಟಿಸಿ. ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಸಂದೇಶ ಒತ್ತಿ ಹಿಡಿದು → Share → Echchara."), fontSize = 13.sp, color = Muted)

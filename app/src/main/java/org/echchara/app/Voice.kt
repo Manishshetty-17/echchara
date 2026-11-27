@@ -105,3 +105,92 @@ object Voice {
 
     fun installKannadaIntent(): Intent = Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA)
 }
+
+/**
+ * Listens in the app until the person taps Done (or stays quiet for 8 seconds after speaking).
+ * The phone's recogniser stops at every pause, so it is restarted and each phrase is joined.
+ */
+class Dictation(
+    private val ctx: Context,
+    private val kannada: Boolean,
+    private val onText: (String) -> Unit,
+    private val onDone: (String) -> Unit
+) {
+    private val h = android.os.Handler(android.os.Looper.getMainLooper())
+    private var sr: android.speech.SpeechRecognizer? = null
+    private val heard = StringBuilder()
+    private var partial = ""
+    private var active = false
+    private var lastHeard = 0L
+    private var started = 0L
+
+    private val watch = object : Runnable {
+        override fun run() {
+            if (!active) return
+            val now = System.currentTimeMillis()
+            if ((heard.isNotEmpty() || partial.isNotEmpty()) && now - lastHeard > 8000) { finish(); return }
+            if (now - started > 180_000) { finish(); return }
+            h.postDelayed(this, 1000)
+        }
+    }
+
+    private fun intent() = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        putExtra(RecognizerIntent.EXTRA_LANGUAGE, if (kannada) "kn-IN" else "en-IN")
+        putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+        putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+        putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 4000L)
+        putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 4000L)
+    }
+
+    private val listener = object : android.speech.RecognitionListener {
+        override fun onReadyForSpeech(params: android.os.Bundle?) {}
+        override fun onBeginningOfSpeech() { lastHeard = System.currentTimeMillis() }
+        override fun onRmsChanged(rmsdB: Float) {}
+        override fun onBufferReceived(buffer: ByteArray?) {}
+        override fun onEndOfSpeech() {}
+        override fun onEvent(eventType: Int, params: android.os.Bundle?) {}
+        override fun onPartialResults(b: android.os.Bundle?) {
+            val t = b?.getStringArrayList(android.speech.SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull().orEmpty()
+            if (t.isNotBlank()) { partial = t; lastHeard = System.currentTimeMillis(); onText(current()) }
+        }
+        override fun onResults(b: android.os.Bundle?) {
+            val t = b?.getStringArrayList(android.speech.SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull().orEmpty().trim()
+            if (t.isNotEmpty()) { if (heard.isNotEmpty()) heard.append(' '); heard.append(t); lastHeard = System.currentTimeMillis() }
+            partial = ""; onText(current())
+            if (active) h.postDelayed({ if (active) begin() }, 150)
+        }
+        override fun onError(error: Int) {
+            if (!active) return
+            if (error == android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) { finish(); return }
+            if (partial.isNotEmpty()) { if (heard.isNotEmpty()) heard.append(' '); heard.append(partial); partial = "" }
+            h.postDelayed({ if (active) begin() }, 300)   // no match, silence or busy: keep listening
+        }
+    }
+
+    private fun current() = (heard.toString() + " " + partial).trim()
+
+    private fun begin() {
+        try { sr?.destroy() } catch (e: Exception) { }
+        sr = android.speech.SpeechRecognizer.createSpeechRecognizer(ctx).apply { setRecognitionListener(listener); startListening(intent()) }
+    }
+
+    fun start() {
+        active = true; started = System.currentTimeMillis(); lastHeard = started
+        begin(); h.postDelayed(watch, 1000)
+    }
+
+    fun finish() {
+        if (!active) return
+        active = false; h.removeCallbacks(watch)
+        try { sr?.stopListening(); sr?.destroy() } catch (e: Exception) { }
+        sr = null
+        onDone(current())
+    }
+
+    fun cancel() {
+        active = false; h.removeCallbacks(watch)
+        try { sr?.cancel(); sr?.destroy() } catch (e: Exception) { }
+        sr = null
+    }
+}
