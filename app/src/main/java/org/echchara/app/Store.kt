@@ -57,7 +57,8 @@ object Store {
     fun clearHistory() { prefs?.edit()?.putString("history", "[]")?.apply(); listeners.toList().forEach { it() } }
 
     fun feedbackRows(): List<Pair<Int, String>> {
-        val arr = JSONArray(prefs?.getString("feedback", "[]") ?: "[]")
+        val p = prefs ?: return emptyList()
+        val arr = JSONArray(p.getString("feedback", "[]") ?: "[]")
         return (0 until arr.length()).map { val o = arr.getJSONObject(it); o.getInt("y") to o.getString("x") }
     }
 

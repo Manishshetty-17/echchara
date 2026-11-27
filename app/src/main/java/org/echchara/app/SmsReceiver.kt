@@ -20,7 +20,7 @@ class SmsReceiver : BroadcastReceiver() {
         Thread {
             try {
                 val a = Engine.analyze(body)
-                if (a.score >= 30) {
+                if (Engine.shouldAlertSms(sender, a)) {
                     val kn = Store.kannada
                     Store.addHistory(HistoryItem(System.currentTimeMillis(), "sms", sender, body, a.score, a.type?.en, a.type?.kn))
                     val title = (if (a.score >= 60) Txt("Scam SMS from $sender", "$sender ನಿಂದ ವಂಚನೆ SMS") else Txt("Suspicious SMS from $sender", "$sender ನಿಂದ ಅನುಮಾನಾಸ್ಪದ SMS")).get(kn)

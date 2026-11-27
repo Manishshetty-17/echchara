@@ -8,7 +8,7 @@
 <style>
 /* Layout: a consumer security product site. Navy utility bar with the 1930 helpline, a white header with page navigation, one page visible at a time (hash routing), and a full footer. */
 :root{
-  --bg:#F5F7FA; --surface:#FFFFFF; --sunk:#EEF2F6; --ink:#101828; --ink2:#344054; --muted:#667085; --line:#E1E6ED; --line2:#D0D5DD;
+  --bg:#F5F7FA; --surface:#FFFFFF; --sunk:#EEF2F6; --ink:#101828; --ink2:#344054; --muted:#5A6478; --line:#E1E6ED; --line2:#D0D5DD;
   --brand:#1554D1; --brand-ink:#0B3A99; --brand-soft:#EBF1FF; --on-brand:#FFFFFF; --navy:#0B1B36; --on-navy:#D6DEEB;
   --safe:#067647; --safe-bg:#ECFDF3; --safe-line:#ABEFC6;
   --warn:#B54708; --warn-bg:#FFFAEB; --warn-line:#FEDF89;
@@ -19,19 +19,19 @@
   --r:10px; --sh:0 1px 2px rgba(16,24,40,.05); --sh2:0 4px 16px rgba(16,24,40,.08);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0B111C; --surface:#121A28; --sunk:#0E1522; --ink:#EDF1F7; --ink2:#C5CEDB; --muted:#94A0B4; --line:#212B3B; --line2:#2C3749;
+  --bg:#0B111C; --surface:#121A28; --sunk:#0E1522; --ink:#EDF1F7; --ink2:#D3DAE5; --muted:#AAB5C7; --line:#212B3B; --line2:#2C3749;
   --brand:#5B8CFF; --brand-ink:#9DB9FF; --brand-soft:#172442; --on-brand:#0B111C; --navy:#060B14; --on-navy:#B7C2D4;
   --safe:#47CD89; --safe-bg:#0B2A1C; --safe-line:#155C3A; --warn:#FDB022; --warn-bg:#2E2006; --warn-line:#6B4A0C; --danger:#F97066; --danger-bg:#2E1210; --danger-line:#6E241F; --info:#C5CEDB; --info-bg:#1A2333;
   --sh:0 1px 2px rgba(0,0,0,.3); --sh2:0 4px 16px rgba(0,0,0,.35); color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#0B111C; --surface:#121A28; --sunk:#0E1522; --ink:#EDF1F7; --ink2:#C5CEDB; --muted:#94A0B4; --line:#212B3B; --line2:#2C3749;
+  --bg:#0B111C; --surface:#121A28; --sunk:#0E1522; --ink:#EDF1F7; --ink2:#D3DAE5; --muted:#AAB5C7; --line:#212B3B; --line2:#2C3749;
   --brand:#5B8CFF; --brand-ink:#9DB9FF; --brand-soft:#172442; --on-brand:#0B111C; --navy:#060B14; --on-navy:#B7C2D4;
   --safe:#47CD89; --safe-bg:#0B2A1C; --safe-line:#155C3A; --warn:#FDB022; --warn-bg:#2E2006; --warn-line:#6B4A0C; --danger:#F97066; --danger-bg:#2E1210; --danger-line:#6E241F; --info:#C5CEDB; --info-bg:#1A2333;
   --sh:0 1px 2px rgba(0,0,0,.3); --sh2:0 4px 16px rgba(0,0,0,.35); color-scheme:dark }
 
 *{box-sizing:border-box}
 @media (prefers-reduced-motion: reduce){*{transition:none!important; animation:none!important}}
-body{background:var(--bg); color:var(--ink); font-family:var(--f); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+body{background:var(--bg); color:var(--ink); font-family:var(--f); font-size:16.5px; line-height:1.6; -webkit-font-smoothing:antialiased}
 html[lang="kn"] body{line-height:1.7}
 body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:40; background:var(--navy)}
 .wrap{max-width:1200px; margin:0 auto; padding-left:max(20px, env(safe-area-inset-left,0px)); padding-right:max(20px, env(safe-area-inset-right,0px))}
@@ -44,7 +44,7 @@ a{color:var(--brand)}
 button,textarea,input{font:inherit; color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--brand); outline-offset:2px}
-.muted{color:var(--muted)} .small{font-size:.86rem}
+.muted{color:var(--muted)} .small{font-size:.93rem}
 .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
 svg.i{width:18px; height:18px; flex:none; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
@@ -154,7 +154,7 @@ main{min-height:60vh}
 .feat{padding:18px; display:grid; gap:8px; align-content:start; text-align:left; border:1px solid var(--line); background:var(--surface); border-radius:var(--r); box-shadow:var(--sh)}
 .feat:hover{border-color:var(--brand)}
 .ficon{width:38px; height:38px; border-radius:9px; background:var(--brand-soft); color:var(--brand); display:grid; place-items:center}
-.feat p{font-size:.88rem; color:var(--muted)}
+.feat p{font-size:.95rem; color:var(--ink2)}
 .steps3{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:24px}
 @media (max-width:760px){.steps3{grid-template-columns:minmax(0,1fr)}}
 .step{display:grid; gap:8px}
@@ -168,16 +168,16 @@ main{min-height:60vh}
 .console{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start}
 @media (max-width:960px){.console{grid-template-columns:minmax(0,1fr)}}
 .seg{display:flex; flex-wrap:wrap; gap:4px; background:var(--sunk); padding:4px; border-radius:9px}
-.seg button{border:0; background:transparent; padding:7px 12px; border-radius:6px; font-weight:500; font-size:.88rem; color:var(--ink2); white-space:nowrap; display:flex; gap:7px; align-items:center}
+.seg button{border:0; background:transparent; padding:8px 13px; border-radius:6px; font-weight:500; font-size:.95rem; color:var(--ink2); white-space:nowrap; display:flex; gap:7px; align-items:center}
 .seg button svg{width:16px; height:16px}
 .seg button[aria-selected="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--sh); font-weight:600}
 .samples{display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin:14px 0 10px}
 .samples > span{font-size:.8rem; color:var(--muted); margin-right:4px}
-.chip{border:1px solid var(--line2); background:var(--surface); border-radius:99px; padding:3px 10px; font-size:.8rem; color:var(--ink2)}
+.chip{border:1px solid var(--line2); background:var(--surface); border-radius:99px; padding:5px 12px; font-size:.88rem; color:var(--ink2)}
 .chip:hover{border-color:var(--brand); color:var(--brand)}
 .fld{display:grid; gap:6px; margin-bottom:12px}
 .fld label{font-size:.84rem; font-weight:600; color:var(--ink2)}
-textarea.in,input.in{width:100%; background:var(--surface); border:1px solid var(--line2); border-radius:8px; padding:11px 13px; font-size:.94rem; line-height:1.55; box-shadow:var(--sh)}
+textarea.in,input.in{width:100%; background:var(--surface); border:1px solid var(--line2); border-radius:8px; padding:12px 14px; font-size:1.02rem; line-height:1.6; box-shadow:var(--sh)}
 textarea.in{min-height:170px; resize:vertical}
 .mono{font-family:var(--f-mono); font-size:.84rem}
 textarea.in:focus,input.in:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft)}
@@ -206,19 +206,19 @@ mark.high{background:var(--danger-bg); border-color:var(--danger)} mark.mid{back
 .res-ic{width:48px; height:48px; border-radius:12px; display:grid; place-items:center; flex:none}
 .res-ic svg{width:26px; height:26px}
 .res-ic.safe{background:var(--safe-bg); color:var(--safe)} .res-ic.warn{background:var(--warn-bg); color:var(--warn)} .res-ic.danger{background:var(--danger-bg); color:var(--danger)} .res-ic.none{background:var(--sunk); color:var(--muted)}
-.res-t{font-size:1.35rem; font-weight:700; letter-spacing:-.02em}
+.res-t{font-size:1.6rem; font-weight:700; letter-spacing:-.02em}
 .res-t.safe{color:var(--safe)} .res-t.ctx{color:var(--warn)} .res-ic.ctx{background:var(--warn-bg); color:var(--warn)} .badge.ctx{color:var(--warn); background:var(--warn-bg); border-color:var(--warn-line)} .cq.on{background:var(--ink); color:var(--bg); border-color:var(--ink)}
 .drv{display:grid; gap:8px} .drv-r{display:grid; grid-template-columns:minmax(0,1.4fr) minmax(60px,1fr) 40px; gap:10px; align-items:center; font-size:.88rem} .drv-l{min-width:0; overflow-wrap:anywhere} .drv-b{height:8px; background:var(--sunk); border-radius:4px; overflow:hidden} .drv-b i{display:block; height:100%; border-radius:4px} .drv-n{text-align:right; font-variant-numeric:tabular-nums; font-weight:600}
 .jr{display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:8px} .jr .ja{display:none} .jn{min-width:0; border:1px solid var(--line); border-top:4px solid var(--c); border-radius:10px; padding:10px 12px; background:var(--surface)} .jn .k{font-size:.72rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em} .jn b{display:block; font-size:1.25rem; color:var(--c); font-variant-numeric:tabular-nums} .jn p{font-size:.8rem; color:var(--ink2); margin-top:4px; overflow-wrap:anywhere} .ja{flex:none; align-self:center; color:var(--muted); padding:0 4px}
 .jin{display:grid; gap:12px} .jin .st{display:grid; grid-template-columns:30px 1fr; gap:10px; align-items:start} .jin .st i{width:26px; height:26px; border-radius:50%; background:var(--brand-soft); color:var(--brand); display:grid; place-items:center; font-style:normal; font-weight:700; font-size:.82rem; margin-top:24px} .jin label{font-size:.82rem; font-weight:600; display:block; margin-bottom:4px} .jin textarea.in{min-height:64px} .res-t.warn{color:var(--warn)} .res-t.danger{color:var(--danger)}
-.res-s{color:var(--ink2); font-size:.92rem; margin-top:2px}
+.res-s{color:var(--ink2); font-size:1.02rem; margin-top:2px}
 .score{margin-left:auto; text-align:right; flex:none}
 .score b{font-size:1.6rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.02em}
 .score span{display:block; font-size:.74rem; color:var(--muted)}
 .meter{height:6px; border-radius:99px; background:var(--sunk); overflow:hidden; margin-top:16px}
 .meter b{display:block; height:100%; border-radius:99px; transition:width .5s ease}
 .block{border-top:1px solid var(--line); padding-top:16px; margin-top:16px}
-.block-h{font-size:.8rem; font-weight:600; color:var(--muted); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:10px}
+.block-h{font-size:.9rem; font-weight:600; color:var(--ink2); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:10px}
 .engines{display:grid; gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden}
 .eng{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center; padding:10px 12px; font-size:.9rem}
 .eng + .eng{border-top:1px solid var(--line)}
@@ -229,12 +229,12 @@ mark.high{background:var(--danger-bg); border-color:var(--danger)} mark.mid{back
 .fi{display:grid; grid-template-columns:20px minmax(0,1fr); gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px}
 .fi svg{width:18px; height:18px; margin-top:1px}
 .fi.high svg{color:var(--danger)} .fi.mid svg{color:var(--warn)} .fi.low svg{color:var(--muted)} .fi.safe svg{color:var(--safe)}
-.fi b{display:block; font-size:.9rem; font-weight:600}
-.fi span{font-size:.85rem; color:var(--muted)}
+.fi b{display:block; font-size:1rem; font-weight:600}
+.fi span{font-size:.94rem; color:var(--ink2)}
 code{font-family:var(--f-mono); font-size:.8em; background:var(--sunk); border:1px solid var(--line); padding:0 4px; border-radius:4px; word-break:break-all}
-.todo{margin:0; padding-left:20px; display:grid; gap:5px; font-size:.92rem}
-.aisum{background:var(--brand-soft); border:1px solid color-mix(in srgb, var(--brand) 25%, transparent); border-radius:8px; padding:12px 14px; font-size:.93rem; color:var(--ink)}
-.aisum .meta{font-size:.8rem; color:var(--muted); margin-top:6px}
+.todo{margin:0; padding-left:20px; display:grid; gap:6px; font-size:1.02rem}
+.aisum{background:var(--brand-soft); border:1px solid color-mix(in srgb, var(--brand) 25%, transparent); border-radius:8px; padding:13px 15px; font-size:1.04rem; line-height:1.6; color:var(--ink)}
+.aisum .meta{font-size:.9rem; color:var(--muted); margin-top:6px}
 .aisum ul{margin:8px 0 0; padding-left:18px; font-size:.88rem}
 .spin{width:14px; height:14px; border:2px solid var(--line2); border-top-color:var(--brand); border-radius:50%; animation:sp 0.8s linear infinite; display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -328,7 +328,7 @@ tr.hl td{font-weight:600}
 .toks.g span{border-color:var(--safe-line); background:var(--safe-bg); color:var(--safe)}
 .mist{display:grid; gap:10px}
 .mist + .mist{border-top:1px solid var(--line); padding-top:18px}
-.quote{font-size:.86rem; background:var(--sunk); border:1px solid var(--line); border-radius:8px; padding:10px 12px; color:var(--ink2)}
+.quote{font-size:.95rem; background:var(--sunk); border:1px solid var(--line); border-radius:8px; padding:10px 12px; color:var(--ink2)}
 .ba{display:grid; grid-template-columns:1fr 1fr; gap:8px}
 .ba div{border:1px solid var(--line); border-radius:8px; padding:10px 12px}
 .ba .lb{font-size:.76rem; color:var(--muted)}
@@ -472,7 +472,7 @@ footer ul a:hover{color:var(--brand)}
           <div class="acts"><a class="btn" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i18n="app.btn"></span></a><a class="link" href="https://github.com/Manishshetty-17/echchara" target="_blank" rel="noopener">GitHub ↗</a></div>
         </div>
       </div>
-      <div class="preview" aria-label="Example result"><div class="card"><div class="card-b" id="previewCard"></div></div></div>
+      <div class="preview" aria-label="What you get back"><div class="card"><div class="card-b" id="previewCard"></div></div></div>
     </div>
   </div>
   <div class="wrap">
@@ -745,7 +745,9 @@ const I18N = {
 const t = k => I18N[lang][k] ?? I18N.en[k] ?? k;
 
 /* ======================= URL engine ======================= */
-const BRANDS = ['google','gmail','paypal','apple','icloud','microsoft','outlook','amazon','netflix','facebook','instagram','whatsapp','telegram','linkedin','sbi','onlinesbi','hdfcbank','hdfc','icicibank','icici','axisbank','kotak','canarabank','karnatakabank','unionbank','bankofbaroda','paytm','phonepe','gpay','bhim','npci','flipkart','myntra','meesho','irctc','incometax','indiapost','uidai','epfo','airtel','jio','bsnl','bescom','mescom','hescom','gescom','cesc','kptcl','ksrtc','sevasindhu','parivahan','echallan','kisan','gruhalakshmi','ayushman','swiggy','zomato','fedex','dhl','bluedart'];
+const BRANDS = ['google','gmail','paypal','apple','icloud','microsoft','outlook','amazon','netflix','facebook','instagram','whatsapp','telegram','linkedin','sbi','onlinesbi','hdfcbank','hdfc','icicibank','icici','axisbank','kotak','canarabank','karnatakabank','unionbank','bankofbaroda','paytm','phonepe','gpay','bhim','npci','flipkart','myntra','meesho','irctc','incometax','indiapost','uidai','epfo','airtel','jio','bsnl','bescom','mescom','hescom','gescom','cesc','kptcl','ksrtc','sevasindhu','parivahan','echallan','kisan','gruhalakshmi','ayushman','swiggy','zomato','fedex','dhl','bluedart','spotify','youtube','hotstar','bookmyshow','makemytrip','bigbasket','blinkit','zepto','nykaa','dunzo'];
+/* official short-link domains brands use in their own SMS */
+const BRAND_SHORT = {'fkrt.it':'flipkart','fkrt.cc':'flipkart','fkrt.co':'flipkart','amzn.to':'amazon','amzn.in':'amazon','amzn.eu':'amazon','spoti.fi':'spotify','myntr.it':'myntra','youtu.be':'youtube','wa.me':'whatsapp','g.co':'google','swig.gy':'swiggy','zoma.to':'zomato','phon.pe':'phonepe','paytm.me':'paytm'};
 const BRAND_NAMES = {'state bank of india':'sbi','sbi':'sbi','canara bank':'canarabank','karnataka bank':'karnatakabank','hdfc':'hdfcbank','icici':'icicibank','axis bank':'axisbank','paypal':'paypal','amazon':'amazon','flipkart':'flipkart','paytm':'paytm','phonepe':'phonepe','bescom':'bescom','mescom':'mescom','ksrtc':'ksrtc','income tax':'incometax','india post':'indiapost','netflix':'netflix','microsoft':'microsoft','google':'google','irctc':'irctc','seva sindhu':'sevasindhu','parivahan':'parivahan','airtel':'airtel','jio':'jio'};
 const OK_TLDS = new Set(['com','in','co.in','net','org','co','io','bank.in','sbi','uk','co.uk']);
 const TRUSTED_SUFFIX = ['gov.in','nic.in','karnataka.gov.in'];
@@ -786,14 +788,14 @@ function analyzeUrl(input){
   if(!r.isIP && (r.labels.length<2 || /\s/.test(p.host))) return {error:true};
   const flags=[]; const add=(sev,w,label,why)=>flags.push({sev,w,label,why});
   const {scheme,userinfo,port,host,path,query} = p; const {isIP,labels,reg,regLabel,tld,sub} = r;
-  let official=null; const trusted = isTrusted(host);
+  let official=BRAND_SHORT[reg]||BRAND_SHORT[host]||null; const trusted = isTrusted(host);
   const nonAscii = /[^\x00-\x7f]/.test(host) || host.includes('xn--');
   if(scheme==='http') add('mid',.15,{en:'No encryption (http)',kn:'ಎನ್‌ಕ್ರಿಪ್ಶನ್ ಇಲ್ಲ (http)'},{en:'The page does not use HTTPS, so what you type travels in plain text. Real banks always use HTTPS.',kn:'ಈ ಪುಟ HTTPS ಬಳಸುತ್ತಿಲ್ಲ. ನಿಜವಾದ ಬ್ಯಾಂಕ್‌ಗಳು ಯಾವಾಗಲೂ HTTPS ಬಳಸುತ್ತವೆ.'});
   if(isIP) add('high',.4,{en:'Raw IP address instead of a name',kn:'ಹೆಸರಿನ ಬದಲು IP ಸಂಖ್ಯೆ'},{en:'Organisations use their domain name. A bare number hides who runs the server.',kn:'ಸಂಸ್ಥೆಗಳು ಡೊಮೇನ್ ಹೆಸರು ಬಳಸುತ್ತವೆ. ಕೇವಲ ಸಂಖ್ಯೆ ಇದ್ದರೆ ಯಾರದು ಎಂದು ತಿಳಿಯುವುದಿಲ್ಲ.'});
   if(userinfo) add('high',.4,{en:'Hidden "@" trick',kn:'ಮರೆಮಾಚಿದ "@" ತಂತ್ರ'},{en:`Browsers ignore everything before "@". The real destination is <code>${esc(host)}</code>.`,kn:`"@" ಮುಂಚಿನ ಭಾಗವನ್ನು ಬ್ರೌಸರ್ ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ. ನಿಜವಾದ ತಾಣ <code>${esc(host)}</code>.`});
   if(nonAscii) add('high',.45,{en:'Look-alike characters',kn:'ಒಂದೇ ರೀತಿ ಕಾಣುವ ಅಕ್ಷರಗಳು'},{en:'Non-Latin letters (such as a Cyrillic "а") look identical to normal ones but lead to a different site.',kn:'ಲ್ಯಾಟಿನ್ ಅಲ್ಲದ ಅಕ್ಷರಗಳು ಸಾಮಾನ್ಯದಂತೆ ಕಾಣುತ್ತವೆ, ಆದರೆ ಬೇರೆ ಸೈಟ್‌ಗೆ ಕರೆದೊಯ್ಯುತ್ತವೆ.'});
   if(port && !['80','443'].includes(port)) add('mid',.15,{en:`Unusual port :${port}`,kn:`ಅಸಾಮಾನ್ಯ ಪೋರ್ಟ್ :${port}`},{en:'Public websites rarely need a port number. Often a hastily set-up server.',kn:'ಸಾರ್ವಜನಿಕ ವೆಬ್‌ಸೈಟ್‌ಗಳಿಗೆ ಪೋರ್ಟ್ ಸಂಖ್ಯೆ ಅಪರೂಪ.'});
-  if(!isIP && !trusted){
+  if(!isIP && !trusted && !official){
     const skel = skeleton(regLabel), tokens = regLabel.split('-');
     let hit=false;
     if(BRANDS.includes(regLabel)){
@@ -872,7 +874,7 @@ const RULES = [
   {en:'Deadlines in minutes or hours exist to stop you from verifying.',kn:'ನಿಮಿಷ ಅಥವಾ ಗಂಟೆಗಳ ಗಡುವು ನೀವು ಪರಿಶೀಲಿಸದಂತೆ ತಡೆಯಲು.'},{en:'Slow down. A genuine problem will still be there after you check.',kn:'ನಿಧಾನಿಸಿ. ನಿಜವಾದ ಸಮಸ್ಯೆ ಪರಿಶೀಲಿಸಿದ ನಂತರವೂ ಇರುತ್ತದೆ.'}),
  R('id','mid',.2,{en:'Identity document mentioned',kn:'ಗುರುತಿನ ದಾಖಲೆ ಉಲ್ಲೇಖ'},/\b(kyc|pan( card)?|aadhaa?r|passport (number|details)|voter id)\b/gi,/ಕೆವೈಸಿ|ಆಧಾರ್|ಪಾನ್ ಕಾರ್ಡ್/g,
   {en:'"KYC expired" and "PAN not linked" are the top bank-phishing hooks in India. Banks update KYC in-app or at a branch.',kn:'"KYC ಅವಧಿ ಮುಗಿದಿದೆ", "PAN ಲಿಂಕ್ ಆಗಿಲ್ಲ" ಭಾರತದ ಪ್ರಮುಖ ಫಿಶಿಂಗ್ ಆಮಿಷಗಳು.'},{en:'Update KYC only inside your bank app or at a branch.',kn:'KYC ಅನ್ನು ಬ್ಯಾಂಕ್ ಆ್ಯಪ್ ಅಥವಾ ಶಾಖೆಯಲ್ಲಿ ಮಾತ್ರ ನವೀಕರಿಸಿ.'}),
- R('prize','mid',.2,{en:'Too-good-to-be-true reward',kn:'ನಂಬಲಾಗದ ಬಹುಮಾನ'},/\b(congratulations|you('ve| have)? won|winner|lottery|lucky draw|jackpot|prize|claim your (reward|gift|prize)|cashback of|free (iphone|gift|recharge)|guaranteed returns?|\d+% off)\b/gi,/ಅಭಿನಂದನೆಗಳು|ಬಹುಮಾನ|ಗೆದ್ದಿದ್ದೀರಿ|ಲಾಟರಿ/g,
+ R('prize','mid',.2,{en:'Too-good-to-be-true reward',kn:'ನಂಬಲಾಗದ ಬಹುಮಾನ'},/\b(congratulations|you('ve| have)? won|winner|lottery|lucky draw|jackpot|prize|claim your (reward|gift|prize)|free (iphone|gift|recharge)|guaranteed returns?)\b/gi,/ಅಭಿನಂದನೆಗಳು|ಬಹುಮಾನ|ಗೆದ್ದಿದ್ದೀರಿ|ಲಾಟರಿ/g,
   {en:'Unexpected winnings and guaranteed returns are bait. The "fee" comes next.',kn:'ಅನಿರೀಕ್ಷಿತ ಬಹುಮಾನ ಮತ್ತು ಖಚಿತ ಲಾಭ ಆಮಿಷ. ನಂತರ "ಶುಲ್ಕ" ಬರುತ್ತದೆ.'},{en:'If you did not enter, you did not win.',kn:'ನೀವು ಭಾಗವಹಿಸದಿದ್ದರೆ, ನೀವು ಗೆದ್ದಿಲ್ಲ.'}),
  R('job','mid',.25,{en:'Easy-money job offer',kn:'ಸುಲಭ ಹಣದ ಕೆಲಸ'},/\b(work from home|part[- ]time (job|work)|earn (rs\.?|₹)?\s?[\d,]+\s?(per day|daily|\/day|a day)?|daily (income|earning|salary)|liking (youtube )?videos|like (youtube )?videos|rate (hotels|products|restaurants)|prepaid task|tasks? to earn|telegram group|join (our )?telegram|trading group)\b/gi,/ಮನೆಯಿಂದಲೇ ಕೆಲಸ|ದಿನಕ್ಕೆ ₹?\s?\d+|ಪಾರ್ಟ್ ಟೈಮ್/g,
   {en:'Task scams pay small amounts first, then ask you to "invest" to unlock bigger tasks. The money never returns.',kn:'ಮೊದಲು ಸ್ವಲ್ಪ ಹಣ ಕೊಟ್ಟು, ನಂತರ ದೊಡ್ಡ ಟಾಸ್ಕ್‌ಗಾಗಿ "ಹೂಡಿಕೆ" ಕೇಳುತ್ತಾರೆ. ಹಣ ವಾಪಸ್ ಬರುವುದಿಲ್ಲ.'},{en:'Real employers never ask you to pay to work.',kn:'ನಿಜವಾದ ಉದ್ಯೋಗದಾತರು ಕೆಲಸಕ್ಕಾಗಿ ಹಣ ಕೇಳುವುದಿಲ್ಲ.'}),
@@ -917,7 +919,7 @@ SAFE_CUES.push({re:/साझा न करें|शेयर न करें|
 
 /* ---- vague references that need context before any verdict ---- */
 const CTX_CUES = [
- /\b(your|the|our) (earlier|previous|recent|last) (service )?(request|complaint|query|enquiry|inquiry|application|conversation|call|order)\b/gi,
+ /\b(your|the|our) (earlier|previous|recent|last) (service )?(request|complaint|query|enquiry|inquiry|application|conversation)\b/gi,
  /\bregarding (your|the) (service |support )?(request|complaint|query|ticket|application|issue)\b/gi,
  /\bas (per|discussed (in|on)) (our|the|your) (call|conversation|discussion|chat)\b|\bas discussed\b/gi,
  /\byour (service |support )?(request|complaint|ticket|application) (has been|is|was) (received|processed|approved|registered|pending|on hold|escalated|updated)\b/gi,
@@ -1177,7 +1179,17 @@ const DATA = [
  [1,"மின் கட்டணம் நிலுவையில் உள்ளதால் இன்று இரவு மின்சாரம் துண்டிக்கப்படும். உடனே இந்த எண்ணை அழைக்கவும் 9845067890"],
  [1,"आपका बिजली कनेक्शन आज रात काट दिया जाएगा। तुरंत बिजली अधिकारी को इस नंबर पर कॉल करें 9845067891"],
  [1,"మీ కరెంట్ కనెక్షన్ ఈ రాత్రి నిలిపివేయబడుతుంది. వెంటనే ఈ నంబర్‌కు కాల్ చేయండి 9845067892"],
- [1,"നിങ്ങളുടെ വൈദ്യുതി കണക്ഷൻ ഇന്ന് രാത്രി വിച്ഛേദിക്കും. ഉടൻ ഈ നമ്പറിൽ വിളിക്കുക 9845067893"]
+ [1,"നിങ്ങളുടെ വൈദ്യുതി കണക്ഷൻ ഇന്ന് രാത്രി വിച്ഛേദിക്കും. ഉടൻ ഈ നമ്പറിൽ വിളിക്കുക 9845067893"],
+ [0,"Flipkart: Your order for Redmi Note 13 has been shipped. Track it here: fkrt.it/Ab12Cd"],
+ [0,"Big Billion Days are live! Up to 80% off on mobiles. Shop now on the Flipkart app: fkrt.it/BBD24"],
+ [0,"123456 is your OTP for Flipkart login. Do not share it with anyone."],
+ [0,"Your Spotify Premium payment of Rs 119 was successful. Manage your plan at spotify.com/account"],
+ [0,"Spotify: Your Premium payment didn't go through. Update your payment method in the app to keep listening."],
+ [0,"Amazon: Your package will be delivered today by 9 PM. Track at amzn.in/d/xyz"],
+ [0,"Get 3 months of Spotify Premium for Rs 59. Offer ends soon. spoti.fi/3months"],
+ [0,"Myntra End of Reason Sale: flat 50-80% off on top brands. Shop now on the app."],
+ [0,"Your Swiggy order is out for delivery and will reach you in 15 minutes."],
+ [0,"Hotstar: Your subscription renews on 5 Dec. Rs 299 will be charged to your saved card."]
 ];
 function tokens(text, raw){
   let s = (raw ? text : normalizeText(text).t).toLowerCase();
@@ -1203,6 +1215,7 @@ function fuse(rule, ml, safe){
   if(ml!=null && (rule>=60 || ml>=.9)) s = Math.max(s, 62);
   if(ml!=null && rule<20 && ml<.35) s = Math.min(s, 20);
   if(safe && rule<20) s = Math.min(s, 20);
+  if(ml!=null && rule<20) s = Math.min(s, 45);   // the classifier alone never makes a message Dangerous
   if(rule>=40) s = Math.max(s, rule>=55 ? 60 : 45);
   return Math.max(0, Math.min(100, s));
 }
@@ -1875,12 +1888,11 @@ function renderVerdict(){
 
 /* ======================= Home ======================= */
 function renderPreview(){
-  const txt = SAMPLES.msg[1].v; const a=analyzeText(txt); const s=fuse(a.score, predictNB(NB,txt), a.safeCue); const b=band(s);
-  const top=a.flags.filter(f=>f.sev==='high').slice(0,3);
-  $('previewCard').innerHTML = `<p class="small muted" style="margin-bottom:10px">${lang==='kn'?'ಉದಾಹರಣೆ ಫಲಿತಾಂಶ':'Example result'}</p>
-   <p class="quote" style="margin-bottom:14px">${highlight(txt, a.ranges)}</p>
-   <div class="res-top"><div class="res-ic ${b}">${ico(RESICON[b])}</div><div><div class="res-t ${b}">${t('v.'+b)}</div><p class="res-s">${t('v.'+b+'Sub')}</p></div><div class="score"><b style="color:${colorFor(s)}">${s}</b><span>${t('risk')}</span></div></div>
-   <ul class="findings" style="margin-top:14px">${top.map(f=>`<li class="fi high">${ico('x')}<div><b>${esc(L(f.label))}</b></div></li>`).join('')}</ul>`;
+  const kn=lang==='kn';
+  const rows=[['safe',kn?'0–29: ಬಲವಾದ ವಂಚನೆ ಲಕ್ಷಣಗಳಿಲ್ಲ':'0–29: no strong scam signals'],['warn',kn?'30–59: ಎಚ್ಚರಿಕೆಯ ಲಕ್ಷಣಗಳಿವೆ, ಮೊದಲು ಪರಿಶೀಲಿಸಿ':'30–59: warning signs, check before you act'],['danger',kn?'60–100: ಬಹುತೇಕ ವಂಚನೆ, ಕ್ಲಿಕ್ ಅಥವಾ ಪಾವತಿ ಮಾಡಬೇಡಿ':'60–100: very likely a scam, do not click or pay']];
+  $('previewCard').innerHTML = `<p class="block-h" style="margin-bottom:14px">${kn?'ನೀವು ಪಡೆಯುವ ಉತ್ತರ':'What you get back'}</p>
+   <ul class="findings">${rows.map(([b,txt])=>`<li class="fi ${b==='warn'?'mid':b==='danger'?'high':'safe'}">${ico(RESICON[b])}<div><b class="res-t ${b}" style="font-size:1.08rem">${t('v.'+b)}</b><span>${esc(txt)}</span></div></li>`).join('')}</ul>
+   <p class="small muted" style="margin-top:14px">${kn?'ಪ್ರತಿ ತೀರ್ಪಿನೊಂದಿಗೆ ಕಾರಣಗಳು, ಮುಂದೆ ಏನು ಮಾಡಬೇಕು ಮತ್ತು ಕುಟುಂಬವನ್ನು ಎಚ್ಚರಿಸುವ ಆಯ್ಕೆ. ನೀವು ಅಂಟಿಸಿದ್ದು ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಉಳಿಯುತ್ತದೆ.':'Every verdict comes with the reasons, what to do next and a way to warn your family. What you paste stays on your device.'}</p>`;
 }
 const FEATS = [
  {m:'msg',h:{en:'SMS & WhatsApp',kn:'SMS ಮತ್ತು ವಾಟ್ಸಾಪ್'},p:{en:'KYC, UPI, power-cut, job and prize scams in Kannada, English, Hindi, Tamil, Telugu and Malayalam.',kn:'ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು, ಮಲಯಾಳಂನಲ್ಲಿ KYC, UPI, ವಿದ್ಯುತ್ ಕಡಿತ, ಉದ್ಯೋಗ, ಬಹುಮಾನ ವಂಚನೆಗಳು.'}},
@@ -2239,9 +2251,8 @@ function applyLang(){
 $('bigBtn').onclick=()=>{ store.set('ec-big', !store.get('ec-big',false)); applyBig(); };
 document.querySelector('.lang').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||b.dataset.lang===lang) return; lang=b.dataset.lang; store.set('ec-lang',lang); applyLang(); });
 $('scanBtn').onclick=()=>{ if(mode==='shot' && shotFile && ocrState.status!=='loading' && ocrState.status!=='done') runOCR(); else runScan(); };
-$('clearBtn').onclick=()=>{ if(mode==='web'){inputs.web='';inputs.webc='';} else if(mode==='shot'){ shotFile=null; if(shotURL) URL.revokeObjectURL(shotURL); shotURL=null; } else inputs[mode]=''; renderPane(); runScan(false); };
+$('clearBtn').onclick=()=>{ if(mode==='web'){inputs.web='';inputs.webc='';} else if(mode==='shot'){ shotFile=null; if(shotURL) URL.revokeObjectURL(shotURL); shotURL=null; } else if(mode==='qr'){ qrFile=null; if(qrURL) URL.revokeObjectURL(qrURL); qrURL=null; qrState={status:'idle', key:null, text:''}; } else if(mode==='journey'){ inputs.j1=inputs.j2=inputs.j3=inputs.j4=''; } else inputs[mode]=''; renderPane(); runScan(false); };
 
-inputs.msg = SAMPLES.msg[0].v;
 applyLang();
 route();
 

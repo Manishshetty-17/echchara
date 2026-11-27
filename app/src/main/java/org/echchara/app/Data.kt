@@ -78,6 +78,16 @@ object Data {
         0 to "Train 16585 is running 20 minutes late at Mangaluru Central.",
         0 to "Your vehicle insurance renewal is due next month. Renew in the insurer's app.",
         0 to "Hello, I am calling from Amazon delivery. I am near your building with your order. Should I leave it with security?",
-        0 to "Hi, this is Ravi from the college office. Please collect your hall ticket tomorrow between 10 and 4."
+        0 to "Hi, this is Ravi from the college office. Please collect your hall ticket tomorrow between 10 and 4.",
+        0 to "Flipkart: Your order for Redmi Note 13 has been shipped. Track it here: fkrt.it/Ab12Cd",
+        0 to "Big Billion Days are live! Up to 80% off on mobiles. Shop now on the Flipkart app: fkrt.it/BBD24",
+        0 to "123456 is your OTP for Flipkart login. Do not share it with anyone.",
+        0 to "Your Spotify Premium payment of Rs 119 was successful. Manage your plan at spotify.com/account",
+        0 to "Spotify: Your Premium payment didn't go through. Update your payment method in the app to keep listening.",
+        0 to "Amazon: Your package will be delivered today by 9 PM. Track at amzn.in/d/xyz",
+        0 to "Get 3 months of Spotify Premium for Rs 59. Offer ends soon. spoti.fi/3months",
+        0 to "Myntra End of Reason Sale: flat 50-80% off on top brands. Shop now on the app.",
+        0 to "Your Swiggy order is out for delivery and will reach you in 15 minutes.",
+        0 to "Hotstar: Your subscription renews on 5 Dec. Rs 299 will be charged to your saved card."
     )
 }

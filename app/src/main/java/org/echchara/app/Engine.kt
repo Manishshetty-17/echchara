@@ -57,7 +57,9 @@ private class Rule(
 object Engine {
 
     // ---------------- URL analysis ----------------
-    private val BRANDS = listOf("google","gmail","paypal","apple","icloud","microsoft","outlook","amazon","netflix","facebook","instagram","whatsapp","telegram","linkedin","sbi","onlinesbi","hdfcbank","hdfc","icicibank","icici","axisbank","kotak","canarabank","karnatakabank","unionbank","bankofbaroda","paytm","phonepe","gpay","bhim","npci","flipkart","myntra","meesho","irctc","incometax","indiapost","uidai","epfo","airtel","jio","bsnl","bescom","mescom","hescom","gescom","cesc","kptcl","ksrtc","sevasindhu","parivahan","echallan","swiggy","zomato","fedex","dhl","bluedart")
+    private val BRANDS = listOf("google","gmail","paypal","apple","icloud","microsoft","outlook","amazon","netflix","facebook","instagram","whatsapp","telegram","linkedin","sbi","onlinesbi","hdfcbank","hdfc","icicibank","icici","axisbank","kotak","canarabank","karnatakabank","unionbank","bankofbaroda","paytm","phonepe","gpay","bhim","npci","flipkart","myntra","meesho","irctc","incometax","indiapost","uidai","epfo","airtel","jio","bsnl","bescom","mescom","hescom","gescom","cesc","kptcl","ksrtc","sevasindhu","parivahan","echallan","swiggy","zomato","fedex","dhl","bluedart","spotify","youtube","hotstar","bookmyshow","makemytrip","bigbasket","blinkit","zepto","nykaa","dunzo")
+    /** Official short-link domains that brands use in their own SMS. */
+    private val BRAND_SHORT = mapOf("fkrt.it" to "flipkart", "fkrt.cc" to "flipkart", "fkrt.co" to "flipkart", "amzn.to" to "amazon", "amzn.in" to "amazon", "amzn.eu" to "amazon", "spoti.fi" to "spotify", "myntr.it" to "myntra", "youtu.be" to "youtube", "wa.me" to "whatsapp", "g.co" to "google", "swig.gy" to "swiggy", "zoma.to" to "zomato", "phon.pe" to "phonepe", "m.paytm.me" to "paytm", "paytm.me" to "paytm", "jio.com" to "jio", "airtel.in" to "airtel")
     private val OK_TLDS = setOf("com","in","co.in","net","org","co","io","bank.in","sbi","uk","co.uk")
     private val TRUSTED = listOf("gov.in","nic.in")
     private val RISKY_TLDS = setOf("zip","mov","top","xyz","click","country","gq","tk","ml","cf","ga","work","rest","support","live","icu","cam","buzz","monster","quest","cfd","sbs","lol","loan","win","bid","info","online","site","shop","vip","cyou","apk")
@@ -106,7 +108,7 @@ object Engine {
         val trusted = TRUSTED.any { host == it || host.endsWith(".$it") }
         val flags = mutableListOf<Flag>()
         fun add(sev: Sev, w: Double, l: Txt, why: Txt) = flags.add(Flag(null, sev, w, l, why))
-        var official: String? = null
+        var official: String? = BRAND_SHORT[reg] ?: BRAND_SHORT[host]
 
         if (scheme == "http") add(Sev.MID, .15, Txt("No encryption (http)", "ಎನ್‌ಕ್ರಿಪ್ಶನ್ ಇಲ್ಲ (http)"), Txt("Real banks always use HTTPS.", "ನಿಜವಾದ ಬ್ಯಾಂಕ್‌ಗಳು ಯಾವಾಗಲೂ HTTPS ಬಳಸುತ್ತವೆ."))
         if (isIP) add(Sev.HIGH, .4, Txt("Raw IP address instead of a name", "ಹೆಸರಿನ ಬದಲು IP ಸಂಖ್ಯೆ"), Txt("Organisations use their domain name.", "ಸಂಸ್ಥೆಗಳು ಡೊಮೇನ್ ಹೆಸರು ಬಳಸುತ್ತವೆ."))
@@ -114,7 +116,7 @@ object Engine {
         if (host.any { it.code > 127 } || host.contains("xn--")) add(Sev.HIGH, .45, Txt("Look-alike characters", "ಒಂದೇ ರೀತಿ ಕಾಣುವ ಅಕ್ಷರಗಳು"), Txt("Non-Latin letters that look like normal ones.", "ಸಾಮಾನ್ಯದಂತೆ ಕಾಣುವ ಬೇರೆ ಅಕ್ಷರಗಳು."))
         if (port.isNotEmpty() && port != "80" && port != "443") add(Sev.MID, .15, Txt("Unusual port :$port", "ಅಸಾಮಾನ್ಯ ಪೋರ್ಟ್ :$port"), Txt("Public websites rarely need a port number.", "ಸಾರ್ವಜನಿಕ ಸೈಟ್‌ಗಳಿಗೆ ಪೋರ್ಟ್ ಅಪರೂಪ."))
 
-        if (!isIP && !trusted) {
+        if (!isIP && !trusted && official == null) {
             val skel = skeleton(regLabel)
             val tokens = regLabel.split('-')
             var hit = false
@@ -164,7 +166,7 @@ object Engine {
     // ---------------- Message rules ----------------
     private val RULES = listOf(
         Rule("otpshare", Sev.HIGH, .45, Txt("Asks you to share a code", "ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಲು ಕೇಳುತ್ತಿದೆ"),
-            rx("""\b(share|send|tell|forward|provide|read out|give)\b[^.\n]{0,40}\b(otp|code|pin|password)\b"""), rx("""(OTP|ಒಟಿಪಿ|ಕೋಡ್|ಪಿನ್)[^.\n]{0,30}(ಕಳುಹಿಸಿ|ಹೇಳಿ|ಹಂಚಿಕೊಳ್ಳಿ|kalisi|heli)"""),
+            rx("""\b(share|send|tell|forward|provide|read out|give)\b[^.\n]{0,40}\b(otp|code|pin|password)\b|\b(otp|pin|password)\b[^.\n]{0,40}\b(share|send|tell|forward|give|read out)\s+(it|that|me|us|the (otp|code|pin))\b"""), rx("""(OTP|ಒಟಿಪಿ|ಕೋಡ್|ಪಿನ್)[^.\n]{0,30}(ಕಳುಹಿಸಿ|ಹೇಳಿ|ಹಂಚಿಕೊಳ್ಳಿ|kalisi|heli)"""),
             Txt("No bank or app will ever ask you to read out or forward a one-time code.", "ಯಾವ ಬ್ಯಾಂಕ್ ಅಥವಾ ಆ್ಯಪ್ OTP ಕೇಳುವುದಿಲ್ಲ."), Txt("Never share an OTP or PIN, even with someone claiming to be the bank.", "OTP ಅಥವಾ PIN ಯಾರಿಗೂ ಹೇಳಬೇಡಿ.")),
         Rule("upipin", Sev.HIGH, .45, Txt("PIN to \"receive\" money", "ಹಣ \"ಪಡೆಯಲು\" PIN"),
             rx("""\b(enter|type|input)\b[^.\n]{0,30}\b(upi )?pin\b[^.\n]{0,40}\b(receive|get|claim|refund|credit)|\b(collect request|approve (the )?(payment )?request)"""), rx("""ಹಣ ಪಡೆಯಲು[^.\n]{0,20}(ಪಿನ್|PIN)"""),
@@ -179,7 +181,7 @@ object Engine {
             rx("""\b(password|passcode|cvv|card number|card details|login details|net ?banking (id|details)|verify your (account|identity|details)|confirm your (account|details|identity)|update your (kyc|details|account|pan|information)|update pan|kyc update)\b"""), rx("""ಕೆವೈಸಿ ನವೀಕರಿಸ|ಖಾತೆಯನ್ನು ಪರಿಶೀಲಿಸ|ಪಾಸ್‌ವರ್ಡ್|KYC update maadi"""),
             Txt("Requests to verify or update details are the core of phishing.", "ವಿವರ ನವೀಕರಿಸಿ ಎನ್ನುವುದು ಫಿಶಿಂಗ್ ತಂತ್ರ."), Txt("Use the official app. Never use the link in the message.", "ಅಧಿಕೃತ ಆ್ಯಪ್ ಬಳಸಿ. ಸಂದೇಶದ ಲಿಂಕ್ ಬಳಸಬೇಡಿ.")),
         Rule("threat", Sev.HIGH, .25, Txt("Threat or penalty", "ಬೆದರಿಕೆ ಅಥವಾ ದಂಡ"),
-            rx("""\b(suspend(ed)?|block(ed)?|deactivat(ed|ion)|disconnect(ed|ion)|locked|terminat(ed|ion)|legal action|arrest(ed)?|warrant|penalty|fine of|police|FIR|court|money laundering|seized|frozen|banned)\b"""), rx("""ಬ್ಲಾಕ್|ಸ್ಥಗಿತ|ಬಂಧನ|ಪೊಲೀಸ್|ದಂಡ|block aag"""),
+            rx("""\b(suspend(ed)?|block(ed)?|deactivat(ed|ion)|disconnect(ed|ion)|locked|terminat(ed|ion)|legal action|arrest(ed)?|warrant|penalty|fine of|police|FIR|court|money laundering|seized|frozen|banned|or else)\b"""), rx("""ಬ್ಲಾಕ್|ಸ್ಥಗಿತ|ಬಂಧನ|ಪೊಲೀಸ್|ದಂಡ|block aag"""),
             Txt("Scammers invent a consequence so you act before checking.", "ಪರಿಶೀಲಿಸುವ ಮೊದಲೇ ಕ್ರಮಕ್ಕಾಗಿ ಬೆದರಿಸುತ್ತಾರೆ."), Txt("Check your account yourself in the official app.", "ಖಾತೆಯನ್ನು ಅಧಿಕೃತ ಆ್ಯಪ್‌ನಲ್ಲಿ ನೀವೇ ಪರಿಶೀಲಿಸಿ.")),
         Rule("money", Sev.HIGH, .3, Txt("Unusual payment demand", "ಅಸಾಮಾನ್ಯ ಪಾವತಿ ಬೇಡಿಕೆ"),
             rx("""\b(gift ?cards?|google play (cards?|codes?)|bitcoin|btc|usdt|crypto(currency)?|wire transfer|western union|processing (fee|charges)|registration fee|release fee|customs (duty|fee|charges)|security deposit|(safe|secure|verification|rbi) account|transfer (all )?(your )?(savings|funds|money)|pay (rs\.?|₹|inr)\s?[\d,]+)\b"""), rx("""ಶುಲ್ಕ ಪಾವತಿಸಿ|ವೀಸಾ ಶುಲ್ಕ|ಹಣ ವರ್ಗಾಯಿಸಿ|ಗಿಫ್ಟ್ ಕಾರ್ಡ್|ನೋಂದಣಿ ಶುಲ್ಕ"""),
@@ -193,8 +195,8 @@ object Engine {
         Rule("challan", Sev.HIGH, .4, Txt("Fake traffic e-challan", "ನಕಲಿ ಟ್ರಾಫಿಕ್ ಇ-ಚಲನ್"),
             rx("""\b(e-?challan|traffic (fine|challan)|rto)\b[^.\n]{0,60}\b(apk|download|app|pay now|link)\b"""), rx("""ಚಲನ್[^.\n]{0,40}(ಡೌನ್‌ಲೋಡ್|ಲಿಂಕ್|APK)"""),
             Txt("Fake challan apps steal SMS and OTPs.", "ನಕಲಿ ಚಲನ್ ಆ್ಯಪ್ SMS ಮತ್ತು OTP ಕದಿಯುತ್ತದೆ."), Txt("Check challans only on the official Parivahan site.", "ಅಧಿಕೃತ ಪರಿವಾಹನ್ ಸೈಟ್‌ನಲ್ಲಿ ಮಾತ್ರ ಪರಿಶೀಲಿಸಿ.")),
-        Rule("family", Sev.MID, .32, Txt("Money request from a \"new number\"", "\"ಹೊಸ ಸಂಖ್ಯೆ\"ಯಿಂದ ಹಣದ ಬೇಡಿಕೆ"),
-            rx("""\b(new number|my (phone|mobile) (broke|fell|is (lost|broken))|lost my phone|phone (broke|fell))\b"""), rx("""ಹೊಸ ಸಂಖ್ಯೆ|ಫೋನ್ ಕಳೆದು"""),
+        Rule("family", Sev.MID, .32, Txt("Money request posing as a friend or relative", "ಸ್ನೇಹಿತ / ಸಂಬಂಧಿಕರಂತೆ ಹಣದ ಬೇಡಿಕೆ"),
+            rx("""\b(new number|my (phone|mobile) (broke|fell|is (lost|broken))|lost my phone|phone (broke|fell)|(i'?m|i am|iam|this is|it'?s) (your )?(friend|brother|bro|sister|son|daughter|cousin|uncle|nephew|niece|colleague|classmate)|(send|transfer)\s+(me|us)\s+(some\s+)?(money|cash|amount)|(please|pls|plz|kindly)\s+(send|transfer)\s+(some\s+)?(money|cash|amount)|^\s*(send|transfer)\s+(some\s+)?(money|cash)|\bi\s+need\s+(some\s+)?(money|cash))\b"""), rx("""ಹೊಸ ಸಂಖ್ಯೆ|ಫೋನ್ ಕಳೆದು"""),
             Txt("Relative-impersonation scams start this way.", "ಸಂಬಂಧಿಕರಂತೆ ನಟಿಸುವ ವಂಚನೆ ಹೀಗೆ ಶುರು."), Txt("Call the person on their old saved number first.", "ಹಳೆಯ ಉಳಿಸಿದ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಿ ಖಚಿತಪಡಿಸಿ.")),
         Rule("gulf", Sev.MID, .28, Txt("Overseas job with visa fee", "ವಿದೇಶಿ ಉದ್ಯೋಗ, ವೀಸಾ ಶುಲ್ಕ"),
             rx("""\b(dubai|saudi|qatar|kuwait|oman|bahrain|gulf|abroad)\b[^.\n]{0,60}\b(visa|job|salary)\b|\bvisa (processing|charges|fee)"""), rx("""(ದುಬೈ|ವಿದೇಶ)[^.\n]{0,30}(ಉದ್ಯೋಗ|ವೀಸಾ)"""),
@@ -206,7 +208,7 @@ object Engine {
             rx("""\b(kyc|pan( card)?|aadhaa?r|passport (number|details)|voter id)\b"""), rx("""ಕೆವೈಸಿ|ಆಧಾರ್|ಪಾನ್ ಕಾರ್ಡ್"""),
             Txt("KYC and PAN are the top bank-phishing hooks in India.", "KYC, PAN ಪ್ರಮುಖ ಫಿಶಿಂಗ್ ಆಮಿಷಗಳು."), Txt("Update KYC only in your bank app or at a branch.", "KYC ಬ್ಯಾಂಕ್ ಆ್ಯಪ್ ಅಥವಾ ಶಾಖೆಯಲ್ಲಿ ಮಾತ್ರ.")),
         Rule("prize", Sev.MID, .2, Txt("Too-good-to-be-true reward", "ನಂಬಲಾಗದ ಬಹುಮಾನ"),
-            rx("""\b(congratulations|you('ve| have)? won|winner|lottery|lucky draw|jackpot|prize|claim your (reward|gift|prize)|cashback of|free (iphone|gift|recharge)|guaranteed returns?|\d+% off)\b"""), rx("""ಅಭಿನಂದನೆಗಳು|ಬಹುಮಾನ|ಗೆದ್ದಿದ್ದೀರಿ|ಲಾಟರಿ"""),
+            rx("""\b(congratulations|you('ve| have)? won|winner|lottery|lucky draw|jackpot|prize|claim your (reward|gift|prize)|free (iphone|gift|recharge)|guaranteed returns?)\b"""), rx("""ಅಭಿನಂದನೆಗಳು|ಬಹುಮಾನ|ಗೆದ್ದಿದ್ದೀರಿ|ಲಾಟರಿ"""),
             Txt("Unexpected winnings are bait. The fee comes next.", "ಅನಿರೀಕ್ಷಿತ ಬಹುಮಾನ ಆಮಿಷ."), Txt("If you did not enter, you did not win.", "ನೀವು ಭಾಗವಹಿಸದಿದ್ದರೆ ಗೆದ್ದಿಲ್ಲ.")),
         Rule("job", Sev.MID, .25, Txt("Easy-money job offer", "ಸುಲಭ ಹಣದ ಕೆಲಸ"),
             rx("""\b(work from home|part[- ]time (job|work)|earn (rs\.?|₹)?\s?[\d,]+\s?(per day|daily|/day|a day)?|daily (income|earning|salary)|liking (youtube )?videos|like (youtube )?videos|rate (hotels|products|restaurants)|prepaid task|tasks? to earn|telegram group|join (our )?telegram|trading group)\b"""), rx("""ಮನೆಯಿಂದಲೇ ಕೆಲಸ|ದಿನಕ್ಕೆ ₹?\s?\d+|ಪಾರ್ಟ್ ಟೈಮ್"""),
@@ -229,8 +231,9 @@ object Engine {
     )
     private val LINK_RE = rx("""(?:https?://[^\s<>"']+|www\.[^\s<>"']+|\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.(?:[a-z]{2,24})(?:/[^\s<>"']*)?)""")
     private val NEG_RE = rx("""(\b(not|never|no one|nobody)\b|n't)[^.\n]{0,35}$""")
+    private val NEG_IN = rx("""\b(not|never)\b|n't""")
 
-    private data class RuleResult(val score: Int, val flags: List<Flag>, val todos: List<Txt>)
+    private data class RuleResult(val score: Int, val flags: List<Flag>, val todos: List<Txt>, val safeCue: Boolean)
 
     private fun rules(text: String): RuleResult {
         val linkRanges = mutableListOf<IntRange>()
@@ -252,7 +255,7 @@ object Engine {
             if (inLink(m.range)) continue
             if (rule.id in setOf("otpshare", "creds", "upipin")) {
                 val before = text.substring(max(0, m.range.first - 45), m.range.first)
-                if (NEG_RE.containsMatchIn(before)) continue
+                if (NEG_RE.containsMatchIn(before) || NEG_IN.containsMatchIn(m.value)) continue
             }
             val ex = hits.getOrPut(rule.id) { mutableListOf() }
             if (ex.size < 3 && m.value !in ex) ex.add(m.value)
@@ -277,7 +280,8 @@ object Engine {
         if (links.any { it.score >= 25 }) todos.add(Txt("Do not open the link. Use the official app instead.", "ಲಿಂಕ್ ತೆರೆಯಬೇಡಿ. ಅಧಿಕೃತ ಆ್ಯಪ್ ಬಳಸಿ."))
         flags.mapNotNull { it.todo }.forEach { t -> if (todos.none { it.en == t.en }) todos.add(t) }
         val order = mapOf(Sev.HIGH to 0, Sev.MID to 1, Sev.LOW to 2, Sev.SAFE to 3)
-        return RuleResult(score, flags.sortedWith(compareBy<Flag> { order[it.sev] }.thenByDescending { it.w }), todos)
+        val safeCue = safe.isNotEmpty() && "otpshare" !in hits && "upipin" !in hits
+        return RuleResult(score, flags.sortedWith(compareBy<Flag> { order[it.sev] }.thenByDescending { it.w }), todos, safeCue)
     }
 
     // ---------------- Naive Bayes ----------------
@@ -314,11 +318,17 @@ object Engine {
         return e1 / (e0 + e1)
     }
 
-    fun fuse(rule: Int, ml: Double?): Int {
+    fun fuse(rule: Int, ml: Double?, safeCue: Boolean = false): Int {
         if (ml == null) return rule
         var s = (.6 * rule + .4 * ml * 100).roundToInt()
         if (rule >= 60 || ml >= .9) s = max(s, 62)
         if (rule < 20 && ml < .35) s = min(s, 20)
+        // A genuine-message cue ("do not share this code") with no scam rule outweighs the classifier.
+        if (safeCue && rule < 20) s = min(s, 20)
+        // Without any scam rule, the classifier alone can make a message Suspicious but never Dangerous.
+        if (rule < 20) s = min(s, 45)
+        // A strong scam rule can't be pulled down to "safe" by the classifier.
+        if (rule >= 40) s = max(s, if (rule >= 55) 60 else 45)
         return s.coerceIn(0, 100)
     }
 
@@ -345,7 +355,7 @@ object Engine {
     fun analyze(text: String): Analysis {
         val r = rules(text)
         val p = ml(text)
-        val s = fuse(r.score, p)
+        val s = fuse(r.score, p, r.safeCue)
         val ids = r.flags.mapNotNull { it.id }.toSet()
         var typeKey: String? = null
         if (s >= 30) typeKey = when {
@@ -371,6 +381,16 @@ object Engine {
         }
         return Analysis(r.score, p, s, r.flags, r.todos, type, org, summary)
     }
+
+    /** Registered business sender IDs (e.g. JD-FLPKRT-S, VM-SPTIFY) contain letters; personal numbers do not. */
+    fun isRegisteredSender(sender: String) = sender.any { it.isLetter() }
+
+    /**
+     * Should an incoming SMS raise a notification? Registered business senders (Flipkart, Spotify, banks)
+     * send offers, OTPs and payment reminders all day, so they need strong scam evidence before we alert.
+     */
+    fun shouldAlertSms(sender: String, a: Analysis) =
+        if (isRegisteredSender(sender)) a.score >= 60 && a.ruleScore >= 45 else a.score >= 30
 
     /** Call alerts need real scam behaviour, not just a mention of a bank. */
     fun shouldAlertCall(a: Analysis) = a.score >= 60 && a.ruleScore >= 45
