@@ -1,0 +1,15 @@
+{
+  "name": "Echchara (ಎಚ್ಚರ) – scam checker for Karnataka",
+  "short_name": "Echchara",
+  "description": "Check SMS, WhatsApp messages, links, QR codes and calls for scams, in Kannada and English. Works offline.",
+  "start_url": "./#home",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FCFDFE",
+  "theme_color": "#132A55",
+  "lang": "kn-IN",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

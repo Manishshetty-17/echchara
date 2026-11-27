@@ -34,7 +34,7 @@ Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud De
 ## How it decides
 
 1. **Pattern engine**: 24 scam rules written for Karnataka (ESCOM power cuts, guarantee-scheme fees, Gulf job visas, e-challan APKs, digital arrest, UPI collect requests, KYC/PAN, fake investment and trading groups, .apk files sent as wedding invitations or bills, eSIM and SIM-swap requests, money-mule recruitment and "boss" impersonation), plus a link analyser that catches look-alike domains, misspellings, fake addresses placed in front of the real domain, IP links, risky domain endings and app downloads. It trusts RBI's `.bank.in` bank domains and checks that investment payments go to SEBI's `@valid` UPI IDs.
-2. **ML classifier**: a Naive Bayes model trained on English, Kannada and Kanglish messages.
+2. **ML classifier** (website): a logistic-regression model trained on 4,460 messages from the public UCI SMS Spam Collection plus Karnataka and Indian-language examples. On 1,114 real SMS it never saw: 98.1% accuracy, 0.7% false alarms. The Android app uses a Naive Bayes model on the same features.
 3. **Explanation engine**: a plain-language summary in Kannada or English, the scam type, and who the scammer is pretending to be.
 
 Echchara itself uploads nothing and stores no audio. Speech-to-text uses the phone's speech recognition service, which on many phones works online unless offline speech packs are installed.
