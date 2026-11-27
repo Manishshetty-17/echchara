@@ -600,24 +600,107 @@ footer .brand small{color:var(--on-navy)}
 footer .brand svg path:first-child{fill:#fff}
 footer .brand svg path:last-child{stroke:var(--navy)}
 .fbot{border-top-color:rgba(255,255,255,.14); color:var(--on-navy)}
+
+/* ===== video layout: header, hero, sections ===== */
+header.main{background:var(--paper); border-bottom:1px solid var(--line)}
+header.main .wrap{gap:18px; height:68px; max-width:1240px}
+.brand{gap:10px; align-items:baseline}
+.brand b{font-size:1.75rem; font-weight:700; color:var(--ink); letter-spacing:0; line-height:1}
+.brand small{font-size:1rem; color:var(--muted); font-weight:500; border:0; padding:0; margin:0}
+nav.pages{justify-content:center; gap:6px}
+nav.pages a{font-size:.98rem; color:var(--ink2); padding:8px 12px}
+header.main .tools{display:flex; align-items:center; gap:10px; flex:none}
+header.main .lang{display:inline-flex; border:1px solid var(--line2); border-radius:8px; padding:2px; background:var(--surface); margin:0}
+header.main .lang button{border:0; background:transparent; color:var(--ink2); font-size:.9rem; padding:4px 11px; border-radius:6px; font-weight:500}
+header.main .lang button[aria-pressed="true"]{background:var(--sunk); color:var(--ink); font-weight:600}
+header.main .bigbtn{border:1px solid var(--line2); color:var(--ink2); background:var(--surface); border-radius:8px; padding:4px 9px; margin:0; font-size:.85rem}
+header.main .bigbtn[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+header.main .wrap > .cta{background:var(--ink); color:var(--paper); border-radius:8px; padding:10px 16px; font-weight:600}
+header.main.compact .tools .bigbtn{display:none}
+@media (max-width:520px){ header.main .tools .bigbtn{display:none} .brand small{display:none} header.main .lang button{padding:4px 8px} }
+.mnav .mbig{border:1px solid var(--line2); background:var(--surface); color:var(--ink); border-radius:8px; padding:11px 10px; font:inherit; text-align:left}
+.hero .wrap{padding-block:72px 56px; align-items:center}
+.hero h1{font-size:clamp(2.6rem, 5.2vw, 4.4rem); line-height:1.08; letter-spacing:-.03em; color:var(--ink); max-width:12ch}
+.hero .echo{font-size:clamp(1.4rem, 2.6vw, 2rem); color:var(--muted); margin-top:22px}
+.hero p.sub{font-size:1.12rem; color:var(--ink2); margin-top:26px; max-width:46ch}
+.qc1{display:flex; gap:10px; margin-top:24px; max-width:560px}
+.qc1 input{flex:1; min-width:0; font:inherit; font-size:1.02rem; padding:13px 14px; border:1px solid var(--line2); border-radius:8px; background:var(--surface); color:var(--ink)}
+.qc1 input:focus{outline:none; border-color:var(--ink); box-shadow:0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent)}
+.qc1 .btn{background:var(--ink); color:var(--paper); padding:13px 20px; border-radius:8px; font-weight:600; white-space:nowrap}
+.qnote{font-size:.9rem; color:var(--muted); margin-top:12px}
+@media (max-width:520px){ .qc1{flex-direction:column} .qc1 .btn{justify-content:center} }
+.hsec h2, .h2b{font-size:clamp(1.9rem, 3.4vw, 2.6rem); line-height:1.15; letter-spacing:-.02em; color:var(--ink)}
+.echo2{font-size:clamp(1.2rem, 2vw, 1.5rem); color:var(--muted); margin-top:10px; font-weight:500}
+.lead2{font-size:1.08rem; color:var(--ink2); margin-top:20px; max-width:52ch}
+.pat{overflow-x:auto}
+table.pt{width:100%; border-collapse:collapse; max-width:960px}
+table.pt th{font-size:.9rem; font-weight:500; color:var(--muted); text-align:left; padding:0 18px 12px 0; border-bottom:2px solid var(--ink)}
+table.pt td{padding:18px 18px 18px 0; vertical-align:top; border-bottom:1px solid var(--line2); font-size:1rem; color:var(--ink2)}
+table.pt td b{color:var(--ink); font-size:1.05rem}
+.pen-u{background:linear-gradient(transparent calc(100% - 3px), var(--pen) 0) no-repeat 0 100%/100% 100%; padding-bottom:1px}
+@media (max-width:720px){ table.pt thead{display:none} table.pt tr{display:grid; gap:4px; padding:16px 0; border-bottom:1px solid var(--line2)} table.pt td{border:0; padding:0} table.pt td::before{content:attr(data-h); display:block; font-size:.8rem; color:var(--muted)} }
+.live2,.lost2{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:56px; align-items:start}
+@media (max-width:900px){ .live2,.lost2{grid-template-columns:minmax(0,1fr); gap:32px} }
+.ticks{list-style:none; margin:22px 0 26px; padding:0; display:grid; gap:16px; max-width:52ch}
+.ticks li{display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:start; font-size:1.02rem; color:var(--ink2)}
+svg.htick{width:26px; height:26px; fill:none; stroke:var(--pen-green); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; margin-top:-2px}
+.live2 .btn{background:var(--ink); color:var(--paper); padding:13px 20px; border-radius:8px; font-weight:600}
+.callmock{display:flex; justify-content:center}
+.cm-phone{width:min(100%, 300px); min-height:440px; border:1.5px solid var(--line2); border-radius:34px; background:var(--surface); box-shadow:var(--sh2); padding:30px 14px 16px; display:flex; flex-direction:column; gap:12px}
+.cm-top{text-align:center; display:grid; gap:2px} .cm-top b{font-size:1.1rem; color:var(--ink)} .cm-top small{font-size:.8rem; color:var(--muted)}
+.cm-lines{display:grid; gap:10px; margin-top:6px}
+.cm-l{background:var(--sunk); border-radius:12px; padding:9px 12px; font-size:.86rem; color:var(--ink2); margin:0}
+.cm-alert{margin-top:auto; border:2px solid var(--pen); border-radius:14px; padding:12px 14px; background:var(--surface)}
+.cm-alert b{color:var(--pen); font-size:.98rem; display:block} .cm-alert p{font-size:.84rem; color:var(--ink2); margin:6px 0 10px}
+.cm-acts{display:flex; gap:8px} .cm-hang{background:var(--pen); color:#fff; border-radius:7px; padding:5px 12px; font-size:.84rem; font-weight:600} .cm-rep{border:1px solid var(--line2); border-radius:7px; padding:5px 12px; font-size:.84rem; color:var(--ink)}
+.callmock .cm-l, .callmock .cm-alert{opacity:0; transform:translateY(8px)}
+.callmock.play .cm-l, .callmock.play .cm-alert{animation:cmIn .45s ease-out calc(var(--i)*1.1s + .3s) forwards}
+@keyframes cmIn{to{opacity:1; transform:none}}
+@media (prefers-reduced-motion: reduce){ .callmock .cm-l, .callmock .cm-alert{opacity:1; transform:none} }
+.big1930{font-size:clamp(4.5rem, 10vw, 7.5rem); font-weight:700; color:var(--pen); line-height:1; letter-spacing:-.04em; margin-top:26px}
+.lost2 .actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px}
+.lost2 .penbtn{background:var(--pen); color:#fff; padding:13px 20px; border-radius:8px; font-weight:600}
+.lost2 .btn.sec{padding:13px 18px; border-radius:8px}
+.rc-h{font-size:1.4rem; color:var(--ink)}
+.rcheck{list-style:none; margin:16px 0 0; padding:0; display:grid; gap:6px}
+.rc{display:grid; grid-template-columns:32px 1fr; gap:12px; align-items:start; text-align:left; width:100%; background:transparent; border:0; padding:8px 0; color:inherit; font:inherit; cursor:pointer}
+.rc b{display:block; color:var(--ink); font-size:1.02rem} .rc small{display:block; color:var(--muted); font-size:.92rem; margin-top:2px}
+svg.hbox{width:28px; height:28px; fill:none; stroke-linecap:round; stroke-linejoin:round}
+svg.hbox .b{stroke:var(--ink); stroke-width:1.6} svg.hbox .t{stroke:var(--pen-green); stroke-width:2.6; stroke-dasharray:40; stroke-dashoffset:40; transition:stroke-dashoffset .35s ease}
+.rc.on svg.hbox .t{stroke-dashoffset:0}
+.rc:focus-visible{outline:2px solid var(--ink); outline-offset:3px; border-radius:6px}
+/* ===== voice assistant ===== */
+.va{position:fixed; right:max(16px, env(safe-area-inset-right)); bottom:max(16px, env(safe-area-inset-bottom)); z-index:50; display:flex; flex-direction:column; align-items:flex-end; gap:10px}
+.va-fab{display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--paper); border:0; border-radius:999px; padding:14px 22px 14px 18px; font:inherit; font-size:1.1rem; font-weight:700; box-shadow:0 0 0 2px var(--paper), 0 6px 22px rgba(19,42,85,.28); cursor:pointer}
+.va-fab svg{width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2}
+.va-fab.on{background:var(--pen); animation:vaPulse 1.4s ease-in-out infinite}
+@keyframes vaPulse{50%{box-shadow:0 0 0 10px color-mix(in srgb, var(--pen) 22%, transparent)}}
+.va-panel{width:min(340px, calc(100vw - 32px)); background:var(--surface); border:1px solid var(--line2); border-radius:16px; box-shadow:var(--sh2); padding:14px; display:grid; gap:10px}
+.va-top{display:flex; justify-content:space-between; align-items:center} .va-top b{font-size:1.1rem; color:var(--ink)}
+.va-x{border:0; background:transparent; font-size:1.6rem; line-height:1; color:var(--muted); cursor:pointer; padding:0 4px}
+.va-b{display:flex; align-items:center; gap:12px; width:100%; text-align:left; border:1px solid var(--line2); background:var(--paper); color:var(--ink); border-radius:12px; padding:13px 14px; font:inherit; font-size:1.05rem; font-weight:600; cursor:pointer}
+.va-b svg{width:24px; height:24px; flex:none; fill:none; stroke:currentColor; stroke-width:2}
+.va-b:hover{border-color:var(--ink)} .va-b.on{border-color:var(--pen); color:var(--pen)}
+.va [hidden]{display:none!important}
+.va-b.va-stopb{background:var(--pen); color:#fff; border-color:var(--pen)}
+.va-auto{display:flex; gap:10px; align-items:center; font-size:.95rem; color:var(--ink2); cursor:pointer} .va-auto input{width:20px; height:20px; accent-color:var(--ink)}
+.va-speed{display:flex; gap:8px; align-items:center; font-size:.92rem; color:var(--ink2)}
+.va-speed button{border:1px solid var(--line2); background:var(--surface); color:var(--ink2); border-radius:8px; padding:4px 12px; font:inherit; font-size:.9rem; cursor:pointer}
+.va-speed button[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.va-note{font-size:.88rem; color:var(--muted); margin:0} .va-note:empty{display:none}
+@media (max-width:520px){ .va-fab{padding:12px 18px 12px 14px; font-size:1rem} }
+footer{padding-bottom:72px}
 </style>
 
-<div class="util">
-  <div class="wrap">
-    <div class="alert"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></svg><span data-i18n="util"></span></div>
-    <button class="bigbtn" id="bigBtn" aria-pressed="false" title="Larger text" aria-label="Larger text">A<span>A</span></button>
-    <div class="lang" role="group" aria-label="Language" style="margin-left:0"><button data-lang="en" aria-pressed="true">English</button><button data-lang="kn" aria-pressed="false">ಕನ್ನಡ</button></div>
-  </div>
-</div>
 <header class="main">
   <div class="wrap">
-    <a class="brand" href="#home" aria-label="Echchara home">
-      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28 7v8.4c0 7.3-5.1 12.4-12 14.1C9.1 27.8 4 22.7 4 15.4V7z" fill="var(--brand)"/><path d="M10.5 16.2l3.6 3.6 7.4-7.6" fill="none" stroke="var(--on-brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <b>ಎಚ್ಚರ</b><small>Echchara</small>
-    </a>
+    <a class="brand" href="#home" aria-label="Echchara home"><b lang="kn">ಎಚ್ಚರ</b><small>Echchara</small></a>
     <nav class="pages" id="nav" aria-label="Main"></nav>
-    <a class="cta app" href="https://github.com/niranjan19m-source/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i18n="app.hdr"></span></a>
-    <a class="cta" href="#help"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span data-i18n="cta"></span></a>
+    <div class="tools">
+      <button class="bigbtn" id="bigBtn" aria-pressed="false" title="Larger text" aria-label="Larger text">A<span>A</span></button>
+      <div class="lang" role="group" aria-label="Language"><button data-lang="kn" aria-pressed="false" lang="kn">ಕನ್ನಡ</button><button data-lang="en" aria-pressed="true">English</button></div>
+    </div>
+    <a class="cta" href="#check"><span data-i18n="nav.check"></span></a>
     <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mnav" aria-label="Menu"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
   <div class="mnav" id="mnav"></div>
@@ -631,37 +714,54 @@ footer .brand svg path:last-child{stroke:var(--navy)}
       <div>
         <h1 data-i18n="home.h1"></h1>
         <p class="echo" id="heroEcho"></p>
-        <p class="sub" data-i18n="home.sub"></p>
-        <form class="qc" id="qcForm">
-          <label for="qcIn" class="sr" data-i18n="home.ph"></label>
-          <textarea id="qcIn" data-i18n-ph="home.ph"></textarea>
-          <div class="qc-f"><span class="small muted" data-i18n="home.qcHint"></span><button class="btn" type="submit"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span data-i18n="home.check"></span></button></div>
+        <p class="sub" data-i18n="home.lead2"></p>
+        <form class="qc1" id="qcForm">
+          <label for="qcIn" class="sr" data-i18n="home.ph2"></label>
+          <input id="qcIn" type="text" autocomplete="off" spellcheck="false" data-i18n-ph="home.ph2">
+          <button class="btn" type="submit" data-i18n="home.check2"></button>
         </form>
-        <div class="trustline"><span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg><b data-i18n="tr.1"></b></span><span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg><b data-i18n="tr.2"></b></span><span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg><b data-i18n="tr.3"></b></span></div>
-        <div class="appban" style="margin-top:22px">
-          <div class="appban-ic"><svg class="i" viewBox="0 0 24 24" style="width:22px;height:22px"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></div>
-          <div class="appban-t"><span class="livepill"><i></i><span data-i18n="app.live"></span></span><b data-i18n="app.t"></b><p data-i18n="app.p"></p></div>
-          <div class="acts"><a class="btn" href="https://github.com/niranjan19m-source/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i18n="app.btn"></span></a><a class="link" href="https://github.com/niranjan19m-source/echchara" target="_blank" rel="noopener">GitHub ↗</a></div>
-        </div>
+        <p class="qnote" data-i18n="home.note2"></p>
       </div>
       <div class="mark-demo" id="markDemo" role="figure" aria-label="Example: a scam SMS marked up the way Echchara explains it"></div>
     </div>
   </div>
   <div class="wrap">
     <div class="hsec">
-      <div class="sec-h"><div><h2 data-i18n="home.what"></h2><p data-i18n="home.whatSub"></p></div></div>
-      <div class="feats" id="feats"></div>
-    </div>
-    <div class="hsec">
-      <div class="sec-h"><div><h2 data-i18n="home.how"></h2></div></div>
+      <div class="sec-h"><div><h2 data-i18n="home.how2"></h2><p data-i18n="home.howSub2"></p></div></div>
       <div class="steps3" id="homeSteps"></div>
     </div>
     <div class="hsec">
-      <div class="sec-h"><div><h2 data-i18n="home.trend"></h2><p data-i18n="home.trendSub"></p></div><a class="link" href="#alerts"><span data-i18n="home.allAlerts"></span></a></div>
-      <div class="adv" id="homeAlerts"></div>
+      <div class="sec-h"><div><h2 data-i18n="home.trend"></h2><p class="echo2" data-echo="home.trend"></p></div></div>
+      <div class="pat" id="homePatterns"></div>
+      <p style="margin-top:22px"><a class="link" href="#alerts" data-i18n="home.allAlerts2"></a></p>
     </div>
     <div class="hsec">
-      <div class="band"><div><h2 data-i18n="home.band"></h2><p style="margin-top:6px" data-i18n="home.bandSub"></p></div><div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap"><span class="big">1930</span><a class="btn" href="#help" data-i18n="home.bandBtn"></a></div></div>
+      <div class="live2">
+        <div>
+          <h2 class="h2b"><span data-i18n="home.live.h1"></span><br><span data-i18n="home.live.h2"></span></h2>
+          <p class="echo2" data-echo="home.live.h2"></p>
+          <p class="lead2" data-i18n="home.live.p"></p>
+          <ul class="ticks" id="liveTicks"></ul>
+          <a class="btn" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener" data-i18n="home.live.btn"></a>
+        </div>
+        <div class="callmock" id="callMock" aria-label="Example: Call Shield during a scam call"></div>
+      </div>
+    </div>
+    <div class="hsec">
+      <div class="lost2">
+        <div>
+          <h2 class="h2b"><span data-i18n="home.lost.h1"></span><br><span data-i18n="home.lost.h2"></span></h2>
+          <p class="echo2" data-echo="home.band"></p>
+          <div class="big1930">1930</div>
+          <p class="lead2" data-i18n="home.lost.p"></p>
+          <div class="actions"><a class="btn penbtn" href="tel:1930" data-i18n="home.lost.call"></a><a class="btn sec" href="https://cybercrime.gov.in" target="_blank" rel="noopener" data-i18n="home.lost.rep"></a></div>
+        </div>
+        <div>
+          <h3 class="rc-h" data-i18n="home.rc.h"></h3>
+          <p class="small muted" data-i18n="home.rc.sub"></p>
+          <ul class="rcheck" id="recovList"></ul>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -696,7 +796,7 @@ footer .brand svg path:last-child{stroke:var(--navy)}
     <div class="appban" style="margin-bottom:28px">
       <div class="appban-ic"><svg class="i" viewBox="0 0 24 24" style="width:22px;height:22px"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></div>
       <div class="appban-t"><span class="livepill"><i></i><span data-i18n="app.live"></span></span><b data-i18n="app.demo"></b><p data-i18n="app.demoP"></p></div>
-      <div class="acts"><a class="btn" href="https://github.com/niranjan19m-source/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i18n="app.btn"></span></a></div>
+      <div class="acts"><a class="btn" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i18n="app.btn"></span></a></div>
     </div>
     <div class="live">
       <div>
@@ -795,11 +895,25 @@ footer .brand svg path:last-child{stroke:var(--navy)}
 </section>
 </main>
 
+<div class="va" id="va">
+  <div class="va-panel" id="vaPanel" hidden role="dialog" aria-labelledby="vaTitle">
+    <div class="va-top"><b id="vaTitle" data-i18n="va.h"></b><button class="va-x" id="vaClose" aria-label="Close">×</button></div>
+    <button class="va-b" id="vaRead"><svg class="i" viewBox="0 0 24 24"><path d="M7 5v14l12-7z"/></svg><span data-i18n="va.read"></span></button>
+    <button class="va-b" id="vaSay"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span data-i18n="va.say"></span></button>
+    <button class="va-b" id="vaResult" hidden><svg class="i" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6"/></svg><span data-i18n="va.result"></span></button>
+    <button class="va-b va-stopb" id="vaStop" hidden><svg class="i" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span data-i18n="va.stop"></span></button>
+    <label class="va-auto"><input type="checkbox" id="vaAuto"><span data-i18n="va.auto"></span></label>
+    <div class="va-speed"><span data-i18n="va.speed"></span><button data-rate="0.75" data-i18n="va.slow"></button><button data-rate="0.9" data-i18n="va.normal"></button></div>
+    <p class="va-note" id="vaNote" aria-live="polite"></p>
+  </div>
+  <button class="va-fab" id="vaFab" aria-expanded="false" aria-controls="vaPanel"><svg class="i" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><span data-i18n="va.fab"></span></button>
+</div>
+
 <footer>
   <div class="wrap">
     <div class="fgrid">
       <div><a class="brand" href="#home"><svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28 7v8.4c0 7.3-5.1 12.4-12 14.1C9.1 27.8 4 22.7 4 15.4V7z" fill="var(--brand)"/><path d="M10.5 16.2l3.6 3.6 7.4-7.6" fill="none" stroke="var(--on-brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Echchara</b></a><p class="small muted" style="margin-top:10px; max-width:40ch" data-i18n="f.about"></p></div>
-      <div><h4 data-i18n="f.product"></h4><ul><li><a href="#check" data-i18n="nav.check"></a></li><li><a href="#protect" data-i18n="nav.protect"></a></li><li><a href="#technology" data-i18n="nav.tech"></a></li><li><a href="https://github.com/niranjan19m-source/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener" data-i18n="app.foot"></a></li></ul></div>
+      <div><h4 data-i18n="f.product"></h4><ul><li><a href="#check" data-i18n="nav.check"></a></li><li><a href="#protect" data-i18n="nav.protect"></a></li><li><a href="#technology" data-i18n="nav.tech"></a></li><li><a href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener" data-i18n="app.foot"></a></li></ul></div>
       <div><h4 data-i18n="f.res"></h4><ul><li><a href="#alerts" data-i18n="nav.alerts"></a></li><li><a href="#help" data-i18n="nav.help"></a></li><li><a href="#partners" data-i18n="nav.partners"></a></li></ul></div>
       <div><h4 data-i18n="f.report"></h4><ul><li><a href="https://cybercrime.gov.in" target="_blank" rel="noopener">cybercrime.gov.in</a></li><li><a href="https://sancharsaathi.gov.in" target="_blank" rel="noopener">Sanchar Saathi · Chakshu</a></li><li><a href="#help">1930 · 112</a></li></ul></div>
     </div>
@@ -837,6 +951,12 @@ const I18N = {
   'app.demo':'This page is a demo. The real Call Shield and SMS Shield run in the Echchara Android app.',
   'app.demoP':'The phones below show what the app does. Install Echchara on an Android phone and it does this for real: on actual incoming calls from unknown numbers, and on every SMS you receive.',
   'nav.home':'Home','nav.check':'Check a message','nav.protect':'Live protection','nav.alerts':'Scam alerts','nav.tech':'Technology','nav.help':'Get help','nav.partners':'For partners',
+  'home.lead2':'Check it before you click, pay or share. Echchara reads the message on your phone and shows you exactly why.','home.ph2':'Paste the message, link or number here','home.check2':'Check message','home.note2':'Read on your phone. Nothing is uploaded. Works in Kannada and English.',
+  'home.how2':'How a check works','home.howSub2':'Three steps, and all of them happen on your phone.','home.allAlerts2':'See all scam alerts',
+  'home.live.h1':'Unknown caller?','home.live.h2':'Covered live.','home.live.p':'Call Shield in the Android app turns the caller’s words into text as they speak, and warns you before you share an OTP or send money.','home.live.btn':'Get the Android app',
+  'home.lost.h1':'Already lost money?','home.lost.h2':'The first hour matters.','home.lost.p':'National Cyber Crime Helpline. Banks can often freeze money that is still moving between accounts.','home.lost.call':'Call 1930','home.lost.rep':'Report at cybercrime.gov.in',
+  'home.rc.h':'Recovery checklist','home.rc.sub':'Work through it in order. Your ticks are saved on this phone.',
+  'va.fab':'Listen','va.h':'Voice help','va.read':'Read this page aloud','va.say':'Speak the message, I will check it','va.result':'Read the result','va.stop':'Stop','va.auto':'Read every page and result aloud','va.speed':'Speed:','va.slow':'Slow','va.normal':'Normal',
   'home.tag':'Free scam checker for Karnataka','home.h1':'Is this message a scam?',
   'home.sub':'Check it before you click, pay or share. Echchara checks SMS, WhatsApp messages, emails, links, websites and screenshots for phishing and fraud. It reads Kannada, English, Hindi, Tamil, Telugu and Malayalam, including mixed messages.',
   'home.ph':'Paste a suspicious message or link here','home.qcHint':'Works with Kannada, English, Hindi, Tamil, Telugu, Malayalam and mixed messages','home.check':'Check now',
@@ -879,6 +999,12 @@ const I18N = {
   'app.demo':'ಈ ಪುಟ ಡೆಮೊ. ನಿಜವಾದ ಕಾಲ್ ಶೀಲ್ಡ್ ಮತ್ತು SMS ಶೀಲ್ಡ್ ಎಚ್ಚರ Android ಆ್ಯಪ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ.',
   'app.demoP':'ಕೆಳಗಿನ ಫೋನ್‌ಗಳು ಆ್ಯಪ್ ಏನು ಮಾಡುತ್ತದೆ ಎಂದು ತೋರಿಸುತ್ತವೆ. Android ಫೋನ್‌ನಲ್ಲಿ ಎಚ್ಚರ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿದರೆ ಅಪರಿಚಿತ ಸಂಖ್ಯೆಗಳ ನಿಜವಾದ ಕರೆಗಳಿಗೆ ಮತ್ತು ಪ್ರತಿ SMS ಗೆ ಇದು ನಿಜವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.',
   'nav.home':'ಮುಖಪುಟ','nav.check':'ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ','nav.protect':'ನೇರ ರಕ್ಷಣೆ','nav.alerts':'ವಂಚನೆ ಎಚ್ಚರಿಕೆಗಳು','nav.tech':'ತಂತ್ರಜ್ಞಾನ','nav.help':'ಸಹಾಯ ಪಡೆಯಿರಿ','nav.partners':'ಪಾಲುದಾರರಿಗೆ',
+  'home.lead2':'ಕ್ಲಿಕ್ ಮಾಡುವ, ಪಾವತಿಸುವ ಅಥವಾ ಹಂಚಿಕೊಳ್ಳುವ ಮೊದಲು ಪರಿಶೀಲಿಸಿ. ಎಚ್ಚರ ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲೇ ಸಂದೇಶ ಓದಿ, ಏಕೆ ಎಂದು ಸ್ಪಷ್ಟವಾಗಿ ತೋರಿಸುತ್ತದೆ.','home.ph2':'ಸಂದೇಶ, ಲಿಂಕ್ ಅಥವಾ ಸಂಖ್ಯೆಯನ್ನು ಇಲ್ಲಿ ಅಂಟಿಸಿ','home.check2':'ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ','home.note2':'ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ. ಏನೂ ಅಪ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ. ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.',
+  'home.how2':'ಪರಿಶೀಲನೆ ಹೇಗೆ ನಡೆಯುತ್ತದೆ','home.howSub2':'ಮೂರು ಹಂತಗಳು, ಎಲ್ಲವೂ ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲೇ.','home.allAlerts2':'ಎಲ್ಲಾ ವಂಚನೆ ಎಚ್ಚರಿಕೆಗಳನ್ನು ನೋಡಿ',
+  'home.live.h1':'ಅಪರಿಚಿತ ಕರೆ?','home.live.h2':'ನೇರ ರಕ್ಷಣೆ.','home.live.p':'Android ಆ್ಯಪ್‌ನ ಕಾಲ್ ಶೀಲ್ಡ್ ಕರೆ ಮಾಡಿದವರ ಮಾತನ್ನು ಅವರು ಮಾತನಾಡುತ್ತಿದ್ದಂತೆ ಪಠ್ಯವಾಗಿಸುತ್ತದೆ, ಮತ್ತು ನೀವು OTP ಹೇಳುವ ಅಥವಾ ಹಣ ಕಳುಹಿಸುವ ಮೊದಲೇ ಎಚ್ಚರಿಸುತ್ತದೆ.','home.live.btn':'Android ಆ್ಯಪ್ ಪಡೆಯಿರಿ',
+  'home.lost.h1':'ಈಗಾಗಲೇ ಹಣ ಕಳೆದುಕೊಂಡಿರಾ?','home.lost.h2':'ಮೊದಲ ಗಂಟೆ ಅತ್ಯಂತ ಮುಖ್ಯ.','home.lost.p':'ರಾಷ್ಟ್ರೀಯ ಸೈಬರ್ ಅಪರಾಧ ಸಹಾಯವಾಣಿ. ಖಾತೆಗಳ ನಡುವೆ ಇನ್ನೂ ಚಲಿಸುತ್ತಿರುವ ಹಣವನ್ನು ಬ್ಯಾಂಕ್‌ಗಳು ಹಲವು ಬಾರಿ ತಡೆಹಿಡಿಯಬಲ್ಲವು.','home.lost.call':'1930 ಗೆ ಕರೆ ಮಾಡಿ','home.lost.rep':'cybercrime.gov.in ನಲ್ಲಿ ದೂರು ನೀಡಿ',
+  'home.rc.h':'ಮರುಪಡೆಯುವ ಪಟ್ಟಿ','home.rc.sub':'ಕ್ರಮವಾಗಿ ಮಾಡಿ. ನಿಮ್ಮ ಗುರುತುಗಳು ಈ ಫೋನ್‌ನಲ್ಲೇ ಉಳಿಯುತ್ತವೆ.',
+  'va.fab':'ಕೇಳಿ','va.h':'ಧ್ವನಿ ಸಹಾಯ','va.read':'ಈ ಪುಟವನ್ನು ಓದಿ ಹೇಳಿ','va.say':'ಸಂದೇಶವನ್ನು ಹೇಳಿ, ನಾನು ಪರಿಶೀಲಿಸುತ್ತೇನೆ','va.result':'ಫಲಿತಾಂಶ ಓದಿ ಹೇಳಿ','va.stop':'ನಿಲ್ಲಿಸಿ','va.auto':'ಪ್ರತಿ ಪುಟ ಮತ್ತು ಫಲಿತಾಂಶವನ್ನು ಓದಿ ಹೇಳಿ','va.speed':'ವೇಗ:','va.slow':'ನಿಧಾನ','va.normal':'ಸಾಮಾನ್ಯ',
   'home.tag':'ಕರ್ನಾಟಕಕ್ಕಾಗಿ ಉಚಿತ ವಂಚನೆ ಪರಿಶೀಲಕ','home.h1':'ಈ ಸಂದೇಶ ವಂಚನೆಯೇ?',
   'home.sub':'ಕ್ಲಿಕ್ ಮಾಡುವ, ಪಾವತಿಸುವ ಅಥವಾ ಹಂಚಿಕೊಳ್ಳುವ ಮೊದಲು ಪರಿಶೀಲಿಸಿ. ಎಚ್ಚರ SMS, ವಾಟ್ಸಾಪ್ ಸಂದೇಶ, ಇಮೇಲ್, ಲಿಂಕ್, ವೆಬ್‌ಸೈಟ್ ಮತ್ತು ಸ್ಕ್ರೀನ್‌ಶಾಟ್‌ಗಳಲ್ಲಿ ಫಿಶಿಂಗ್ ಮತ್ತು ವಂಚನೆಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು ಮತ್ತು ಮಲಯಾಳಂ, ಮಿಶ್ರ ಸಂದೇಶಗಳನ್ನೂ ಓದುತ್ತದೆ.',
   'home.ph':'ಅನುಮಾನಾಸ್ಪದ ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಇಲ್ಲಿ ಅಂಟಿಸಿ','home.qcHint':'ಕನ್ನಡ, ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ತಮಿಳು, ತೆಲುಗು, ಮಲಯಾಳಂ ಮತ್ತು ಮಿಶ್ರ ಸಂದೇಶಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ','home.check':'ಈಗ ಪರಿಶೀಲಿಸಿ',
@@ -1492,9 +1618,10 @@ Your e-statement for October is ready. Open the iMobile app or type icicibank.co
 const PAGES = [['home','nav.home'],['check','nav.check'],['protect','nav.protect'],['learn','nav.learn'],['alerts','nav.alerts'],['technology','nav.tech'],['help','nav.help'],['partners','nav.partners']];
 let page = 'home';
 function renderNav(){
-  const links = PAGES.filter(p=>p[0]!=='home' && p[0]!=='partners').map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('');
+  const links = PAGES.filter(p=>['protect','alerts','learn','help'].includes(p[0])).map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('');
   $('nav').innerHTML = links;
-  $('mnav').innerHTML = PAGES.map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('') + `<a class="cta app" href="https://github.com/niranjan19m-source/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener">${t('app.hdr')}</a><a class="cta" href="#help">${t('cta')}</a>`;
+  $('mnav').innerHTML = PAGES.map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('') + `<button class="mbig" id="mBig">${lang==='kn'?'ದೊಡ್ಡ ಅಕ್ಷರ (AA)':'Larger text (AA)'}</button><a class="cta app" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener">${t('app.hdr')}</a><a class="cta" href="#check">${t('nav.check')}</a>`;
+  const mb=$('mBig'); if(mb) mb.onclick=()=>{ store.set('ec-big', !store.get('ec-big',false)); applyBig(); };
   fitNav();
 }
 function fitNav(){
@@ -1514,6 +1641,7 @@ function route(){
   renderNav(); $('mnav').classList.remove('open'); $('menuBtn').setAttribute('aria-expanded','false');
   if(changed) window.scrollTo(0,0);
   if(p==='protect') playLive(); else stopCallIfLive();
+  if(typeof vaAfterRoute==='function') vaAfterRoute();
   if(p==='technology') renderModelCard();
   if(p==='learn') renderQuiz();
   if(p==='home') queueMarks();
@@ -1602,7 +1730,7 @@ function runScan(ask){
 }
 
 /* ======================= Extra checkers: QR code & job offers ======================= */
-const SITE_URL = 'https://niranjan19m-source.github.io/echchara/';
+const SITE_URL = 'https://manishshetty-17.github.io/echchara/';
 const scriptCache = {};
 function loadScript(src){ if(!scriptCache[src]) scriptCache[src]=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>{ delete scriptCache[src]; rej(new Error('load')); }; document.head.appendChild(s); }); return scriptCache[src]; }
 const JSQR_SRC='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
@@ -2031,16 +2159,89 @@ function explain(r, s){
 /* ---- read aloud (browser voice) ---- */
 const canSpeak = 'speechSynthesis' in window;
 let speaking=false;
-function voiceFor(code){ try{ return speechSynthesis.getVoices().find(v=>v.lang && v.lang.toLowerCase().startsWith(code)); }catch(e){ return null; } }
-function speak(text){
-  if(!canSpeak) return;
-  if(speaking){ speechSynthesis.cancel(); speaking=false; renderVerdict(); return; }
-  const u = new SpeechSynthesisUtterance(text);
-  const v = lang==='kn' ? voiceFor('kn') : (voiceFor('en-in')||voiceFor('en'));
-  if(v) u.voice=v; u.lang = lang==='kn'?'kn-IN':'en-IN'; u.rate=.95;
-  u.onend=u.onerror=()=>{ speaking=false; renderVerdict(); };
-  speaking=true; speechSynthesis.speak(u); renderVerdict();
+/* ---- voice assistant: reads pages and results aloud in Kannada or English, and listens to a spoken message ---- */
+const VA={rate:store.get('ec-va-rate',0.9), auto:store.get('ec-va-auto',false), queue:[], listening:false, lastSpoken:''};
+function voiceFor(code){ try{ return speechSynthesis.getVoices().find(v=>v.lang && v.lang.toLowerCase().replace('_','-').startsWith(code)); }catch(e){ return null; } }
+function vaVoice(lg){ return lg==='kn' ? voiceFor('kn') : (voiceFor('en-in')||voiceFor('en-gb')||voiceFor('en')); }
+function vaNote(msg){ const n=$('vaNote'); if(n) n.textContent=msg||''; }
+function vaChunks(text){ return (text.replace(/\s+/g,' ').match(/[^.!?।]+[.!?।]?/g)||[text]).map(x=>x.trim()).filter(Boolean).reduce((a,x)=>{ if(a.length && (a[a.length-1]+' '+x).length<180) a[a.length-1]+=' '+x; else a.push(x); return a; },[]); }
+function vaSpeak(text, opts={}){
+  if(!canSpeak){ vaNote(lang==='kn'?'ಈ ಬ್ರೌಸರ್ ಧ್ವನಿಯಲ್ಲಿ ಓದಲು ಬೆಂಬಲಿಸುವುದಿಲ್ಲ.':'This browser cannot read aloud.'); return; }
+  let lg=opts.lang||lang, txt=text;
+  if(lg==='kn' && !vaVoice('kn')){
+    // no Kannada voice on this device: say so, and read the English version instead
+    if(opts.en){ txt=opts.en; lg='en'; }
+    vaNote(lang==='kn'?'ಈ ಸಾಧನದಲ್ಲಿ ಕನ್ನಡ ಧ್ವನಿ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಓದುತ್ತಿದೆ. Android ಫೋನ್‌ನಲ್ಲಿ Chrome ಅಥವಾ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ Microsoft Edge ಬಳಸಿದರೆ ಕನ್ನಡದಲ್ಲಿ ಕೇಳಬಹುದು.':'This device has no Kannada voice, so it is reading in English. Kannada works in Chrome on Android phones and in Microsoft Edge on computers.');
+  } else vaNote('');
+  speechSynthesis.cancel();
+  const v=vaVoice(lg); const parts=vaChunks(txt); VA.lastSpoken=txt;
+  speaking=true; vaState();
+  parts.forEach((part,k)=>{ const u=new SpeechSynthesisUtterance(part); if(v) u.voice=v; u.lang=lg==='kn'?'kn-IN':'en-IN'; u.rate=VA.rate;
+    if(k===parts.length-1) u.onend=()=>{ speaking=false; vaState(); };
+    u.onerror=()=>{ speaking=false; vaState(); };
+    speechSynthesis.speak(u); });
 }
+function vaStop(){ if(canSpeak) speechSynthesis.cancel(); speaking=false; if(VA.rec){ try{ VA.rec.abort(); }catch(e){} } VA.listening=false; vaState(); }
+function vaState(){
+  const fab=$('vaFab'); if(fab) fab.classList.toggle('on', speaking||VA.listening);
+  const st=$('vaStop'); if(st) st.hidden=!(speaking||VA.listening);
+  const rs=$('vaResult'); if(rs) rs.hidden=!(page==='check' && last && !last.error && !last.pending);
+  const sy=$('vaSay'); if(sy) sy.classList.toggle('on', VA.listening);
+  document.querySelectorAll('.va-speed button').forEach(b=>b.setAttribute('aria-pressed', String(+b.dataset.rate===VA.rate)));
+  const au=$('vaAuto'); if(au) au.checked=VA.auto;
+  const tb=$('ttsBtn'); if(tb) tb.textContent = speaking ? t('ai.stop') : t('ai.listen');
+}
+function speak(text){ if(speaking){ vaStop(); return; } vaSpeak(text, {en: resultScript('en')}); }
+const PAGE_SCRIPTS={
+ home:{en:'Welcome to Echchara. This website tells you if a message or a call is a scam. To check a message, press the dark blue button that says Check a message, and paste the message. Or press the Listen button, then Speak the message, and say it aloud. Echchara will tell you if it is safe or a scam, and what to do. If you have already lost money, call 1930 immediately. One. Nine. Three. Zero.',
+       kn:'ಎಚ್ಚರಕ್ಕೆ ಸ್ವಾಗತ. ಈ ವೆಬ್‌ಸೈಟ್ ಒಂದು ಸಂದೇಶ ಅಥವಾ ಕರೆ ವಂಚನೆಯೇ ಎಂದು ತಿಳಿಸುತ್ತದೆ. ಸಂದೇಶ ಪರಿಶೀಲಿಸಲು, ಸಂದೇಶ ಪರಿಶೀಲಿಸಿ ಎಂಬ ಕಡು ನೀಲಿ ಬಟನ್ ಒತ್ತಿ, ಸಂದೇಶವನ್ನು ಅಂಟಿಸಿ. ಅಥವಾ ಕೇಳಿ ಬಟನ್ ಒತ್ತಿ, ನಂತರ ಸಂದೇಶ ಹೇಳಿ ಒತ್ತಿ, ಸಂದೇಶವನ್ನು ಜೋರಾಗಿ ಹೇಳಿ. ಅದು ಸುರಕ್ಷಿತವೇ ಅಥವಾ ವಂಚನೆಯೇ, ಮತ್ತು ಏನು ಮಾಡಬೇಕು ಎಂದು ಎಚ್ಚರ ಹೇಳುತ್ತದೆ. ಈಗಾಗಲೇ ಹಣ ಕಳೆದುಕೊಂಡಿದ್ದರೆ, ತಕ್ಷಣ ಒಂದು ಒಂಬತ್ತು ಮೂರು ಸೊನ್ನೆ, ಹತ್ತೊಂಬತ್ತು ಮೂವತ್ತಕ್ಕೆ ಕರೆ ಮಾಡಿ.'},
+ check:{en:'This is the check page. Paste the message in the big box, or press Speak the message and say it aloud. You can also press one of the examples. The answer appears next to it. Green means it looks safe. Orange means be careful and check first. Red means it is a scam. Do not click, pay or share anything.',
+        kn:'ಇದು ಪರಿಶೀಲನೆಯ ಪುಟ. ದೊಡ್ಡ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಸಂದೇಶ ಅಂಟಿಸಿ, ಅಥವಾ ಸಂದೇಶ ಹೇಳಿ ಒತ್ತಿ ಜೋರಾಗಿ ಹೇಳಿ. ಉದಾಹರಣೆಗಳಲ್ಲಿ ಒಂದನ್ನೂ ಒತ್ತಬಹುದು. ಉತ್ತರ ಪಕ್ಕದಲ್ಲಿ ಬರುತ್ತದೆ. ಹಸಿರು ಎಂದರೆ ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣುತ್ತದೆ. ಕಿತ್ತಳೆ ಎಂದರೆ ಎಚ್ಚರಿಕೆ, ಮೊದಲು ಪರಿಶೀಲಿಸಿ. ಕೆಂಪು ಎಂದರೆ ವಂಚನೆ. ಏನನ್ನೂ ಕ್ಲಿಕ್ ಮಾಡಬೇಡಿ, ಪಾವತಿಸಬೇಡಿ, ಹಂಚಿಕೊಳ್ಳಬೇಡಿ.'},
+ protect:{en:'Live protection. Install the Echchara app on your Android phone. When a stranger calls, it listens on speaker and warns you if the call is a scam. It also checks every SMS you receive. Press Get the Android app to download it.',
+          kn:'ನೇರ ರಕ್ಷಣೆ. ನಿಮ್ಮ Android ಫೋನ್‌ನಲ್ಲಿ ಎಚ್ಚರ ಆ್ಯಪ್ ಹಾಕಿಕೊಳ್ಳಿ. ಅಪರಿಚಿತರು ಕರೆ ಮಾಡಿದಾಗ, ಸ್ಪೀಕರ್‌ನಲ್ಲಿ ಕೇಳಿ, ಕರೆ ವಂಚನೆಯಾಗಿದ್ದರೆ ಎಚ್ಚರಿಸುತ್ತದೆ. ನಿಮಗೆ ಬರುವ ಪ್ರತಿ SMS ಅನ್ನೂ ಪರಿಶೀಲಿಸುತ್ತದೆ. ಡೌನ್‌ಲೋಡ್ ಮಾಡಲು Android ಆ್ಯಪ್ ಪಡೆಯಿರಿ ಬಟನ್ ಒತ್ತಿ.'},
+ learn:{en:'Learn and play. You will see a message. Decide if it is a scam or safe, and press your answer. You get points for every right answer. Playing a few rounds trains you to spot scams.',
+        kn:'ಕಲಿಯಿರಿ ಮತ್ತು ಆಡಿ. ಒಂದು ಸಂದೇಶ ಕಾಣುತ್ತದೆ. ಅದು ವಂಚನೆಯೇ ಸುರಕ್ಷಿತವೇ ಎಂದು ನಿರ್ಧರಿಸಿ, ನಿಮ್ಮ ಉತ್ತರ ಒತ್ತಿ. ಪ್ರತಿ ಸರಿಯಾದ ಉತ್ತರಕ್ಕೆ ಅಂಕ ಸಿಗುತ್ತದೆ. ಕೆಲವು ಸುತ್ತು ಆಡಿದರೆ ವಂಚನೆ ಗುರುತಿಸಲು ಕಲಿಯುತ್ತೀರಿ.'},
+ alerts:{en:'Scam alerts. These are the scams happening in Karnataka now.',kn:'ವಂಚನೆ ಎಚ್ಚರಿಕೆಗಳು. ಇವು ಈಗ ಕರ್ನಾಟಕದಲ್ಲಿ ನಡೆಯುತ್ತಿರುವ ವಂಚನೆಗಳು.'},
+ technology:{en:'How Echchara works. Scam rules written for Karnataka and a trained classifier check every message on your own device. Nothing is uploaded. This page shows how accurate it is.',
+             kn:'ಎಚ್ಚರ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಕರ್ನಾಟಕಕ್ಕಾಗಿ ಬರೆದ ವಂಚನೆ ನಿಯಮಗಳು ಮತ್ತು ತರಬೇತಿ ಪಡೆದ ವರ್ಗೀಕರಣ ಪ್ರತಿ ಸಂದೇಶವನ್ನು ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಪರಿಶೀಲಿಸುತ್ತವೆ. ಏನೂ ಅಪ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ. ಇದು ಎಷ್ಟು ನಿಖರ ಎಂದು ಈ ಪುಟ ತೋರಿಸುತ್ತದೆ.'},
+ help:{en:'Get help. If you lost money, call 1930 immediately. One. Nine. Three. Zero. Then call your bank on the number printed on your card, and block your card and UPI. Then file a complaint at cybercrime dot gov dot in, or at your nearest police station. Do not trust anyone who offers to get your money back for a fee.',
+       kn:'ಸಹಾಯ ಪಡೆಯಿರಿ. ಹಣ ಕಳೆದುಕೊಂಡಿದ್ದರೆ, ತಕ್ಷಣ ಒಂದು ಒಂಬತ್ತು ಮೂರು ಸೊನ್ನೆ, ಹತ್ತೊಂಬತ್ತು ಮೂವತ್ತಕ್ಕೆ ಕರೆ ಮಾಡಿ. ನಂತರ ನಿಮ್ಮ ಕಾರ್ಡ್ ಮೇಲಿರುವ ಸಂಖ್ಯೆಗೆ ಬ್ಯಾಂಕ್‌ಗೆ ಕರೆ ಮಾಡಿ, ಕಾರ್ಡ್ ಮತ್ತು UPI ಬ್ಲಾಕ್ ಮಾಡಿ. ನಂತರ ಸೈಬರ್ ಕ್ರೈಮ್ ಡಾಟ್ ಜಿಓವಿ ಡಾಟ್ ಇನ್ ನಲ್ಲಿ, ಅಥವಾ ಹತ್ತಿರದ ಪೊಲೀಸ್ ಠಾಣೆಯಲ್ಲಿ ದೂರು ನೀಡಿ. ಶುಲ್ಕ ಪಡೆದು ಹಣ ಮರಳಿಸುತ್ತೇವೆ ಎನ್ನುವವರನ್ನು ನಂಬಬೇಡಿ.'},
+ partners:{en:'Partners. The organisations that support Echchara.',kn:'ಪಾಲುದಾರರು. ಎಚ್ಚರಕ್ಕೆ ಬೆಂಬಲ ನೀಡುವ ಸಂಸ್ಥೆಗಳು.'}
+};
+function pageScript(lg){
+  const base=(PAGE_SCRIPTS[page]||PAGE_SCRIPTS.home)[lg];
+  if(page==='check' && last && !last.error && !last.pending) return resultScript(lg);
+  if(page==='alerts' && typeof ALERTS!=='undefined') return base+' '+ALERTS.slice(0,4).map((a,i)=>`${i+1}. ${a.t[lg]||a.t.en}. ${(a.move&&(a.move[lg]||a.move.en))||''}`).join(' ');
+  return base;
+}
+function resultScript(lg){
+  if(!last || last.error || last.pending) return '';
+  const s=finalScore(), b=(typeof vband==='function'?vband(s):band(s));
+  const ex=explain({...last, flags:[...(typeof ctxFlags==='function'?ctxFlags():[]), ...(last.flags||[])]}, s);
+  const pick=o=>o==null?'':(typeof o==='string'?o:(o[lg]||o.en));
+  const verdict={safe:{en:'Looks safe.',kn:'ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣುತ್ತದೆ.'},warn:{en:'Be careful. This looks suspicious.',kn:'ಎಚ್ಚರಿಕೆ. ಇದು ಅನುಮಾನಾಸ್ಪದವಾಗಿ ಕಾಣುತ್ತದೆ.'},danger:{en:'Danger. This is very likely a scam.',kn:'ಅಪಾಯ. ಇದು ಬಹುತೇಕ ವಂಚನೆ.'},ctx:{en:'Not sure yet. Answer the two questions on the screen.',kn:'ಇನ್ನೂ ಖಚಿತವಿಲ್ಲ. ಪರದೆಯ ಮೇಲಿನ ಎರಡು ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ.'}}[b]||{en:'',kn:''};
+  const moves=(last.moves||[]).slice(0,2).map(pick).join(' ');
+  const what=lg==='kn'?'ಏನು ಮಾಡಬೇಕು:':'What to do:';
+  return `${verdict[lg]} ${pick(ex.summary)} ${moves?what+' '+moves:''}`;
+}
+function vaReadPage(){ vaSpeak(pageScript(lang), {en: pageScript('en')}); }
+function vaReadResult(){ const t2=resultScript(lang); if(t2) vaSpeak(t2, {en: resultScript('en')}); }
+function vaListen(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ vaSpeak(lang==='kn'?'ಈ ಬ್ರೌಸರ್ ನಿಮ್ಮ ಧ್ವನಿಯನ್ನು ಕೇಳಲು ಸಾಧ್ಯವಿಲ್ಲ. Android ಫೋನ್‌ನಲ್ಲಿ Chrome ಬಳಸಿ.':'This browser cannot listen to your voice. Please use Chrome on an Android phone.', {en:'This browser cannot listen to your voice. Please use Chrome on an Android phone.'}); return; }
+  if(VA.listening){ vaStop(); return; }
+  if(canSpeak) speechSynthesis.cancel(); speaking=false;
+  const rec=new SR(); VA.rec=rec; rec.lang=lang==='kn'?'kn-IN':'en-IN'; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1;
+  let heard='';
+  rec.onresult=e=>{ heard=[...e.results].map(r=>r[0].transcript).join(' '); vaNote((lang==='kn'?'ಕೇಳಿದ್ದು: ':'Heard: ')+heard); };
+  rec.onerror=e=>{ VA.listening=false; vaState(); vaNote(e.error==='not-allowed'||e.error==='service-not-allowed' ? (lang==='kn'?'ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ಇಲ್ಲ. ಬ್ರೌಸರ್ ವಿಳಾಸ ಪಟ್ಟಿಯಲ್ಲಿ ಮೈಕ್ ಅನುಮತಿಸಿ.':'Microphone permission was blocked. Allow the microphone from the browser address bar.') : (lang==='kn'?'ಸರಿಯಾಗಿ ಕೇಳಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.':'I could not hear that. Please try again.')); };
+  rec.onend=()=>{ VA.listening=false; vaState();
+    if(heard.trim()){ mode='msg'; inputs.msg=heard.trim(); renderTabs(); renderPane(); runScan(false); go('check'); setTimeout(vaReadResult, 350); } };
+  VA.listening=true; vaState(); vaNote(lang==='kn'?'ಕೇಳುತ್ತಿದ್ದೇನೆ… ಸಂದೇಶವನ್ನು ಜೋರಾಗಿ ಹೇಳಿ.':'Listening… say the message aloud.');
+  try{ rec.start(); }catch(e){ VA.listening=false; vaState(); }
+}
+function vaAfterRoute(){ vaState(); if(VA.auto){ clearTimeout(VA.rt); VA.rt=setTimeout(vaReadPage, 400); } }
+function vaAfterResult(){ vaState(); if(!VA.auto || page!=='check' || !last || last.error || last.pending) return; const key=String(finalScore())+'|'+(last.text||'').slice(0,60); if(key===VA.lastResult) return; clearTimeout(VA.rr); VA.rr=setTimeout(()=>{ VA.lastResult=key; vaReadResult(); }, 1200); }
 /* ---- screenshot OCR (Tesseract.js, runs in the browser) ---- */
 const TESS_SRC='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
 let tessLoad=null;
@@ -2117,6 +2318,7 @@ function renderVerdict(){
   const cq=$('ctxq'); if(cq) cq.onclick=e=>{ const k=e.target.closest('[data-cq]'); if(!k) return; const q=k.dataset.cq, v=k.dataset.v; ctxAns[q] = ctxAns[q]===v ? null : v; renderVerdict(); };
   const tb=$('ttsBtn'); if(tb) tb.onclick=()=>speak(`${t('v.'+b)}. ${sumText} ${moves.slice(0,2).map(m=>L(m)).join(' ')}`);
   wireAppeal(s);
+  vaAfterResult();
 }
 
 /* ======================= Home ======================= */
@@ -2198,15 +2400,46 @@ const FEATS = [
  {m:'call',h:{en:'Phone calls',kn:'ಫೋನ್ ಕರೆಗಳು'},p:{en:'Call Shield turns an unknown caller’s words into text and warns you mid-call. Live in the Android app.',kn:'ಕಾಲ್ ಶೀಲ್ಡ್ ಅಪರಿಚಿತ ಕರೆಯ ಮಾತನ್ನು ಪಠ್ಯವಾಗಿಸಿ ಕರೆಯ ಮಧ್ಯೆಯೇ ಎಚ್ಚರಿಸುತ್ತದೆ. Android ಆ್ಯಪ್‌ನಲ್ಲಿ ಲಭ್ಯ.'}},
  {m:'shot',h:{en:'Screenshots',kn:'ಸ್ಕ್ರೀನ್‌ಶಾಟ್'},p:{en:'Upload a picture of the message. Built-in text recognition reads it on your device.',kn:'ಸಂದೇಶದ ಚಿತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಸಾಧನದಲ್ಲೇ ಪಠ್ಯ ಓದಲಾಗುತ್ತದೆ.'}}
 ];
+const PATTERNS=[
+ {s:{en:'“Your power will be cut tonight”',kn:'“ಇಂದು ರಾತ್ರಿ ವಿದ್ಯುತ್ ಕಡಿತ”'},r:{en:'SMS, pretending to be BESCOM or MESCOM',kn:'SMS, ಬೆಸ್ಕಾಂ ಅಥವಾ ಮೆಸ್ಕಾಂ ಹೆಸರಿನಲ್ಲಿ'},t:{en:'A personal mobile number and a same-night deadline.',kn:'ವೈಯಕ್ತಿಕ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು ಅದೇ ರಾತ್ರಿಯ ಗಡುವು.'},d:{en:'Check your bill in the official ESCOM app, or call 1912.',kn:'ಅಧಿಕೃತ ESCOM ಆ್ಯಪ್‌ನಲ್ಲಿ ಬಿಲ್ ನೋಡಿ, ಅಥವಾ 1912 ಗೆ ಕರೆ ಮಾಡಿ.'}},
+ {s:{en:'KYC or PAN “expiring today”',kn:'KYC ಅಥವಾ PAN “ಇಂದೇ ಅವಧಿ ಮುಗಿಯುತ್ತದೆ”'},r:{en:'SMS that looks like your bank',kn:'ನಿಮ್ಮ ಬ್ಯಾಂಕ್‌ನಂತೆ ಕಾಣುವ SMS'},t:{en:'The link is not the bank’s own website.',kn:'ಲಿಂಕ್ ಬ್ಯಾಂಕ್‌ನ ಸ್ವಂತ ವೆಬ್‌ಸೈಟ್ ಅಲ್ಲ.'},d:{en:'Banks update KYC only in their app or at a branch.',kn:'ಬ್ಯಾಂಕ್‌ಗಳು KYC ಅನ್ನು ಆ್ಯಪ್ ಅಥವಾ ಶಾಖೆಯಲ್ಲಿ ಮಾತ್ರ ನವೀಕರಿಸುತ್ತವೆ.'}},
+ {s:{en:'“Digital arrest” by fake police',kn:'ನಕಲಿ ಪೊಲೀಸರಿಂದ “ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್”'},r:{en:'Video call',kn:'ವೀಡಿಯೊ ಕರೆ'},t:{en:'Orders not to tell your family, and a “safe account”.',kn:'ಮನೆಯವರಿಗೆ ಹೇಳಬೇಡಿ ಎಂಬ ಆದೇಶ ಮತ್ತು “ಸುರಕ್ಷಿತ ಖಾತೆ”.'},d:{en:'Hang up. No agency arrests anyone on a video call. Call 1930.',kn:'ಕರೆ ಕಡಿತಗೊಳಿಸಿ. ಯಾವ ಸಂಸ್ಥೆಯೂ ವೀಡಿಯೊ ಕರೆಯಲ್ಲಿ ಬಂಧಿಸುವುದಿಲ್ಲ. 1930 ಗೆ ಕರೆ ಮಾಡಿ.'}},
+ {s:{en:'Gulf job with an upfront visa fee',kn:'ಮುಂಗಡ ವೀಸಾ ಶುಲ್ಕದ ಗಲ್ಫ್ ಉದ್ಯೋಗ'},r:{en:'WhatsApp, coastal Karnataka',kn:'ವಾಟ್ಸಾಪ್, ಕರಾವಳಿ ಕರ್ನಾಟಕ'},t:{en:'A foreign number asking for money before any interview.',kn:'ಸಂದರ್ಶನಕ್ಕೂ ಮೊದಲೇ ಹಣ ಕೇಳುವ ವಿದೇಶಿ ಸಂಖ್ಯೆ.'},d:{en:'Check the agent on the eMigrate portal before paying.',kn:'ಪಾವತಿಸುವ ಮೊದಲು eMigrate ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ಏಜೆಂಟ್ ಪರಿಶೀಲಿಸಿ.'}}
+];
+const RECOV=[
+ [{en:'Stop all contact',kn:'ಎಲ್ಲಾ ಸಂಪರ್ಕ ನಿಲ್ಲಿಸಿ'},{en:'Hang up and stop replying. Ignore “refund recovery” offers.',kn:'ಕರೆ ಕಡಿತಗೊಳಿಸಿ, ಉತ್ತರಿಸುವುದನ್ನು ನಿಲ್ಲಿಸಿ. “ಹಣ ಮರುಪಡೆಯುತ್ತೇವೆ” ಎಂಬ ಆಫರ್‌ಗಳನ್ನು ನಿರ್ಲಕ್ಷಿಸಿ.'}],
+ [{en:'Call 1930 immediately',kn:'ತಕ್ಷಣ 1930 ಗೆ ಕರೆ ಮಾಡಿ'},{en:'The first hours give the best chance of freezing money in transit.',kn:'ಮೊದಲ ಗಂಟೆಗಳಲ್ಲಿ ಹಣ ತಡೆಹಿಡಿಯುವ ಸಾಧ್ಯತೆ ಹೆಚ್ಚು.'}],
+ [{en:'Call your bank on the number on your card',kn:'ಕಾರ್ಡ್ ಮೇಲಿನ ಸಂಖ್ಯೆಗೆ ಬ್ಯಾಂಕ್‌ಗೆ ಕರೆ ಮಾಡಿ'},{en:'Block cards, freeze UPI and note the reference number.',kn:'ಕಾರ್ಡ್ ಬ್ಲಾಕ್ ಮಾಡಿ, UPI ನಿಲ್ಲಿಸಿ, ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ ಬರೆದಿಟ್ಟುಕೊಳ್ಳಿ.'}],
+ [{en:'File a complaint',kn:'ದೂರು ದಾಖಲಿಸಿ'},{en:'At cybercrime.gov.in, or at your district CEN police station.',kn:'cybercrime.gov.in ನಲ್ಲಿ, ಅಥವಾ ನಿಮ್ಮ ಜಿಲ್ಲೆಯ CEN ಪೊಲೀಸ್ ಠಾಣೆಯಲ್ಲಿ.'}],
+ [{en:'Remove remote-access apps',kn:'ರಿಮೋಟ್ ಆಕ್ಸೆಸ್ ಆ್ಯಪ್‌ಗಳನ್ನು ತೆಗೆಯಿರಿ'},{en:'Uninstall AnyDesk, TeamViewer or any APK the scammer sent.',kn:'AnyDesk, TeamViewer ಅಥವಾ ವಂಚಕ ಕಳುಹಿಸಿದ ಯಾವುದೇ APK ಅನ್‌ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ.'}]
+];
+const HAND_TICK='<svg class="htick" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13.5c2 1.4 3.6 3.2 5 5.3C11.6 12.6 15.6 7.6 21 3.5"/></svg>';
+const HAND_BOX='<svg class="hbox" viewBox="0 0 28 28" aria-hidden="true"><path class="b" d="M4.5 5.2c6.2-.6 12.6-.5 19 .2.4 6 .3 11.8-.1 17.8-6.3.5-12.6.6-18.7.1-.5-6-.6-12-.2-18.1z"/><path class="t" d="M7 15c2.4 1.6 4.2 3.6 5.6 6C15.8 13.5 20.2 7.6 26.5 2.5"/></svg>';
 function renderHome(){
-  const he=$('heroEcho'); if(he){ const o=lang==='kn'?'en':'kn'; he.textContent=I18N[o]['home.h1']; he.lang=o; }
+  const kn=lang==='kn', other=kn?'en':'kn';
+  const he=$('heroEcho'); if(he){ he.textContent=I18N[other]['home.h1']; he.lang=other; }
+  document.querySelectorAll('[data-echo]').forEach(el=>{ el.textContent=I18N[other][el.dataset.echo]||''; el.lang=other; });
   renderPreview();
-  $('feats').innerHTML = FEATS.map(f=>`<button class="feat" data-m="${f.m}"><span class="ficon">${ico(f.m)}</span><h3>${esc(L(f.h))}</h3><p>${esc(L(f.p))}</p></button>`).join('');
-  const st=[[{en:'Paste or upload',kn:'ಅಂಟಿಸಿ ಅಥವಾ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ'},{en:'Paste the message, link or email, or upload a screenshot. Nothing is opened or installed.',kn:'ಸಂದೇಶ, ಲಿಂಕ್ ಅಥವಾ ಇಮೇಲ್ ಅಂಟಿಸಿ, ಅಥವಾ ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಹಾಕಿ. ಏನನ್ನೂ ತೆರೆಯುವುದಿಲ್ಲ.'}],[{en:'Three engines check it',kn:'ಮೂರು ಎಂಜಿನ್‌ಗಳು ಪರಿಶೀಲಿಸುತ್ತವೆ'},{en:'Scam rules and a trained classifier score the message, and the explanation engine says why.',kn:'ವಂಚನೆ ನಿಯಮಗಳು ಮತ್ತು ತರಬೇತಿ ಪಡೆದ ವರ್ಗೀಕರಣ ಅಂಕ ನೀಡುತ್ತವೆ, ವಿವರಣಾ ಎಂಜಿನ್ ಕಾರಣ ಹೇಳುತ್ತದೆ.'}],[{en:'Get a clear verdict',kn:'ಸ್ಪಷ್ಟ ತೀರ್ಪು ಪಡೆಯಿರಿ'},{en:'Safe, suspicious or dangerous, with every reason and the next step to take.',kn:'ಸುರಕ್ಷಿತ, ಅನುಮಾನಾಸ್ಪದ ಅಥವಾ ಅಪಾಯಕಾರಿ, ಕಾರಣಗಳು ಮತ್ತು ಮುಂದಿನ ಕ್ರಮದೊಂದಿಗೆ.'}]];
+  const st=[[{en:'Paste or share it',kn:'ಅಂಟಿಸಿ ಅಥವಾ ಹಂಚಿಕೊಳ್ಳಿ'},{en:'Any SMS, WhatsApp message, email or link. You can also add a screenshot.',kn:'ಯಾವುದೇ SMS, ವಾಟ್ಸಾಪ್ ಸಂದೇಶ, ಇಮೇಲ್ ಅಥವಾ ಲಿಂಕ್. ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಕೂಡ ಹಾಕಬಹುದು.'}],[{en:'Read on your phone',kn:'ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲೇ ಓದಲಾಗುತ್ತದೆ'},{en:'Twenty Karnataka scam rules and a trained classifier check it. Nothing is uploaded.',kn:'ಇಪ್ಪತ್ತು ಕರ್ನಾಟಕ ವಂಚನೆ ನಿಯಮಗಳು ಮತ್ತು ತರಬೇತಿ ಪಡೆದ ವರ್ಗೀಕರಣ ಪರಿಶೀಲಿಸುತ್ತವೆ. ಏನೂ ಅಪ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ.'}],[{en:'See why, then act',kn:'ಕಾರಣ ನೋಡಿ, ನಂತರ ಕ್ರಮ ಕೈಗೊಳ್ಳಿ'},{en:'A verdict with the reasons and what to do next, in Kannada or English.',kn:'ಕಾರಣಗಳು ಮತ್ತು ಮುಂದೇನು ಮಾಡಬೇಕು ಎಂಬುದರೊಂದಿಗೆ ತೀರ್ಪು, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ.'}]];
   $('homeSteps').innerHTML = st.map((s,i)=>`<div class="step"><span class="n">${i+1}</span><h3>${esc(L(s[0]))}</h3><p>${esc(L(s[1]))}</p></div>`).join('');
-  $('homeAlerts').innerHTML = ALERTS.slice(0,3).map(alertCard).join('');
+  const hd=kn?['ವಂಚನೆ','ಹೇಗೆ ತಲುಪುತ್ತದೆ','ಗುರುತು','ಏನು ಮಾಡಬೇಕು']:['The scam','How it reaches you','The tell','What to do'];
+  $('homePatterns').innerHTML = `<table class="pt"><thead><tr>${hd.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${PATTERNS.map((r,i)=>`<tr><td data-h="${hd[0]}"><b>${esc(L(r.s))}</b></td><td data-h="${hd[1]}" class="muted">${esc(L(r.r))}</td><td data-h="${hd[2]}">${i===0?`<span class="pen-u">${esc(L(r.t))}</span>`:esc(L(r.t))}</td><td data-h="${hd[3]}">${esc(L(r.d))}</td></tr>`).join('')}</tbody></table>`;
+  const ticks=kn?['ನಿಮ್ಮ ಸಂಪರ್ಕಗಳಲ್ಲಿ ಇಲ್ಲದ ಸಂಖ್ಯೆಗಳಿಗೆ ಮಾತ್ರ. ಕುಟುಂಬ ಮತ್ತು ಸ್ನೇಹಿತರ ಕರೆಗಳನ್ನು ಎಂದಿಗೂ ಪಠ್ಯವಾಗಿಸುವುದಿಲ್ಲ.','ಪ್ರತಿ ವಾಕ್ಯವೂ ಸಂದೇಶಗಳಿಗೆ ಬಳಸುವ ಅದೇ ವಂಚನೆ ಪರಿಶೀಲನೆಗಳ ಮೂಲಕ ಹೋಗುತ್ತದೆ.','ಯಾವುದೇ ಧ್ವನಿ ಉಳಿಸುವುದಿಲ್ಲ. ನೀವು ದೂರು ನೀಡದ ಹೊರತು ಕರೆ ಮುಗಿದಾಗ ಪಠ್ಯ ಅಳಿಸಲಾಗುತ್ತದೆ.']:['Only for numbers that are not in your contacts. Family and friends are never transcribed.','Every sentence goes through the same scam checks used for messages.','No audio is saved. The text is deleted when the call ends, unless you report it.'];
+  $('liveTicks').innerHTML = ticks.map(x=>`<li>${HAND_TICK}<span>${esc(x)}</span></li>`).join('');
+  const lines=kn?['ನಾನು ಮುಂಬೈ ಸೈಬರ್ ಪೊಲೀಸ್‌ನ ಇನ್ಸ್‌ಪೆಕ್ಟರ್ ಶರ್ಮಾ.','ನಿಮ್ಮ ಹೆಸರಿನ ಪಾರ್ಸೆಲ್‌ನಲ್ಲಿ ಮಾದಕ ವಸ್ತು ಸಿಕ್ಕಿದೆ.','ಈ ವೀಡಿಯೊ ಕರೆ ಕಡಿತಗೊಳಿಸಬೇಡಿ, ಮನೆಯವರಿಗೆ ಹೇಳಬೇಡಿ.']:['This is Inspector Sharma from Mumbai Cyber Police.','A parcel in your name with illegal drugs was seized.','Do not disconnect this video call and do not tell your family.'];
+  $('callMock').innerHTML = `<div class="cm-phone"><div class="cm-top"><b>${kn?'ಅಪರಿಚಿತ ಸಂಖ್ಯೆ':'Unknown number'}</b><small>02:14 · ${kn?'ಕಾಲ್ ಶೀಲ್ಡ್ ಆನ್ ಆಗಿದೆ':'Call Shield is on'}</small></div><div class="cm-lines">${lines.map((x,i)=>`<p class="cm-l" style="--i:${i}">${esc(x)}</p>`).join('')}</div><div class="cm-alert" style="--i:3"><b>${kn?'ಇದು ಡಿಜಿಟಲ್ ಅರೆಸ್ಟ್ ವಂಚನೆಯಂತೆ ಕೇಳುತ್ತಿದೆ':'This sounds like a digital arrest scam'}</b><p>${kn?'ಯಾವ ಸಂಸ್ಥೆಯೂ ವೀಡಿಯೊ ಕರೆಯಲ್ಲಿ ಬಂಧಿಸುವುದಿಲ್ಲ ಅಥವಾ ಹಣ ಪಡೆಯುವುದಿಲ್ಲ.':'No agency arrests anyone or collects money over a video call.'}</p><div class="cm-acts"><span class="cm-hang">${kn?'ಕರೆ ಕಡಿತ':'Hang up'}</span><span class="cm-rep">${kn?'ದೂರು':'Report'}</span></div></div></div>`;
+  const done=store.get('ec-recov',[]);
+  $('recovList').innerHTML = RECOV.map((r,i)=>`<li><button class="rc${done[i]?' on':''}" data-rc="${i}" role="checkbox" aria-checked="${!!done[i]}">${HAND_BOX}<span><b>${esc(L(r[0]))}</b><small>${esc(L(r[1]))}</small></span></button></li>`).join('');
+  playWhenSeen($('callMock'));
 }
-$('feats').addEventListener('click',e=>{ const b=e.target.closest('[data-m]'); if(!b) return; if(b.dataset.m==='call'){ go('protect'); setTimeout(()=>$('callshield').scrollIntoView(),50); return; } mode=b.dataset.m; renderTabs(); renderPane(); runScan(false); go('check'); });
+function playWhenSeen(el){
+  if(!el) return;
+  if(!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches){ el.classList.add('play'); return; }
+  if(el._io) el._io.disconnect();
+  el._io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ el.classList.add('play'); el._io.disconnect(); } },{threshold:.35});
+  el._io.observe(el);
+}
+$('recovList').addEventListener('click',e=>{ const b=e.target.closest('[data-rc]'); if(!b) return; const d=store.get('ec-recov',[]); const i=+b.dataset.rc; d[i]=!d[i]; store.set('ec-recov',d); b.classList.toggle('on',!!d[i]); b.setAttribute('aria-checked',String(!!d[i])); });
 $('qcForm').onsubmit=e=>{ e.preventDefault(); const v=$('qcIn').value.trim(); if(!v) { $('qcIn').focus(); return; } if(/^\S+\.\S+$/.test(v) && !/\s/.test(v)){ mode='url'; inputs.url=v; } else { mode='msg'; inputs.msg=v; } renderTabs(); renderPane(); runScan(false); go('check'); };
 
 /* ======================= Alerts ======================= */
@@ -2549,6 +2782,12 @@ function applyLang(){
   if(page==='protect') playLive();
 }
 $('bigBtn').onclick=()=>{ store.set('ec-big', !store.get('ec-big',false)); applyBig(); };
+$('vaFab').onclick=()=>{ const p=$('vaPanel'); const open=p.hidden; p.hidden=!open; $('vaFab').setAttribute('aria-expanded', String(open)); vaState(); if(open && !speaking) vaReadPage(); };
+$('vaClose').onclick=()=>{ $('vaPanel').hidden=true; $('vaFab').setAttribute('aria-expanded','false'); vaStop(); };
+$('vaRead').onclick=vaReadPage; $('vaSay').onclick=vaListen; $('vaResult').onclick=vaReadResult; $('vaStop').onclick=vaStop;
+$('vaAuto').onchange=e=>{ VA.auto=e.target.checked; store.set('ec-va-auto', VA.auto); if(VA.auto) vaReadPage(); };
+document.querySelector('.va-speed').addEventListener('click',e=>{ const b=e.target.closest('[data-rate]'); if(!b) return; VA.rate=+b.dataset.rate; store.set('ec-va-rate', VA.rate); vaState(); if(VA.lastSpoken) vaSpeak(VA.lastSpoken); });
+if(canSpeak) speechSynthesis.onvoiceschanged=()=>vaState();
 document.querySelector('.lang').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||b.dataset.lang===lang) return; lang=b.dataset.lang; store.set('ec-lang',lang); applyLang(); });
 $('scanBtn').onclick=()=>{ if(mode==='shot' && shotFile && ocrState.status!=='loading' && ocrState.status!=='done') runOCR(); else runScan(); };
 $('clearBtn').onclick=()=>{ if(mode==='web'){inputs.web='';inputs.webc='';} else if(mode==='shot'){ shotFile=null; if(shotURL) URL.revokeObjectURL(shotURL); shotURL=null; } else if(mode==='qr'){ qrFile=null; if(qrURL) URL.revokeObjectURL(qrURL); qrURL=null; qrState={status:'idle', key:null, text:''}; } else if(mode==='journey'){ inputs.j1=inputs.j2=inputs.j3=inputs.j4=''; } else inputs[mode]=''; renderPane(); runScan(false); };

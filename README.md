@@ -8,7 +8,9 @@ Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud De
 
 **[⬇ Download the latest Echchara.apk](../../releases/latest/download/Echchara.apk)** (Android 10 or newer, about 2 MB)
 
-**🌐 Website:** https://niranjan19m-source.github.io/echchara/ — check SMS, WhatsApp messages, emails, links, websites, screenshots, QR codes and job offers in the browser, plus the Learn & Play scam simulator. The website source is in [`docs/index.html`](docs/index.html).
+**🌐 Website:** https://manishshetty-17.github.io/echchara/ — check SMS, WhatsApp messages, emails, links, websites, screenshots, QR codes and job offers in the browser, plus the Learn & Play scam simulator. The website source is in [`docs/index.html`](docs/index.html).
+
+**🔊 Voice help (Kannada and English):** the **Listen** button on every page reads the page and every result aloud, and **Speak the message** lets someone say a message instead of typing it. Built for people who find reading hard. Kannada speech needs a Kannada voice on the device: Chrome on Android and Microsoft Edge on computers have one.
 
 ## What it does
 
