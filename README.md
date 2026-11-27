@@ -19,10 +19,11 @@ Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud De
 | **Check a message** | Paste any message or link, or share a WhatsApp message to Echchara, and get a verdict with the reasons and what to do next. |
 | **Alerts** | A history of every suspicious SMS and call that Echchara caught. |
 | **Learns from you** | "Was this right?" feedback retrains the on-device classifier. |
+| **Report it** | On the website, a scam message comes with one-tap copy and a link to report it on the government's Chakshu portal (Sanchar Saathi). |
 
 ## How it decides
 
-1. **Pattern engine**: 20 scam rules written for Karnataka (ESCOM power cuts, guarantee-scheme fees, Gulf job visas, e-challan APKs, digital arrest, UPI collect requests, KYC/PAN), plus a link analyser that catches look-alike domains, misspellings, IP links, risky domain endings and app downloads.
+1. **Pattern engine**: 24 scam rules written for Karnataka (ESCOM power cuts, guarantee-scheme fees, Gulf job visas, e-challan APKs, digital arrest, UPI collect requests, KYC/PAN, fake investment and trading groups, .apk files sent as wedding invitations or bills, eSIM and SIM-swap requests, money-mule recruitment and "boss" impersonation), plus a link analyser that catches look-alike domains, misspellings, fake addresses placed in front of the real domain, IP links, risky domain endings and app downloads. It trusts RBI's `.bank.in` bank domains and checks that investment payments go to SEBI's `@valid` UPI IDs.
 2. **ML classifier**: a Naive Bayes model trained on English, Kannada and Kanglish messages.
 3. **Explanation engine**: a plain-language summary in Kannada or English, the scam type, and who the scammer is pretending to be.
 
