@@ -1,5 +1,6 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="light">
+<script>try{ if(JSON.parse(localStorage.getItem('ec-theme'))==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Echchara</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -697,6 +698,25 @@ img.blurup.ok{filter:none; transform:none}
 .fastl{margin:0; padding-left:22px; display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:32px}
 @media (max-width:760px){ .fastl{grid-template-columns:minmax(0,1fr)} }
 .fastl li b{display:block; color:var(--ink)} .fastl li span{color:var(--ink2); font-size:.95rem}
+
+/* ===== theme switch ===== */
+header.main .themebtn{border:1px solid var(--line2); color:var(--ink2); background:var(--surface); border-radius:8px; padding:4px 7px; display:inline-grid; place-items:center; cursor:pointer}
+header.main .themebtn svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2}
+header.main .themebtn .sun{display:none} :root[data-theme="dark"] header.main .themebtn .sun{display:block} :root[data-theme="dark"] header.main .themebtn .moon{display:none}
+header.main.compact .tools .themebtn{display:none}
+@media (max-width:520px){ header.main .tools .themebtn{display:none} }
+/* ===== the opening text sits between the ruled lines (lines every 32px from the top of the page) ===== */
+header.main .wrap{height:63px}
+.hero .wrap{padding-block:64px 64px; align-items:start}
+.hero .wrap > div:first-child{padding-top:0}
+.hero h1{line-height:64px; margin:0; font-size:clamp(2.3rem, 4.6vw, 3.7rem)}
+.hero .echo{font-size:clamp(1.25rem, 1.9vw, 1.5rem); line-height:32px; margin-top:32px}
+.hero p.sub{font-size:1.08rem; line-height:32px; margin-top:32px}
+.qc1{margin:32px 0 0; height:64px; align-items:center}
+.qc1 input, .qc1 .btn{height:48px; padding-block:0}
+.qnote{line-height:32px; margin-top:0}
+@media (max-width:920px){ .hero .wrap{padding-block:32px 32px; gap:32px} }
+@media (max-width:520px){ .qc1{height:auto; flex-direction:column; align-items:stretch; gap:16px} .qc1 input, .qc1 .btn{height:48px; width:100%} .hero .echo{margin-top:0} .hero h1{line-height:46px} }
 /* ===== voice assistant ===== */
 .va{position:fixed; right:max(16px, env(safe-area-inset-right)); bottom:max(16px, env(safe-area-inset-bottom)); z-index:50; display:flex; flex-direction:column; align-items:flex-end; gap:10px}
 .va-fab{display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--paper); border:0; border-radius:999px; padding:14px 22px 14px 18px; font:inherit; font-size:1.1rem; font-weight:700; box-shadow:0 0 0 2px var(--paper), 0 6px 22px rgba(19,42,85,.28); cursor:pointer}
@@ -726,6 +746,7 @@ footer{padding-bottom:72px}
     <nav class="pages" id="nav" aria-label="Main"></nav>
     <div class="tools">
       <button class="bigbtn" id="bigBtn" aria-pressed="false" title="Larger text" aria-label="Larger text">A<span>A</span></button>
+      <button class="themebtn" id="themeBtn" aria-pressed="false" title="Dark mode" aria-label="Dark mode"><svg class="i moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
       <div class="lang" role="group" aria-label="Language"><button data-lang="kn" aria-pressed="false" lang="kn">ಕನ್ನಡ</button><button data-lang="en" aria-pressed="true">English</button></div>
     </div>
     <a class="cta" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i18n="app.hdr"></span></a>
@@ -959,6 +980,8 @@ footer{padding-bottom:72px}
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const combine = ws => Math.round((1 - ws.reduce((p,w)=>p*(1-w),1))*100);
+function theme(){ return document.documentElement.getAttribute('data-theme')==='dark' ? 'dark' : 'light'; }
+function setTheme(t){ document.documentElement.setAttribute('data-theme', t); const m=document.querySelector('meta[name="color-scheme"]'); if(m) m.content=t; try{ localStorage.setItem('ec-theme', JSON.stringify(t)); }catch(e){} const b=document.getElementById('themeBtn'); if(b){ b.setAttribute('aria-pressed', String(t==='dark')); const lbl=t==='dark'?'Light mode':'Dark mode'; b.title=lbl; b.setAttribute('aria-label', lbl); } }
 const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} }, set(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} } };
 let lang = store.get('ec-lang','en');
 const L = o => o==null ? '' : (typeof o==='string' ? o : (lang==='kn' && o.kn ? o.kn : o.en));
@@ -1653,8 +1676,9 @@ let page = 'home';
 function renderNav(){
   const links = PAGES.filter(p=>p[0]!=='home').map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('');
   $('nav').innerHTML = links;
-  $('mnav').innerHTML = PAGES.map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('') + `<button class="mbig" id="mBig">${lang==='kn'?'ದೊಡ್ಡ ಅಕ್ಷರ (AA)':'Larger text (AA)'}</button><a class="cta app" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener">${t('app.hdr')}</a><a class="cta" href="#check">${t('nav.check')}</a>`;
+  $('mnav').innerHTML = PAGES.map(([id,k])=>`<a href="#${id}"${id===page?' aria-current="page"':''}>${t(k)}</a>`).join('') + `<button class="mbig" id="mBig">${lang==='kn'?'ದೊಡ್ಡ ಅಕ್ಷರ (AA)':'Larger text (AA)'}</button><button class="mbig" id="mTheme">${theme()==='dark'?(lang==='kn'?'ಬೆಳಕಿನ ಮೋಡ್':'Light mode'):(lang==='kn'?'ಡಾರ್ಕ್ ಮೋಡ್':'Dark mode')}</button><a class="cta app" href="https://github.com/Manishshetty-17/echchara/releases/latest/download/Echchara.apk" target="_blank" rel="noopener">${t('app.hdr')}</a><a class="cta" href="#check">${t('nav.check')}</a>`;
   const mb=$('mBig'); if(mb) mb.onclick=()=>{ store.set('ec-big', !store.get('ec-big',false)); applyBig(); };
+  const mt=$('mTheme'); if(mt) mt.onclick=()=>{ setTheme(theme()==='dark'?'light':'dark'); renderNav(); };
   fitNav();
 }
 function fitNav(){
@@ -1675,6 +1699,7 @@ function route(){
   if(changed) window.scrollTo(0,0);
   if(p==='protect') playLive(); else stopCallIfLive();
   if(typeof vaAfterRoute==='function') vaAfterRoute();
+  if(p==='home') requestAnimationFrame(()=>snapHero());
   if(p==='technology'){ if(techFresh!==lang) renderModelCard(); techFresh=null; }
   if(p==='learn') renderQuiz();
   if(p==='home') queueMarks();
@@ -2105,7 +2130,7 @@ function renderQuizStatsOnly(){ const kn=lang==='kn'; const best=store.get('ec-b
 document.addEventListener('click',e=>{ const b=e.target.closest('#quizCard [data-a]'); if(b) answerQuiz(b.dataset.a); });
 
 /* ---------- large text ---------- */
-function applyBig(){ const on=store.get('ec-big',false); document.documentElement.classList.toggle('big',on); const b=$('bigBtn'); if(b){ b.setAttribute('aria-pressed',String(on)); } }
+function applyBig(){ requestAnimationFrame(()=>{ if(typeof snapHero==='function') snapHero(); }); const on=store.get('ec-big',false); document.documentElement.classList.toggle('big',on); const b=$('bigBtn'); if(b){ b.setAttribute('aria-pressed',String(on)); } }
 
 /* ======================= Result render ======================= */
 const RESICON = {safe:'ok', warn:'warn', danger:'x', none:'search', ctx:'info'};
@@ -2530,7 +2555,22 @@ function renderHome(){
   const done=store.get('ec-recov',[]);
   $('recovList').innerHTML = RECOV.map((r,i)=>`<li><button class="rc${done[i]?' on':''}" data-rc="${i}" role="checkbox" aria-checked="${!!done[i]}">${HAND_BOX}<span><b>${esc(L(r[0]))}</b><small>${esc(L(r[1]))}</small></span></button></li>`).join('');
   playWhenSeen($('callMock'));
+  requestAnimationFrame(snapHero);
 }
+
+/* keep the opening text between the ruled lines: each block starts on the 32px grid, whatever the language or text size */
+function snapHero(){
+  const col=document.querySelector('.hero .wrap > div:first-child'); if(!col || !col.offsetParent) return;
+  const kids=[...col.children];
+  kids.forEach(k=>k.style.marginTop='');
+  for(const k of kids){
+    const top=k.getBoundingClientRect().top+scrollY;
+    const want=Math.ceil((top-0.5)/32)*32;
+    if(want-top>0.25) k.style.marginTop=(parseFloat(getComputedStyle(k).marginTop)+want-top)+'px';
+  }
+}
+addEventListener('resize', ()=>{ clearTimeout(snapHero.t); snapHero.t=setTimeout(snapHero, 100); });
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>snapHero());
 function playWhenSeen(el){
   if(!el) return;
   if(!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches){ el.classList.add('play'); return; }
@@ -2928,6 +2968,8 @@ function applyLang(){
   if(page==='protect') playLive();
 }
 $('bigBtn').onclick=()=>{ store.set('ec-big', !store.get('ec-big',false)); applyBig(); };
+$('themeBtn').onclick=()=>setTheme(theme()==='dark'?'light':'dark');
+setTheme(theme());
 $('vaFab').onclick=()=>{ const p=$('vaPanel'); const open=p.hidden; p.hidden=!open; $('vaFab').setAttribute('aria-expanded', String(open)); vaState(); if(open && !speaking) vaReadPage(); };
 $('vaClose').onclick=()=>{ $('vaPanel').hidden=true; $('vaFab').setAttribute('aria-expanded','false'); vaStop(); };
 $('vaRead').onclick=vaReadPage; $('vaSay').onclick=vaListen; $('vaResult').onclick=vaReadResult; $('vaStop').onclick=vaStop;
