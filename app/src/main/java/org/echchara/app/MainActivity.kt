@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Store.init(this); Store.channels(this)
+        Store.init(this); Store.channels(this); Voice.init(this)
         handleIntent(intent, fresh = savedInstanceState == null)
         setContent { App(resumeTick.intValue, sharedText, startTab) }
     }
@@ -197,6 +197,7 @@ private fun ProtectionScreen(kn: Boolean, tick: Int) {
                 Text(t("Checks unknown calls, every SMS, chat messages and new apps, on this phone.", "ಅಪರಿಚಿತ ಕರೆಗಳು, ಪ್ರತಿ SMS, ಚಾಟ್ ಸಂದೇಶಗಳು ಮತ್ತು ಹೊಸ ಆ್ಯಪ್‌ಗಳನ್ನು ಈ ಫೋನ್‌ನಲ್ಲೇ ಪರಿಶೀಲಿಸುತ್ತದೆ."), color = Color(0xFFD6DEEB), fontSize = 13.sp)
             }
         }
+        VoiceCard(kn)
 
         ShieldCard(
             icon = Icons.Filled.Call, title = t("Call Shield", "ಕಾಲ್ ಶೀಲ್ಡ್"),
@@ -412,26 +413,80 @@ private fun FirstHourCard(kn: Boolean) {
     }
 }
 
+// ---------------- Voice help ----------------
+@Composable
+private fun VoiceCard(kn: Boolean) {
+    val ctx = LocalContext.current
+    fun t(en: String, k: String) = if (kn) k else en
+    var auto by remember { mutableStateOf(Store.voiceAuto) }
+    val speaking by Voice.speaking
+    val knReady by Voice.kannadaReady
+    Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(16.dp), border = androidx.compose.foundation.BorderStroke(1.dp, Line)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text("🔊 " + t("Voice help", "ಧ್ವನಿ ಸಹಾಯ"), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(t("For anyone who finds reading hard: Echchara reads results and scam warnings aloud in Kannada or English.", "ಓದಲು ಕಷ್ಟವಿರುವವರಿಗಾಗಿ: ಎಚ್ಚರ ಫಲಿತಾಂಶ ಮತ್ತು ವಂಚನೆ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಓದಿ ಹೇಳುತ್ತದೆ."), fontSize = 13.sp, color = Muted)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(t("Read every result and scam SMS warning aloud", "ಪ್ರತಿ ಫಲಿತಾಂಶ ಮತ್ತು ವಂಚನೆ SMS ಎಚ್ಚರಿಕೆಯನ್ನು ಓದಿ ಹೇಳಿ"), fontSize = 14.sp, modifier = Modifier.weight(1f))
+                Switch(checked = auto, onCheckedChange = { auto = it; Store.voiceAuto = it; if (it) Voice.say(ctx, "Voice help is on.", "ಧ್ವನಿ ಸಹಾಯ ಆನ್ ಆಗಿದೆ.") })
+            }
+            Button(onClick = { if (speaking) Voice.stop() else Voice.say(ctx, Voice.PROTECT_GUIDE.en, Voice.PROTECT_GUIDE.kn) }, shape = RoundedCornerShape(10.dp)) {
+                Icon(if (speaking) Icons.Filled.Close else Icons.Filled.PlayArrow, null); Spacer(Modifier.width(6.dp)); Text(if (speaking) t("Stop", "ನಿಲ್ಲಿಸಿ") else t("Read this screen aloud", "ಈ ಪರದೆಯನ್ನು ಓದಿ ಹೇಳಿ"))
+            }
+            if (kn && !knReady) {
+                Text(t("This phone has no Kannada voice yet, so Echchara speaks English for now.", "ಈ ಫೋನ್‌ನಲ್ಲಿ ಇನ್ನೂ ಕನ್ನಡ ಧ್ವನಿ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಸದ್ಯಕ್ಕೆ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಹೇಳುತ್ತದೆ."), fontSize = 12.sp, color = Warn)
+                OutlinedButton(onClick = { try { ctx.startActivity(Voice.installKannadaIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } catch (e: Exception) { try { ctx.startActivity(Intent("com.android.settings.TTS_SETTINGS").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) } catch (e2: Exception) { } } }, shape = RoundedCornerShape(10.dp)) {
+                    Text(t("Install the Kannada voice", "ಕನ್ನಡ ಧ್ವನಿ ಹಾಕಿಕೊಳ್ಳಿ"))
+                }
+            }
+        }
+    }
+}
+
 // ---------------- Check ----------------
 @Composable
 private fun CheckScreen(kn: Boolean, shared: MutableState<String?>) {
+    val ctx = LocalContext.current
     fun t(en: String, k: String) = if (kn) k else en
     var input by remember { mutableStateOf("") }
     var result by remember { mutableStateOf<Analysis?>(null) }
     var feedback by remember { mutableStateOf(false) }
-    LaunchedEffect(shared.value) { shared.value?.let { input = it; result = Engine.analyze(it); feedback = false; shared.value = null } }
+    var voiceNote by remember { mutableStateOf("") }
+    val speaking by Voice.speaking
+    // every new result is read aloud when voice help is on
+    fun show(a: Analysis) { result = a; feedback = false; if (Store.voiceAuto) Voice.sayResult(ctx, a) }
+    val listen = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
+        val heard = r.data?.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
+        if (!heard.isNullOrBlank()) { input = heard; val a = Engine.analyze(heard); result = a; feedback = false; Voice.sayResult(ctx, a) }
+    }
+    LaunchedEffect(shared.value) { shared.value?.let { input = it; show(Engine.analyze(it)); shared.value = null } }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(t("Check a message or link", "ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಪರಿಶೀಲಿಸಿ"), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(t("Check a message or link", "ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಪರಿಶೀಲಿಸಿ"), fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+            TextButton(onClick = { if (speaking) Voice.stop() else Voice.say(ctx, Voice.CHECK_GUIDE.en, Voice.CHECK_GUIDE.kn) }) { Icon(Icons.Filled.PlayArrow, null, modifier = Modifier.size(18.dp)); Spacer(Modifier.width(4.dp)); Text(t("Read screen", "ಪರದೆ ಓದಿ"), fontSize = 13.sp) }
+        }
+        Button(onClick = {
+            Voice.stop()
+            try { listen.launch(Voice.listenIntent(kn)) } catch (e: Exception) { voiceNote = t("This phone has no speech input. Install the Google app or Speech Services by Google.", "ಈ ಫೋನ್‌ನಲ್ಲಿ ಧ್ವನಿ ಇನ್‌ಪುಟ್ ಇಲ್ಲ. Google ಆ್ಯಪ್ ಅಥವಾ Speech Services by Google ಹಾಕಿಕೊಳ್ಳಿ.") }
+        }, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(12.dp), colors = ButtonDefaults.buttonColors(containerColor = Danger)) {
+            Text("🎤", fontSize = 20.sp); Spacer(Modifier.width(8.dp)); Text(t("Speak the message, I will check it", "ಸಂದೇಶ ಹೇಳಿ, ನಾನು ಪರಿಶೀಲಿಸುತ್ತೇನೆ"), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+        }
+        if (voiceNote.isNotEmpty()) Text(voiceNote, fontSize = 12.sp, color = Muted)
         Text(t("Paste an SMS, WhatsApp message or link. Tip: in WhatsApp, long-press a message → Share → Echchara.", "SMS, ವಾಟ್ಸಾಪ್ ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಅಂಟಿಸಿ. ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಸಂದೇಶ ಒತ್ತಿ ಹಿಡಿದು → Share → Echchara."), fontSize = 13.sp, color = Muted)
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SAMPLE_MSGS.forEach { (n, v) -> AssistChip(onClick = { input = v; result = Engine.analyze(v); feedback = false }, label = { Text(n.get(kn), fontSize = 12.sp) }) }
+            SAMPLE_MSGS.forEach { (n, v) -> AssistChip(onClick = { input = v; show(Engine.analyze(v)) }, label = { Text(n.get(kn), fontSize = 12.sp) }) }
         }
         OutlinedTextField(value = input, onValueChange = { input = it }, modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp), placeholder = { Text(t("Paste the message here", "ಸಂದೇಶವನ್ನು ಇಲ್ಲಿ ಅಂಟಿಸಿ")) }, shape = RoundedCornerShape(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Button(onClick = { if (input.isNotBlank()) { result = Engine.analyze(input); feedback = false } }, shape = RoundedCornerShape(10.dp)) { Icon(Icons.Filled.Search, null); Spacer(Modifier.width(6.dp)); Text(t("Check", "ಪರಿಶೀಲಿಸಿ")) }
-            OutlinedButton(onClick = { input = ""; result = null }, shape = RoundedCornerShape(10.dp)) { Text(t("Clear", "ಅಳಿಸಿ")) }
+            Button(onClick = { if (input.isNotBlank()) show(Engine.analyze(input)) }, shape = RoundedCornerShape(10.dp)) { Icon(Icons.Filled.Search, null); Spacer(Modifier.width(6.dp)); Text(t("Check", "ಪರಿಶೀಲಿಸಿ")) }
+            OutlinedButton(onClick = { input = ""; result = null; Voice.stop() }, shape = RoundedCornerShape(10.dp)) { Text(t("Clear", "ಅಳಿಸಿ")) }
         }
-        result?.let { a -> ResultCard(a, kn, feedback) { y -> Store.addFeedback(y, input); feedback = true } }
+        result?.let { a ->
+            Button(onClick = { if (speaking) Voice.stop() else Voice.sayResult(ctx, a) }, modifier = Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(12.dp)) {
+                Icon(if (speaking) Icons.Filled.Close else Icons.Filled.PlayArrow, null); Spacer(Modifier.width(8.dp))
+                Text(if (speaking) t("Stop", "ನಿಲ್ಲಿಸಿ") else t("Listen to the result", "ಫಲಿತಾಂಶ ಕೇಳಿ"), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            }
+            ResultCard(a, kn, feedback) { y -> Store.addFeedback(y, input); feedback = true }
+        }
     }
 }
 

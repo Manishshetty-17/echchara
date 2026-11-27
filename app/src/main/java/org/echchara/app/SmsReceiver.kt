@@ -32,6 +32,9 @@ class SmsReceiver : BroadcastReceiver() {
                         val id = (System.currentTimeMillis() % 100000).toInt()
                         Store.notifyAlert(ctx, id, title, body2, Links.reportActions(ctx, 300_000 + id * 2, "$sender\n$body"))
                         if (a.score >= 60) RiskWindow.start(ctx, Txt("a scam SMS", "ವಂಚನೆ SMS"))
+                        if (Store.voiceAuto && a.score >= 60) Voice.sayAndWait(ctx,
+                            "Warning. A scam message has arrived. " + (a.type?.en?.let { "It looks like $it. " } ?: "") + "Do not click, pay or share anything.",
+                            "ಎಚ್ಚರಿಕೆ. ವಂಚನೆಯ ಸಂದೇಶ ಬಂದಿದೆ. " + (a.type?.kn?.let { "ಇದು $it ರೀತಿ ಕಾಣುತ್ತದೆ. " } ?: "") + "ಕ್ಲಿಕ್ ಮಾಡಬೇಡಿ, ಪಾವತಿಸಬೇಡಿ, ಏನನ್ನೂ ಹಂಚಿಕೊಳ್ಳಬೇಡಿ.")
                         if (a.flags.any { it.id == "esim" }) Store.simRiskAt = System.currentTimeMillis()
                     }
                 }

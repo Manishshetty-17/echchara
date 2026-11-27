@@ -28,6 +28,7 @@ Built for **Build4Karnataka 2026 · PS4: AI-Powered Phishing and Online Fraud De
 | **Family code word** | When a call or message claims to be a relative or your boss, the warning reminds you to call back on the saved number or ask for your family code word. The Protection tab helps you message your family to set one. |
 | **First-hour kit** | Lost money or shared an OTP? A checklist with 1930, your bank, cybercrime.gov.in, removing the caller's app, keeping evidence and reporting on Chakshu. |
 | **Alerts** | A history of every suspicious SMS, chat, call and risky app that Echchara caught. |
+| **Voice help (app)** | A big **Speak the message** button checks a message you say aloud, **Listen to the result** reads the verdict and what to do in Kannada or English, and an optional setting reads scam-SMS warnings aloud. |
 | **Learns from you** | "Was this right?" feedback retrains the on-device classifier. |
 | **Report it** | Scam alerts in the app and on the website have **Report on Chakshu**: the message is copied and the government's Chakshu portal (Sanchar Saathi) opens, ready to paste. |
 

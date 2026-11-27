@@ -42,6 +42,11 @@ object Store {
         get() = prefs?.getBoolean("smsShield", true) ?: true
         set(v) { prefs?.edit()?.putBoolean("smsShield", v)?.apply() }
 
+    /** Voice help: read every result and scam-SMS warning aloud. */
+    var voiceAuto: Boolean
+        get() = prefs?.getBoolean("voiceAuto", false) ?: false
+        set(v) { prefs?.edit()?.putBoolean("voiceAuto", v)?.apply() }
+
     /** Phone Shield: payment pause, screen-share guard, message check, app check and SIM alarm. */
     var deviceShield: Boolean
         get() = prefs?.getBoolean("deviceShield", true) ?: true
