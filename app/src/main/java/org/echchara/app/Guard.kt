@@ -70,6 +70,9 @@ object Guard {
     private var tTranscript: TextView? = null
     private var alertBox: LinearLayout? = null
     private var tReasons: TextView? = null
+    private var tVerdict: TextView? = null
+    private var listenBtn: Button? = null
+    private var recBtn: Button? = null
     private var lp: WindowManager.LayoutParams? = null
 
     val isActive get() = active
@@ -137,9 +140,16 @@ object Guard {
         c?.let { try { it.stopService(Intent(it, CallGuardService::class.java)) } catch (e: Exception) { } }
         if (showSummary && root != null && text.isNotBlank()) {
             val a = Engine.analyze(text)
-            alertBox?.visibility = View.GONE
+            alertBox?.visibility = View.GONE; listenBtn?.visibility = View.GONE
+            verdict(a, true)
             status(s("Call ended", "ಕರೆ ಮುಗಿದಿದೆ") + " · " + a.band.label.get(kn) + " (" + a.score + "/100)\n" + a.summary.get(kn))
-            main.postDelayed({ if (!active) removeOverlay() }, 7000)
+            main.postDelayed({ if (!active) removeOverlay() }, 15000)
+        } else if (showSummary && root != null && mode == Mode.CALL) {
+            alertBox?.visibility = View.GONE; listenBtn?.visibility = View.GONE
+            status(s("Call ended. Echchara could not hear the caller (some phones block other apps from hearing calls). If your phone recorded this call, check the recording now.",
+                     "ಕರೆ ಮುಗಿದಿದೆ. ಕರೆ ಮಾಡಿದವರ ಧ್ವನಿ ಎಚ್ಚರಕ್ಕೆ ಕೇಳಲಿಲ್ಲ (ಕೆಲವು ಫೋನ್‌ಗಳು ಕರೆಯನ್ನು ಬೇರೆ ಆ್ಯಪ್‌ಗಳಿಗೆ ಕೇಳಿಸುವುದಿಲ್ಲ). ಈ ಕರೆ ರೆಕಾರ್ಡ್ ಆಗಿದ್ದರೆ, ಈಗ ಅದನ್ನು ಪರಿಶೀಲಿಸಿ."))
+            recBtn?.visibility = View.VISIBLE; tRisk?.visibility = View.GONE; bar?.visibility = View.GONE
+            main.postDelayed({ if (!active) removeOverlay() }, 30000)
         } else removeOverlay()
     }
 
@@ -252,7 +262,7 @@ object Guard {
                 SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> { status(s("Microphone permission is off.", "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿ ಇಲ್ಲ.")); return }
                 SpeechRecognizer.ERROR_NO_MATCH, SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> {
                     silentErrors++
-                    if (silentErrors == 3 && lines.isEmpty()) status(s("Can't hear the caller yet. Turn on speaker and keep the phone near you.", "ಕರೆ ಮಾಡಿದವರು ಕೇಳಿಸುತ್ತಿಲ್ಲ. ಸ್ಪೀಕರ್ ಆನ್ ಮಾಡಿ."))
+                    if (silentErrors == 3 && lines.isEmpty()) status(s("Can't hear the caller yet. Turn on speaker and keep the phone near you. If your phone records calls, you can check the recording after the call.", "ಕರೆ ಮಾಡಿದವರು ಕೇಳಿಸುತ್ತಿಲ್ಲ. ಸ್ಪೀಕರ್ ಆನ್ ಮಾಡಿ. ಫೋನ್ ಕರೆ ರೆಕಾರ್ಡ್ ಮಾಡಿದರೆ, ಕರೆಯ ನಂತರ ರೆಕಾರ್ಡಿಂಗ್ ಪರಿಶೀಲಿಸಬಹುದು."))
                 }
             }
             val hard = error != SpeechRecognizer.ERROR_NO_MATCH && error != SpeechRecognizer.ERROR_SPEECH_TIMEOUT
@@ -278,12 +288,30 @@ object Guard {
 
     private fun updateRisk() {
         val text = lines.joinToString("\n")
-        if (text.isBlank()) { tRisk?.text = s("Call risk: no fraud signs yet", "ಕರೆಯ ಅಪಾಯ: ಇನ್ನೂ ಲಕ್ಷಣಗಳಿಲ್ಲ"); bar?.progress = 2; tint(Color.parseColor("#12B76A")); return }
+        if (text.isBlank()) { tRisk?.text = s("Call risk: no fraud signs yet", "ಕರೆಯ ಅಪಾಯ: ಇನ್ನೂ ಲಕ್ಷಣಗಳಿಲ್ಲ"); bar?.progress = 2; tint(Color.parseColor("#12B76A")); tVerdict?.visibility = View.GONE; return }
         val a = Engine.analyze(text)
         val col = when (a.band) { Band.DANGER -> "#D21F3C"; Band.WARN -> "#A6590B"; else -> "#13753F" }
         tRisk?.text = s("Call risk", "ಕರೆಯ ಅಪಾಯ") + ": " + a.score + "/100" + (a.type?.let { " · " + it.get(kn) } ?: "")
         bar?.progress = maxOf(2, a.score); tint(Color.parseColor(col))
+        verdict(a, false)
         if (!alerted && Engine.shouldAlertCall(a)) showAlert(a)
+    }
+
+    /** Big SCAM / SUSPICIOUS / SAFE word on the pop-up. */
+    private fun verdict(a: Analysis, ended: Boolean) {
+        val v = tVerdict ?: return
+        val (word, col) = when (a.band) {
+            Band.DANGER -> s("🔴 SCAM CALL", "🔴 ವಂಚನೆ ಕರೆ") to "#D21F3C"
+            Band.WARN -> s("🟠 SUSPICIOUS – be careful", "🟠 ಸಂಶಯಾಸ್ಪದ – ಎಚ್ಚರ") to "#A6590B"
+            else -> (if (ended) s("🟢 SAFE – no scam signs", "🟢 ಸುರಕ್ಷಿತ – ವಂಚನೆಯ ಲಕ್ಷಣಗಳಿಲ್ಲ") else s("🟢 SAFE so far", "🟢 ಸದ್ಯಕ್ಕೆ ಸುರಕ್ಷಿತ")) to "#13753F"
+        }
+        v.text = word; v.setTextColor(Color.parseColor(col)); v.visibility = View.VISIBLE
+    }
+
+    private fun openRecordingCheck() {
+        val c = ctx ?: return
+        try { c.startActivity(Intent(c, MainActivity::class.java).putExtra("pickRecording", true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)) } catch (e: Exception) { }
+        removeOverlay()
     }
 
     private fun showAlert(a: Analysis) {
@@ -353,10 +381,12 @@ object Guard {
         head.addView(brand, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)); head.addView(close)
         tTitle = tv(16f, ink, true).apply { setPadding(0, dp(6), 0, 0) }
         tStatus = tv(13f, muted).apply { setPadding(0, dp(4), 0, dp(6)) }
+        tVerdict = tv(22f, ink, true).apply { visibility = View.GONE; setPadding(0, dp(2), 0, dp(4)) }
         tRisk = tv(13f, ink, true)
+        recBtn = Button(c).apply { text = s("📞 Check the call recording", "📞 ಕರೆ ರೆಕಾರ್ಡಿಂಗ್ ಪರಿಶೀಲಿಸಿ"); isAllCaps = false; visibility = View.GONE; setOnClickListener { openRecordingCheck() } }
         bar = ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal).apply { max = 100; progress = 2 }
         tTranscript = tv(13f, ink).apply { setPadding(dp(10), dp(8), dp(10), dp(8)); background = GradientDrawable().apply { setColor(Color.parseColor("#F2F4F7")); cornerRadius = dp(10).toFloat() }; visibility = View.GONE }
-        val listenBtn = Button(c).apply { text = s("Listen now", "ಈಗ ಆಲಿಸಿ"); isAllCaps = false; setOnClickListener { answered = true; if (!listening) startListening() } }
+        listenBtn = Button(c).apply { text = s("Listen now", "ಈಗ ಆಲಿಸಿ"); isAllCaps = false; setOnClickListener { answered = true; ctx?.let { c -> try { ContextCompat.startForegroundService(c, Intent(c, CallGuardService::class.java).putExtra("number", number)) } catch (e: Exception) { } }; if (!listening) startListening() } }
 
         alertBox = LinearLayout(c).apply { orientation = LinearLayout.VERTICAL; visibility = View.GONE; setPadding(0, dp(10), 0, 0) }
         tReasons = tv(14f, Color.parseColor("#D21F3C"), true)
@@ -366,10 +396,11 @@ object Guard {
         row.addView(hang, LinearLayout.LayoutParams(0, dp(46), 1f).apply { marginEnd = dp(8) }); row.addView(keep, LinearLayout.LayoutParams(0, dp(46), 1f))
         alertBox?.addView(tReasons); alertBox?.addView(row)
 
-        box.addView(head); box.addView(tTitle); box.addView(tStatus); box.addView(tRisk)
+        box.addView(head); box.addView(tTitle); box.addView(tStatus); box.addView(tVerdict); box.addView(tRisk)
         box.addView(bar, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(10)).apply { topMargin = dp(4); bottomMargin = dp(8) })
         box.addView(tTranscript, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         if (mode == Mode.CALL) box.addView(listenBtn, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dp(42)).apply { topMargin = dp(6) })
+        if (mode == Mode.CALL) box.addView(recBtn, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(46)).apply { topMargin = dp(6) })
         box.addView(alertBox)
 
         val params = WindowManager.LayoutParams(
@@ -395,6 +426,6 @@ object Guard {
     private fun removeOverlay() {
         val c = ctx ?: return
         root?.let { try { c.getSystemService(WindowManager::class.java).removeView(it) } catch (e: Exception) { } }
-        root = null; tTitle = null; tStatus = null; tRisk = null; bar = null; tTranscript = null; alertBox = null; tReasons = null
+        root = null; tTitle = null; tStatus = null; tRisk = null; bar = null; tTranscript = null; alertBox = null; tReasons = null; tVerdict = null; listenBtn = null; recBtn = null
     }
 }

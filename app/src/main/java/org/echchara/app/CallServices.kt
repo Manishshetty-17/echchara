@@ -42,10 +42,14 @@ class CallGuardService : Service() {
             .setContentTitle(Txt("Call Shield is checking a call", "ಕಾಲ್ ಶೀಲ್ಡ್ ಕರೆಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದೆ").get(Store.kannada))
             .setContentText(number)
             .setOngoing(true).setContentIntent(pi).build()
+        // The microphone type is what lets Android give Call Shield the caller's voice while Echchara is in the background.
         try {
-            if (Build.VERSION.SDK_INT >= 34) startForeground(42, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            if (Build.VERSION.SDK_INT >= 34) startForeground(42, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            else if (Build.VERSION.SDK_INT >= 30) startForeground(42, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE)
             else startForeground(42, n)
-        } catch (e: Exception) { stopSelf() }
+        } catch (e: Exception) {
+            try { if (Build.VERSION.SDK_INT >= 34) startForeground(42, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE) else startForeground(42, n) } catch (e2: Exception) { stopSelf() }
+        }
         return START_NOT_STICKY
     }
 }

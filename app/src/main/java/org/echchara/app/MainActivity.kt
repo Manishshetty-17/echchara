@@ -109,7 +109,11 @@ class MainActivity : ComponentActivity() {
     override fun onResume() { super.onResume(); resumeTick.intValue++ }
 
     private fun handleIntent(i: Intent?, fresh: Boolean) {
-        if (i?.action == Intent.ACTION_SEND) i.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText.value = it; startTab.intValue = 1 }
+        val audio = if (i?.action == Intent.ACTION_SEND && i.type?.startsWith("audio/") == true)
+            (if (Build.VERSION.SDK_INT >= 33) i.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java) else @Suppress("DEPRECATION") i.getParcelableExtra(Intent.EXTRA_STREAM)) else null
+        if (audio != null) { RecIn.uri.value = audio; startTab.intValue = 1 }
+        else if (i?.getBooleanExtra("pickRecording", false) == true) { RecIn.pick.value = true; startTab.intValue = 1 }
+        else if (i?.action == Intent.ACTION_SEND) i.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText.value = it; startTab.intValue = 1 }
         else if (i?.action == Links.ACTION_REPORT) { startTab.intValue = 2; if (fresh) Links.report(this, i.getStringExtra("text").orEmpty()) }
         else if (i?.hasExtra("tab") == true) startTab.intValue = i.getIntExtra("tab", 0)
     }
@@ -443,6 +447,9 @@ private fun VoiceCard(kn: Boolean) {
 }
 
 // ---------------- Check ----------------
+/** A call recording shared to Echchara, or a request (from the Call Shield pop-up) to pick one. */
+object RecIn { val uri = mutableStateOf<Uri?>(null); val pick = mutableStateOf(false) }
+
 @Composable
 private fun CheckScreen(kn: Boolean, shared: MutableState<String?>) {
     val ctx = LocalContext.current
@@ -479,7 +486,34 @@ private fun CheckScreen(kn: Boolean, shared: MutableState<String?>) {
     val micPerm = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
         if (ok) startDictation() else try { listen.launch(Voice.listenIntent(kn)) } catch (e: Exception) { }
     }
-    DisposableEffect(Unit) { onDispose { dictation?.cancel() } }
+    // saved call recording: pick it, listen to it, judge it
+    var rec by remember { mutableStateOf<RecordingCheck?>(null) }
+    var recStatus by remember { mutableStateOf("") }
+    var recText by remember { mutableStateOf("") }
+    fun checkRecording(uri: Uri) {
+        rec?.cancel(); dictation?.cancel(); dictation = null; Voice.stop(); voiceNote = ""; result = null; recText = ""
+        val r = RecordingCheck(ctx, uri, kn, onStatus = { recStatus = it }, onText = { recText = it }, onDone = { text ->
+            rec = null; recStatus = ""
+            if (text.isNotBlank()) {
+                input = text; val a = Engine.analyze(text); result = a; feedback = false
+                Store.addHistory(HistoryItem(System.currentTimeMillis(), "call", t("Call recording", "ಕರೆ ರೆಕಾರ್ಡಿಂಗ್"), text, a.score, a.type?.en, a.type?.kn))
+                Voice.sayResult(ctx, a)
+            } else voiceNote = t("I could not hear any words in this recording. Try a louder recording, or type what the caller said.", "ಈ ರೆಕಾರ್ಡಿಂಗ್‌ನಲ್ಲಿ ಮಾತು ಕೇಳಲಿಲ್ಲ. ಜೋರಾದ ರೆಕಾರ್ಡಿಂಗ್ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಕರೆ ಮಾಡಿದವರು ಹೇಳಿದ್ದನ್ನು ಟೈಪ್ ಮಾಡಿ.")
+        })
+        rec = r; r.start()
+    }
+    var pendingRec by remember { mutableStateOf<Uri?>(null) }
+    val recMic = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { pendingRec?.let { checkRecording(it) }; pendingRec = null }
+    fun withMic(uri: Uri) {
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) checkRecording(uri)
+        else { pendingRec = uri; recMic.launch(Manifest.permission.RECORD_AUDIO) }
+    }
+    val pickAudio = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) withMic(uri) }
+    val recShared by RecIn.uri
+    val recPick by RecIn.pick
+    LaunchedEffect(recShared) { recShared?.let { RecIn.uri.value = null; withMic(it) } }
+    LaunchedEffect(recPick) { if (recPick) { RecIn.pick.value = false; try { pickAudio.launch(arrayOf("audio/*")) } catch (e: Exception) { } } }
+    DisposableEffect(Unit) { onDispose { dictation?.cancel(); rec?.cancel() } }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(t("Check a message or link", "ಸಂದೇಶ ಅಥವಾ ಲಿಂಕ್ ಪರಿಶೀಲಿಸಿ"), fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
@@ -500,6 +534,16 @@ private fun CheckScreen(kn: Boolean, shared: MutableState<String?>) {
                     Button(onClick = { dictation?.finish() }, modifier = Modifier.weight(1f).height(52.dp), shape = RoundedCornerShape(12.dp), colors = ButtonDefaults.buttonColors(containerColor = Danger)) { Text(t("Done – check it", "ಮುಗಿಯಿತು – ಪರಿಶೀಲಿಸಿ"), fontSize = 16.sp, fontWeight = FontWeight.SemiBold) }
                     OutlinedButton(onClick = { dictation?.cancel(); dictation = null; liveText = "" }, modifier = Modifier.height(52.dp), shape = RoundedCornerShape(12.dp)) { Text(t("Cancel", "ರದ್ದು")) }
                 }
+            }
+        }
+        if (rec == null) OutlinedButton(onClick = { try { pickAudio.launch(arrayOf("audio/*")) } catch (e: Exception) { } }, modifier = Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(12.dp)) {
+            Text("📞", fontSize = 18.sp); Spacer(Modifier.width(8.dp)); Text(t("Check a call recording", "ಕರೆ ರೆಕಾರ್ಡಿಂಗ್ ಪರಿಶೀಲಿಸಿ"), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+        }
+        else Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFEEF1F6)), shape = RoundedCornerShape(14.dp)) {
+            Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text("📞 " + recStatus, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = Color(0xFF132A55))
+                Text(recText.ifBlank { t("(words from the call will appear here)", "(ಕರೆಯ ಮಾತುಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ)") }, fontSize = 14.sp, color = if (recText.isBlank()) Muted else Color(0xFF132A55))
+                OutlinedButton(onClick = { rec?.cancel(); rec = null; recStatus = ""; recText = "" }, shape = RoundedCornerShape(12.dp)) { Text(t("Cancel", "ರದ್ದು")) }
             }
         }
         if (voiceNote.isNotEmpty()) Text(voiceNote, fontSize = 12.sp, color = Muted)
